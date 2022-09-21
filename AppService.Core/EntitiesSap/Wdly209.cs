@@ -1,0 +1,101 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace AppService.Core.EntitiesSap
+{
+    public partial class Wdly209
+    {
+        public decimal Recnum { get; set; }
+        public long? Orden { get; set; }
+        public long? Remision { get; set; }
+        public long? Factura { get; set; }
+        public string TipoDocumento { get; set; }
+        public DateTime? FechaDocumento { get; set; }
+        public string Vendedor { get; set; }
+        public int? CodCliente { get; set; }
+        public string RifEmb { get; set; }
+        public int? Bultos { get; set; }
+        public string ImpStock { get; set; }
+        public string TipoEnt { get; set; }
+        public DateTime? FechaPrometida { get; set; }
+        public string NombreEnt { get; set; }
+        public string DireccionEnt1 { get; set; }
+        public string DireccionEnt2 { get; set; }
+        public string DireccionEnt3 { get; set; }
+        public string CodMunicipio { get; set; }
+        public string CodEstado { get; set; }
+        public short? ZonaDespacho { get; set; }
+        public string CartaFaltante { get; set; }
+        public int? NroLista { get; set; }
+        public short? PosicionRuta { get; set; }
+        public string CondPago { get; set; }
+        public short? Copy { get; set; }
+        public string NombreFact { get; set; }
+        public string DireccionFact1 { get; set; }
+        public string DireccionFact2 { get; set; }
+        public string DireccionFact3 { get; set; }
+        public string RifFact { get; set; }
+        public string DescZona { get; set; }
+        public string DespLunes { get; set; }
+        public string DespMartes { get; set; }
+        public string DespMiercoles { get; set; }
+        public string DespJueves { get; set; }
+        public string DespViernes { get; set; }
+        public string NombreEstado { get; set; }
+        public string CapitalEstado { get; set; }
+        public string DescMunicipio { get; set; }
+        public string CapitalMcpo { get; set; }
+        public string Observacion1 { get; set; }
+        public string Observacion2 { get; set; }
+        public string Observacion3 { get; set; }
+        public string NombreVendedor { get; set; }
+        public string CodGerente { get; set; }
+        public short? CodOficina { get; set; }
+        public string Oficina { get; set; }
+        public string CodSupervisor { get; set; }
+        public decimal? CostoFlete { get; set; }
+        public DateTime? FechaDevuelta { get; set; }
+        public short? VecesDevuelta { get; set; }
+        public string ObsDevolucion { get; set; }
+        public DateTime? FechaCliente { get; set; }
+        public decimal? CostoFactura { get; set; }
+        public decimal? CostoImp { get; set; }
+        public int? BultosDesp { get; set; }
+        public string Status { get; set; }
+        public string Flag { get; set; }
+        public string Tiporep { get; set; }
+        public int? BultosEdit { get; set; }
+        public int? BultosTran { get; set; }
+        public string Codmedio { get; set; }
+        public string Desmedio { get; set; }
+        public short? Repartos { get; set; }
+        public DateTime? FechaDespacho { get; set; }
+        public string HoraDespacho { get; set; }
+        public string Despachador { get; set; }
+        public string ChoferCedula { get; set; }
+        public string ChoferNombre { get; set; }
+        public string ChoferTlf { get; set; }
+        public string VehicPlaca { get; set; }
+        public string VehicDesc { get; set; }
+        public string VehicMod { get; set; }
+        public string VehicPropid { get; set; }
+        public string Estacion { get; set; }
+        public string Usuario { get; set; }
+        public string Copyasc { get; set; }
+        public string Cabecera { get; set; }
+        public decimal CostoBulto { get; set; }
+        public short TipoProducto { get; set; }
+        public string CodProducto { get; set; }
+        public decimal KilosBulto { get; set; }
+        public string CodDev { get; set; }
+        public int Nroguia { get; set; }
+        public string InstrucDesp { get; set; }
+        public string NumPreguia { get; set; }
+        public decimal? RcostoFlete { get; set; }
+        public decimal? RcostoFactura { get; set; }
+        public decimal? RcostoImp { get; set; }
+        public decimal? RcostoBulto { get; set; }
+        public decimal? IdDirEntregar { get; set; }
+        public long? IdPrelista { get; set; }
+    }
+}
