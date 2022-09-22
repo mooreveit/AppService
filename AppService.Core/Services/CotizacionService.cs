@@ -714,7 +714,11 @@ namespace AppService.Core.Services
                 Decimal? nullable4 = bsListaCpjminimo.HasValue ? new Decimal?(bsListaCpjminimo.GetValueOrDefault() * cantidad) : new Decimal?();
                 wsmy515_4.TotalBsListaCpjminimo = nullable4;
                 var wsmy502 = await this._unitOfWork.RenglonRepository.GetByCotizacionRenglon(propuestaNew.Cotizacion, propuestaNew.Renglon);
-                propuestaNew.IdPresentacion = wsmy502.UnidadCotizacion;
+                if (wsmy502 != null)
+                {
+                    propuestaNew.IdPresentacion = wsmy502.UnidadCotizacion;
+                }
+
                 propuestaNew.Cajas = propuestaNew.Cantidad;
                 propuestaNew.PorMc = new Decimal?(0M);
                 propuestaNew.BsMc = new Decimal?(0M);
@@ -916,6 +920,7 @@ namespace AppService.Core.Services
 
         public async Task UpdateWpry240(AppDetailQuotes appDetailQuotes, int renglon)
         {
+
             var prod = await _unitOfWork.AppProductsRepository.GetById(appDetailQuotes.IdProducto);
             double factorPulgada = 2.54;
             bool? requiereDatosEntrada = prod.RequiereDatosEntrada;
@@ -950,12 +955,7 @@ namespace AppService.Core.Services
                         if (wpry240 != null)
                         {
 
-                            //wpry240.IdParte = parte;
-                            //wpry240.IdPapel = ingrediente.Code.ToString().Trim();
-                            //wpry240.TipoPapel = wpry240.IdPapel.Substring(0, 3);
-                            //wpry240.Gramaje = wpry240.IdPapel.Substring(3, 3);
-                            //wpry240.Cantidad = (decimal)propuesta.Cantidad;
-                            //wpry240.FechaRegistro = DateTime.Now;
+
                             string medidaString = String.Empty;
                             Fractional.Fractional medidaConvertida = new Fractional.Fractional(Math.Truncate(await this.GetMedida(appDetailQuotes, "MEDIDABASICA") / (Decimal)factorPulgada * 100M) / 100M, false);
                             decimal medidaDecimal = 0;
@@ -977,9 +977,18 @@ namespace AppService.Core.Services
 
 
 
-                            medidaString = medidaString.Replace("/", "0");
-                            medidaString = medidaString.Replace(" ", "0");
-                            medidaString = medidaString.PadRight(6, '0');
+                            var wsmy583 = await this._unitOfWork.WSMY583Repository.GetByProductoMedidaFraccion(prod.ExternalCode.Trim(), medidaString);
+                            if (wsmy583 != null)
+                            {
+                                medidaString = wsmy583.MedidaMascara;
+                            }
+                            else
+                            {
+                                medidaString = medidaString.Replace("/", "0");
+                                medidaString = medidaString.Replace(" ", "0");
+                                medidaString = medidaString.PadRight(5, '0');
+                            }
+
                             wpry240.MedidaBase = new int?(int.Parse(medidaString));
                             if (await this._unitOfWork.WSMY582Repository.GetByProductoMedidaMascara(prod.ExternalCode.Trim(), medidaString) == null)
                             {
@@ -1023,11 +1032,20 @@ namespace AppService.Core.Services
 
                             }
 
+                            wsmy583 = await this._unitOfWork.WSMY583Repository.GetByProductoMedidaFraccion(prod.ExternalCode.Trim(), medidaString);
+                            if (wsmy583 != null)
+                            {
+                                medidaString = wsmy583.MedidaMascara;
+                            }
+                            else
+                            {
+                                medidaString = medidaString.Replace("/", "0");
+                                medidaString = medidaString.Replace(" ", "0");
+                                medidaString = medidaString.PadRight(5, '0');
+                            }
 
 
-                            medidaString = medidaString.Replace("/", "0");
-                            medidaString = medidaString.Replace(" ", "0");
-                            medidaString = medidaString.PadRight(5, '0');
+
                             wpry240.MedidaOpuesta = new int?(int.Parse(medidaString));
                             wpry240.LargoCm = (decimal)wpry240.MedidaBase;
                             wpry240.AnchoCm = (decimal)wpry240.MedidaOpuesta;
@@ -1096,9 +1114,17 @@ namespace AppService.Core.Services
 
 
 
-                            medidaString = medidaString.Replace("/", "0");
-                            medidaString = medidaString.Replace(" ", "0");
-                            medidaString = medidaString.PadRight(6, '0');
+                            var wsmy583 = await this._unitOfWork.WSMY583Repository.GetByProductoMedidaFraccion(prod.ExternalCode.Trim(), medidaString);
+                            if (wsmy583 != null)
+                            {
+                                medidaString = wsmy583.MedidaMascara;
+                            }
+                            else
+                            {
+                                medidaString = medidaString.Replace("/", "0");
+                                medidaString = medidaString.Replace(" ", "0");
+                                medidaString = medidaString.PadRight(5, '0');
+                            }
                             wpry240new.MedidaBase = new int?(int.Parse(medidaString));
                             if (await this._unitOfWork.WSMY582Repository.GetByProductoMedidaMascara(prod.ExternalCode.Trim(), medidaString) == null)
                             {
@@ -1144,9 +1170,17 @@ namespace AppService.Core.Services
 
 
 
-                            medidaString = medidaString.Replace("/", "0");
-                            medidaString = medidaString.Replace(" ", "0");
-                            medidaString = medidaString.PadRight(5, '0');
+                            wsmy583 = await this._unitOfWork.WSMY583Repository.GetByProductoMedidaFraccion(prod.ExternalCode.Trim(), medidaString);
+                            if (wsmy583 != null)
+                            {
+                                medidaString = wsmy583.MedidaMascara;
+                            }
+                            else
+                            {
+                                medidaString = medidaString.Replace("/", "0");
+                                medidaString = medidaString.Replace(" ", "0");
+                                medidaString = medidaString.PadRight(5, '0');
+                            }
                             wpry240new.MedidaOpuesta = new int?(int.Parse(medidaString));
                             wpry240new.LargoCm = (decimal)wpry240new.MedidaBase;
                             wpry240new.AnchoCm = (decimal)wpry240new.MedidaOpuesta;
@@ -2071,8 +2105,14 @@ namespace AppService.Core.Services
                         Wsmy501 wsmy501 = await this.GetByCotizacion(item);
                         if (wsmy501 != null)
                         {
+                            if (e.InnerException != null)
+                            {
+                                wsmy501.ErrorOdoo = e.InnerException.Message;
+                            }
+                            {
+                                wsmy501.ErrorOdoo = "Error no identificad, se requiere evaluacion detallada";
+                            }
 
-                            wsmy501.ErrorOdoo = e.InnerException.Message;
                             wsmy501.EnviarOdoo = true;
                             this._unitOfWork.CotizacionRepository.Update(wsmy501);
                             await this._unitOfWork.SaveChangesAsync();

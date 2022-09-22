@@ -2,15 +2,13 @@
 using AppService.Core.Interfaces;
 using AppService.Infrastructure.DataMooreve;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AppService.Infrastructure.Repositories
 {
-    public class WSMY583Repository: IWSMY583Repository
+    public class WSMY583Repository : IWSMY583Repository
     {
 
         private readonly MooreveContext _context;
@@ -39,6 +37,13 @@ namespace AppService.Infrastructure.Repositories
 
             return await _context.Wsmy583.Where(x => x.Producto == producto && x.MedidaMascara == medidaMascara).FirstOrDefaultAsync();
         }
+
+        public async Task<Wsmy583> GetByProductoMedidaFraccion(string producto, string medidaFraccion)
+        {
+
+            return await _context.Wsmy583.Where(x => x.Producto == producto && x.MedidaFraccion == medidaFraccion).FirstOrDefaultAsync();
+        }
+
 
         public async Task Add(Wsmy583 entity)
         {

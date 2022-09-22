@@ -1,12 +1,10 @@
 ﻿using AppService.Core.EntitiesMooreve;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AppService.Core.Interfaces
 {
-   public  interface IWSMY583Repository
+    public interface IWSMY583Repository
     {
 
         Task<List<Wsmy583>> GetAll();
@@ -14,6 +12,7 @@ namespace AppService.Core.Interfaces
         Task<Wsmy583> GetById(int id);
 
         Task<Wsmy583> GetByProductoMedidaMascara(string producto, string medidaMascara);
+        Task<Wsmy583> GetByProductoMedidaFraccion(string producto, string medidaFraccion);
 
         Task Add(Wsmy583 entity);
 
