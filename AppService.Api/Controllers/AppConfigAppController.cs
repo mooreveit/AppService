@@ -83,7 +83,7 @@ namespace AppService.Api.Controllers
         /// Filtros a aplicar NA, 
         /// se realizara el filtro de los datos
         /// </summary>
-        /// <param name="filters">NA</param>
+        /// <param name="dto">NA</param>
         /// <returns></returns>
         [HttpPost]
         [Route("[action]")]

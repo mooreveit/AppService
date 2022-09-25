@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using AppService.Api.Responses;
+﻿using AppService.Api.Responses;
 using AppService.Core.CustomEntities;
 using AppService.Core.DTOs;
 using AppService.Core.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace AppService.Api.Controllers
 {
@@ -20,7 +18,7 @@ namespace AppService.Api.Controllers
     {
         private readonly IAppDetailQuotesConversionUnitService _appDetailQuotesConversionUnitService;
 
-        public AppDetailQuotesConversionUnitController(IAppDetailQuotesConversionUnitService appDetailQuotesConversionUnitService )
+        public AppDetailQuotesConversionUnitController(IAppDetailQuotesConversionUnitService appDetailQuotesConversionUnitService)
         {
             _appDetailQuotesConversionUnitService = appDetailQuotesConversionUnitService;
         }
@@ -31,13 +29,13 @@ namespace AppService.Api.Controllers
         ///  Retorna Lista de la Receta
         /// 
         /// </summary>
-        /// <param name="filters">Filtros a aplicar AppRecipesQueryFilter</param>
+        /// <param name="appDetailQuotesConversionUnitCreateDto">Filtros a aplicar AppRecipesQueryFilter</param>
         /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<List<AppRecipesGetDto>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CreateAppDetailQuotesConversionUnit(AppDetailQuotesConversionUnitCreateDto  appDetailQuotesConversionUnitCreateDto)
+        public async Task<IActionResult> CreateAppDetailQuotesConversionUnit(AppDetailQuotesConversionUnitCreateDto appDetailQuotesConversionUnitCreateDto)
         {
 
             Metadata metadata = new Metadata
@@ -85,11 +83,11 @@ namespace AppService.Api.Controllers
                 //            newItem.Description = item.Description;
                 //            newItem.Value = item.Value;
                 //            newList.Add(newItem);
-                           
+
                 //        }
                 //        dto.AppTemplateConversionGenericUnitGetDto = newList;
                 //    }
-                    
+
 
                 //    var detailQuotesConversionUnit = await _appDetailQuotesConversionUnitService.ConversionUnitGeneric(dto);
                 //    return Ok(detailQuotesConversionUnit);
@@ -143,7 +141,7 @@ namespace AppService.Api.Controllers
 
                 var detailQuotesConversionUnit = await _appDetailQuotesConversionUnitService.ConversionUnitGeneric(dto);
 
-                
+
 
                 return Ok(detailQuotesConversionUnit);
 
@@ -170,6 +168,6 @@ namespace AppService.Api.Controllers
 
 
 
-       
+
     }
 }

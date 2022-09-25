@@ -1510,37 +1510,50 @@ namespace AppService.Core.Services
             foreach (var item in mtrClientes)
             {
                 var odooProduct = await GetOdooCliente(item);
-
-                string json1 = JsonConvert.SerializeObject(odooProduct);
-                StringContent data = new StringContent(json1, Encoding.UTF8, "application/json");
-
-                var result = await _odooClient.Post(data);
-
-
-
-
-                //var myclass = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(result.Message);
-                Respuesta respuesta = new Respuesta();
-                respuesta = Newtonsoft.Json.JsonConvert.DeserializeObject<Respuesta>(result.Message);
-
-
-                if (respuesta.result == null || !respuesta.result.success)
+                try
                 {
+                    string json1 = JsonConvert.SerializeObject(odooProduct);
+                    StringContent data = new StringContent(json1, Encoding.UTF8, "application/json");
+
+                    var result = await _odooClient.Post(data);
+
+
+
+
+                    //var myclass = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(result.Message);
+                    Respuesta respuesta = new Respuesta();
+                    respuesta = Newtonsoft.Json.JsonConvert.DeserializeObject<Respuesta>(result.Message);
+
+
+                    if (respuesta.result == null || !respuesta.result.success)
+                    {
+                        MtrClienteEnvioOdooLog mtrClienteEnvioOdooLog = new MtrClienteEnvioOdooLog();
+                        mtrClienteEnvioOdooLog.IdCliente = item.Codigo;
+                        mtrClienteEnvioOdooLog.Mensaje = result.Message;
+                        mtrClienteEnvioOdooLog.Fecha = DateTime.Now;
+                        await _unitOfWork.MtrClienteRepository.AddMtrClienteEnvioOdooLog(mtrClienteEnvioOdooLog);
+                    }
+                    else
+                    {
+                        //Enviamos los contactos de cada cliente
+                        var mtrContactos = await _unitOfWork.MtrContactosRepository.GetByIdCliente(item.Codigo);
+                        if (mtrContactos.Count > 0)
+                        {
+                            await UpdateContactosToOdoo(mtrContactos);
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+
                     MtrClienteEnvioOdooLog mtrClienteEnvioOdooLog = new MtrClienteEnvioOdooLog();
                     mtrClienteEnvioOdooLog.IdCliente = item.Codigo;
-                    mtrClienteEnvioOdooLog.Mensaje = result.Message;
+                    mtrClienteEnvioOdooLog.Mensaje = ex.Message;
                     mtrClienteEnvioOdooLog.Fecha = DateTime.Now;
                     await _unitOfWork.MtrClienteRepository.AddMtrClienteEnvioOdooLog(mtrClienteEnvioOdooLog);
                 }
-                else
-                {
-                    //Enviamos los contactos de cada cliente
-                    var mtrContactos = await _unitOfWork.MtrContactosRepository.GetByIdCliente(item.Codigo);
-                    if (mtrContactos.Count > 0)
-                    {
-                        await UpdateContactosToOdoo(mtrContactos);
-                    }
-                }
+
 
 
 

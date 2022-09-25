@@ -24,7 +24,7 @@ namespace AppService.Core.Services
 
             httpClient.BaseAddress = new Uri("https://mooreveit-moore-qa1-5818605.dev.odoo.com/jsonrpc/");
 
-
+            //var url="https://mooreveit-moore-qa1-5818605.dev.odoo.com/jsonrpc/"
             //httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
 
             //Prod
@@ -42,20 +42,30 @@ namespace AppService.Core.Services
         {
             Metadata metadata = new Metadata();
 
+            try
+            {
+                _client.DefaultRequestHeaders.Clear();
+                _client.DefaultRequestHeaders.Add("Accept", "application/json");
+                //_client.DefaultRequestHeaders.Add("x-csrf-token", token);
+                //_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("x-csrf-token", token);
 
-            _client.DefaultRequestHeaders.Clear();
-            _client.DefaultRequestHeaders.Add("Accept", "application/json");
-            //_client.DefaultRequestHeaders.Add("x-csrf-token", token);
-            //_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("x-csrf-token", token);
 
 
+                var result = await _client.PostAsync(_client.BaseAddress, data);
+                string resultContent = await result.Content.ReadAsStringAsync();
 
-            var result = await _client.PostAsync(_client.BaseAddress, data);
-            string resultContent = await result.Content.ReadAsStringAsync();
+                metadata.IsValid = result.IsSuccessStatusCode;
+                metadata.Message = resultContent;
+                return metadata;
+            }
+            catch (Exception ex)
+            {
 
-            metadata.IsValid = result.IsSuccessStatusCode;
-            metadata.Message = resultContent;
-            return metadata;
+                metadata.IsValid = false;
+                metadata.Message = ex.InnerException.Message;
+                return metadata;
+            }
+
             // return await _client.GetStringAsync("/");
         }
 

@@ -2284,7 +2284,16 @@ namespace AppService.Core.Services
                 }
                 else
                 {
-                    result.idComercial = (int)vendedor.IdUsuarioOdoo;
+                    if (vendedor.IdUsuarioOdoo == 0)
+                    {
+                        var config = await _unitOfWork.AppConfigAppRepository.GetByKey("IdComerciante");
+                        if (config != null) result.idComercial = Convert.ToInt16(config.Valor);
+                    }
+                    else
+                    {
+                        result.idComercial = (int)vendedor.IdUsuarioOdoo;
+                    }
+
                 }
 
 
@@ -2569,7 +2578,16 @@ namespace AppService.Core.Services
                 }
                 else
                 {
-                    result.idComercial = (int)vendedor.IdUsuarioOdoo;
+                    if (vendedor.IdUsuarioOdoo == 0)
+                    {
+                        var config = await _unitOfWork.AppConfigAppRepository.GetByKey("IdComerciante");
+                        if (config != null) result.idComercial = Convert.ToInt16(config.Valor);
+                    }
+                    else
+                    {
+                        result.idComercial = (int)vendedor.IdUsuarioOdoo;
+                    }
+
                 }
 
 

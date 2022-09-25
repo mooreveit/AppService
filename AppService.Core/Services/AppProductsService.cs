@@ -226,6 +226,16 @@ namespace AppService.Core.Services
 
         public async Task<AppProducts> Insert(AppProducts appProducts)
         {
+            var civy004 = _unitOfWork.Csmy036Repository.GetCivy004ByCode(appProducts.ExternalCode.Trim());
+            if (civy004 != null)
+            {
+                appProducts.Inventariable = true;
+            }
+            else
+            {
+                appProducts.Inventariable = false;
+            }
+
             await this._unitOfWork.AppProductsRepository.Add(appProducts);
             await this._unitOfWork.SaveChangesAsync();
             return appProducts;
@@ -393,6 +403,17 @@ namespace AppService.Core.Services
         {
             try
             {
+                var civy004 = _unitOfWork.Csmy036Repository.GetCivy004ByCode(appProducts.ExternalCode.Trim());
+                if (civy004 != null)
+                {
+                    appProducts.Inventariable = true;
+                }
+                else
+                {
+                    appProducts.Inventariable = false;
+                }
+
+
                 if (await this.GetById(appProducts.Id) == null) return null;
                 this._unitOfWork.AppProductsRepository.Update(appProducts);
                 await this._unitOfWork.SaveChangesAsync();

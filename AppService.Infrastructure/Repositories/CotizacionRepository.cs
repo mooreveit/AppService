@@ -80,9 +80,9 @@ namespace AppService.Infrastructure.Repositories
 
                 fechaDesde = DateTime.Now.AddDays(-180);
                 fechaHasta = DateTime.Now;
-                // result = await _context.Wsmy501.Where(x => x.Fecha >= fechaDesde && x.EnviarOdoo == true).Select(p => p.Cotizacion).ToListAsync();
+                result = await _context.Wsmy501.Where(x => x.Fecha >= fechaDesde && x.EnviarOdoo == true).Select(p => p.Cotizacion).ToListAsync();
 
-                result = await _context.Wsmy501.Where(x => x.Fecha >= fechaDesde).Select(p => p.Cotizacion).ToListAsync();
+                //result = await _context.Wsmy501.Where(x => x.Fecha >= fechaDesde).Select(p => p.Cotizacion).ToListAsync();
 
 
                 return result;

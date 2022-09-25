@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using AppService.Api.Responses;
+﻿using AppService.Api.Responses;
 using AppService.Core.DTOs;
 using AppService.Core.Interfaces;
 using AppService.Core.QueryFilters;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace AppService.Api.Controllers
 {
@@ -55,7 +52,7 @@ namespace AppService.Api.Controllers
         /// Filtros a aplicar NA, 
         /// se realizara el filtro de los datos
         /// </summary>
-        /// <param name="filters">NA</param>
+        /// <param name="dto">NA</param>
         /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
@@ -110,7 +107,7 @@ namespace AppService.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> DeteAppIngredient(AppIngredientsDeleteDto dto)
         {
-                        
+
             var response = await _appIngredientsService.DeleteAppIngredients(dto);
             return Ok(response);
 

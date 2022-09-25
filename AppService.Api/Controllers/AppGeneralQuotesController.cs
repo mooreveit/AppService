@@ -37,7 +37,6 @@ namespace AppService.Api.Controllers
         ///  
         /// 
         /// </summary>
-        /// <param name="filters">Filtros a aplicar AppGeneralQuotesCopyDto</param>
         /// <returns></returns>
         [HttpGet]
         [Route("[action]")]
@@ -57,7 +56,11 @@ namespace AppService.Api.Controllers
             try
             {
 
+
+
                 var cotizacionesActualizar = await _appGeneralQuotesService.GetListCotizaciones();
+
+
                 await _cotizacionService.UpdateCotizacionesToOdoo(cotizacionesActualizar);
 
 
@@ -690,6 +693,9 @@ namespace AppService.Api.Controllers
 
 
         }
+
+
+
 
 
 
