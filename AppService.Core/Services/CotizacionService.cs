@@ -2277,36 +2277,24 @@ namespace AppService.Core.Services
             var vendedor = _unitOfWork.MtrVendedorRepository.GetById(generalQuotes.IdVendedor);
             if (vendedor != null)
             {
-                if (vendedor.IdUsuarioOdoo == null)
+                var oficina = await _unitOfWork.MtrOficinaRepository.GetById(vendedor.Oficina);
+                if (oficina != null)
                 {
-                    var config = await _unitOfWork.AppConfigAppRepository.GetByKey("IdComerciante");
-                    if (config != null) result.idComercial = Convert.ToInt16(config.Valor);
+                    result.idEquipoVentas = oficina.OdooId;
+                    result.idComercial = oficina.IdComercianteOdoo;
                 }
-                else
-                {
-                    if (vendedor.IdUsuarioOdoo == 0)
-                    {
-                        var config = await _unitOfWork.AppConfigAppRepository.GetByKey("IdComerciante");
-                        if (config != null) result.idComercial = Convert.ToInt16(config.Valor);
-                    }
-                    else
-                    {
-                        result.idComercial = (int)vendedor.IdUsuarioOdoo;
-                    }
 
+                if (vendedor.IdUsuarioOdoo != null && vendedor.IdUsuarioOdoo > 0 && vendedor.Activo == "X")
+                {
+                    result.idComercial = (int)vendedor.IdUsuarioOdoo;
                 }
 
 
             }
-            else
-            {
-                var config = await _unitOfWork.AppConfigAppRepository.GetByKey("IdComerciante");
-                if (config != null) result.idComercial = Convert.ToInt16(config.Valor);
 
-            }
 
-            var oficina = await _unitOfWork.MtrOficinaRepository.GetById(vendedor.Oficina);
-            if (oficina != null) result.idEquipoVentas = oficina.OdooId;
+
+
             result.OrderLines = await GetDetailByGeneradorPresupuesto(generalQuotes);
             return result;
         }
@@ -2569,39 +2557,22 @@ namespace AppService.Core.Services
             var vendedor = _unitOfWork.MtrVendedorRepository.GetById(wsmy501.CodVendedor);
             if (vendedor != null)
             {
-
-
-                if (vendedor.IdUsuarioOdoo == null)
+                var oficina = await _unitOfWork.MtrOficinaRepository.GetById(vendedor.Oficina);
+                if (oficina != null)
                 {
-                    var config = await _unitOfWork.AppConfigAppRepository.GetByKey("IdComerciante");
-                    if (config != null) result.idComercial = Convert.ToInt16(config.Valor);
-                }
-                else
-                {
-                    if (vendedor.IdUsuarioOdoo == 0)
-                    {
-                        var config = await _unitOfWork.AppConfigAppRepository.GetByKey("IdComerciante");
-                        if (config != null) result.idComercial = Convert.ToInt16(config.Valor);
-                    }
-                    else
-                    {
-                        result.idComercial = (int)vendedor.IdUsuarioOdoo;
-                    }
-
+                    result.idEquipoVentas = oficina.OdooId;
+                    result.idComercial = oficina.IdComercianteOdoo;
                 }
 
-
-
-            }
-            else
-            {
-                var config = await _unitOfWork.AppConfigAppRepository.GetByKey("IdComerciante");
-                if (config != null) result.idComercial = Convert.ToInt16(config.Valor);
+                if (vendedor.IdUsuarioOdoo != null && vendedor.IdUsuarioOdoo > 0 && vendedor.Activo == "X")
+                {
+                    result.idComercial = (int)vendedor.IdUsuarioOdoo;
+                }
 
             }
 
-            var oficina = await _unitOfWork.MtrOficinaRepository.GetById(vendedor.Oficina);
-            if (oficina != null) result.idEquipoVentas = oficina.OdooId;
+
+
             result.OrderLines = await GetDetailByCotizadorPlus(wsmy501);
             return result;
         }

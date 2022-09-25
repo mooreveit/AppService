@@ -72,6 +72,10 @@ namespace AppService.Core.Entities
         public string UsuarioAnalista { get; set; }
 
         public int OdooId { get; set; }
+
+        public int IdComercianteOdoo { get; set; }
+
+
         public virtual ICollection<AppService.Core.Entities.MtrVendedor> MtrVendedor { get; set; }
     }
 }

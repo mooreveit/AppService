@@ -1364,22 +1364,25 @@ namespace AppService.Core.Services
             result.company_ref = "1";
 
             //ASIGNACION DEL ID_COMERCIANTE DEFAULT
-            var config = await _unitOfWork.AppConfigAppRepository.GetByKey("IdComerciante");
-            string idComerciante = "";
-            if (!string.IsNullOrEmpty(config.Valor)) idComerciante = config.Valor;
-            result.IdComerciante = Convert.ToInt32(idComerciante);
+            //var config = await _unitOfWork.AppConfigAppRepository.GetByKey("IdComerciante");
+            //string idComerciante = "";
+            //if (!string.IsNullOrEmpty(config.Valor)) idComerciante = config.Valor;
+            //result.IdComerciante = Convert.ToInt32(idComerciante);
+            short idOficina = Convert.ToInt16(mtrCliente.OficinaVenta);
+            var oficina = await _unitOfWork.MtrOficinaRepository.GetById(idOficina);
+            if (oficina != null) result.IdComerciante = oficina.IdComercianteOdoo;
 
 
             //ASIGNAMOS EL ID_COMERCIANTE SI EL CONSULTOR ESTA ACTIVO
             var vendedor = await _unitOfWork.MtrVendedorRepository.GetByIdAsync(mtrCliente.Vendedor1.Trim());
             if (vendedor != null)
             {
-                if (vendedor.IdUsuarioOdoo != null && vendedor.IdUsuarioOdoo > 0)
+                if (vendedor.IdUsuarioOdoo != null && vendedor.IdUsuarioOdoo > 0 && vendedor.Activo == "X")
                 {
                     result.IdComerciante = (int)vendedor.IdUsuarioOdoo;
-                    if (vendedor.Activo == "") result.IdComerciante = Convert.ToInt32(idComerciante);
                 }
             }
+
             result.Direcciones = await ListDirecciones(mtrCliente.Codigo);
 
             return result;

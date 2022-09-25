@@ -28,8 +28,6 @@ namespace AppService.Api.Controllers
         {
 
 
-
-
             List<string> listaOriginal = new List<string>();
 
             //Paso I Lee archivo de texto y agrega a una lista en memoria
