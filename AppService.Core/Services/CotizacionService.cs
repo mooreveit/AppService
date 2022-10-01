@@ -2083,10 +2083,11 @@ namespace AppService.Core.Services
 
             //var cot = cotizaciones.Where(x => x == "GJ33202205008");
 
+            var cont = 0;
             foreach (var item in cotizaciones)
             {
-
-
+                cont++;
+                Console.WriteLine("Actualizando: " + cont.ToString() + " de: " + cotizaciones.Count().ToString());
 
                 try
                 {
