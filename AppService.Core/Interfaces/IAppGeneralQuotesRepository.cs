@@ -7,7 +7,7 @@ namespace AppService.Core.Interfaces
 {
     public interface IAppGeneralQuotesRepository
     {
-
+        Task<List<AppGeneralQuotes>> GetListCotizacionesUltimoMes();
         Task<List<AppGeneralQuotes>> GetAll(AppGeneralQuotesQueryFilter filter);
 
         Task<AppGeneralQuotes> GetById(int id);

@@ -58,13 +58,20 @@ namespace AppService.Api.Controllers
 
 
 
-                var cotizacionesActualizar = await _appGeneralQuotesService.GetListCotizaciones();
+                // var cotizacionesActualizar = await _appGeneralQuotesService.GetListCotizaciones();
+
+                // var lista = cotizacionesActualizar.Where(x => x == "LN01202209008").ToList();
 
 
-                await _cotizacionService.UpdateCotizacionesToOdoo(cotizacionesActualizar);
+                await _cotizacionService.UpdateCotizacionesToOdoo();
 
-
-                return Ok(cotizacionesActualizar);
+                metadata.IsValid = true;
+                metadata.Message = "Actualizado correctamente";
+                var response = new ApiResponse<AppGeneralQuotesGetDto>(null)
+                {
+                    Meta = metadata
+                };
+                return Ok(response);
 
 
 
@@ -82,9 +89,57 @@ namespace AppService.Api.Controllers
 
                 return Ok(responseError);
             }
-
-
         }
+
+
+        /// <summary>
+        /// Copia y Retorna los datos de AppGeneralQuotes
+        ///  
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("[action]")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(List<string>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> IntegrarCotizacionesPorMes()
+        {
+
+            Metadata metadata = new Metadata
+            {
+                IsValid = false,
+                Message = "",
+                TotalCount = 0
+            };
+
+
+            try
+            {
+
+                await _cotizacionService.IntegrarCotizacionesPorMes();
+
+
+
+                return Ok();
+
+
+
+            }
+            catch (Exception e)
+            {
+
+                metadata.IsValid = false;
+                metadata.Message = e.InnerException.Message;
+                var responseError = new ApiResponse<AppGeneralQuotesGetDto>(null)
+                {
+                    Meta = metadata
+                };
+
+
+                return Ok(responseError);
+            }
+        }
+
 
 
 
@@ -118,6 +173,8 @@ namespace AppService.Api.Controllers
                 //_cotizacionService.IntegrarCotizaciones();
 
                 // await _cotizacionService.IntegrarCotizacion(667, true);
+
+
 
                 var generalQuotes = await _appGeneralQuotesService.GetAllAppGeneralQuotes(filters);
 

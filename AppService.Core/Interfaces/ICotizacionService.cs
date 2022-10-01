@@ -10,7 +10,7 @@ namespace AppService.Core.Interfaces
 {
     public interface ICotizacionService
     {
-
+        Task IntegrarCotizacionesPorMes();
         Task<List<Wsmy501>> GetAll();
 
 
@@ -46,7 +46,7 @@ namespace AppService.Core.Interfaces
 
         Task<Boolean> ExisteWpry229ByCotizacion(String cotizacion);
 
-        Task UpdateCotizacionesToOdoo(List<string> cotizaciones);
+        Task UpdateCotizacionesToOdoo();
 
 
         Task<string> GetClienteCotizacion(string cotizacion);
@@ -54,5 +54,6 @@ namespace AppService.Core.Interfaces
         Task<Wsmy501> GetByCotizacionAsNoTracking(string cotizacion);
         Task DeleteCotizacionesDetailToOdoo(List<int> mooreIds);
         Task DeleteCotizacionesToOdoo(List<string> cotizaciones);
+
     }
 }

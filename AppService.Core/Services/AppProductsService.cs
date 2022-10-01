@@ -426,6 +426,13 @@ namespace AppService.Core.Services
             }
         }
 
+
+        public async Task SendAllToOdoo()
+        {
+            var appProducts = await _unitOfWork.AppProductsRepository.GetAll();
+            await UpdateProductsToOdoo(appProducts);
+        }
+
         public async Task<ApiResponse<AppProductsGetDto>> UpdateProducts(AppProductsUpdateDto appProductsUpdateDto)
         {
             AppProductsGetDto resultDto = new AppProductsGetDto();
@@ -578,8 +585,7 @@ namespace AppService.Core.Services
                 {
 
 
-                    //var appProducts = await _unitOfWork.AppProductsRepository.GetAll();
-                    // await UpdateProductsToOdoo(appProducts);
+
                     if (sendToOdoo.Valor.Trim() == "1")
                     {
                         var odooProduct = await GetOdooProduct(appProductsFind.Description1, appProductsFind.Id, appProductsFind.TipoCalculo.ToString(), appProductsFind.UnitPrice);

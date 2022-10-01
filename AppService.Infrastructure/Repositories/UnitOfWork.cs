@@ -501,7 +501,7 @@ namespace AppService.Infrastructure.Repositories
             catch (System.Exception e)
             {
 
-                var msg = e.InnerException.Message;
+                // var msg = e.InnerException.Message;
                 return false;
 
             }

@@ -1,8 +1,8 @@
 ﻿using AppService.Core.EntitiesClientes;
 using AppService.Core.Interfaces;
 using AppService.Infrastructure.DataClientes;
+using Microsoft.EntityFrameworkCore;
 using System;
-using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 

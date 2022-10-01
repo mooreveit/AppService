@@ -1279,23 +1279,24 @@ namespace AppService.Core.Services
 
 
 
-            if (mtrCliente.CodSubSegmento == null)
+            if (mtrCliente.SubSegmentoa == null)
             {
-                mtrCliente.CodSubSegmento = "";
+                mtrCliente.SubSegmentoa = "";
             }
-            mtrCliente.CodSubSegmento = mtrCliente.CodSubSegmento.Trim();
-            if (string.IsNullOrEmpty(mtrCliente.CodSubSegmento))
+
+            mtrCliente.SubSegmentoa = mtrCliente.SubSegmentoa.Trim();
+            if (string.IsNullOrEmpty(mtrCliente.SubSegmentoa))
             {
 
-                result.Ramo = "498";
-                result.Sector = "53";
+                result.Ramo = "999";
+                result.Sector = "999";
             }
             else
             {
                 try
                 {
 
-                    decimal codSubSegmento = decimal.Parse(mtrCliente.CodSubSegmento, CultureInfo.InvariantCulture); // 14500
+                    decimal codSubSegmento = decimal.Parse(mtrCliente.SubSegmentoa, CultureInfo.InvariantCulture); // 14500
                     var ramo = await _unitOfWork.Wsmy065Repository.GetByRamo(codSubSegmento);
                     if (ramo != null)
                     {
@@ -1305,16 +1306,16 @@ namespace AppService.Core.Services
                     }
                     else
                     {
-                        result.Ramo = "498";
-                        result.Sector = "53";
+                        result.Ramo = "999";
+                        result.Sector = "999";
 
                     }
                 }
                 catch (Exception e)
                 {
 
-                    result.Ramo = "498";
-                    result.Sector = "53";
+                    result.Ramo = "999";
+                    result.Sector = "999";
                 }
 
             }
@@ -1370,7 +1371,13 @@ namespace AppService.Core.Services
             //result.IdComerciante = Convert.ToInt32(idComerciante);
             short idOficina = Convert.ToInt16(mtrCliente.OficinaVenta);
             var oficina = await _unitOfWork.MtrOficinaRepository.GetById(idOficina);
-            if (oficina != null) result.IdComerciante = oficina.IdComercianteOdoo;
+            if (oficina != null)
+            {
+                result.IdComerciante = oficina.IdComercianteOdoo;
+            }
+
+
+
 
 
             //ASIGNAMOS EL ID_COMERCIANTE SI EL CONSULTOR ESTA ACTIVO
@@ -1405,7 +1412,7 @@ namespace AppService.Core.Services
                 resultItem.CodigoPostal = cliente.CodigoPostal.Trim();
                 resultItem.IdPais = "1";
 
-                var municipio = await _unitOfWork.Winy243Repository.GetByCodigoMunicipio(direccion.Municipio);
+                var municipio = await _unitOfWork.Winy243Repository.GetByEstadoMunicipio(direccion.Estado, direccion.Municipio);
                 if (municipio != null)
                 {
                     resultItem.Ciudad = municipio.CapitalMcpo;
@@ -1417,7 +1424,7 @@ namespace AppService.Core.Services
                 {
 
 
-                    var municipioClient = await _unitOfWork.Winy243Repository.GetByCodigoMunicipio(cliente.Municipio);
+                    var municipioClient = await _unitOfWork.Winy243Repository.GetByEstadoMunicipio(cliente.Estado, cliente.Municipio);
                     if (municipioClient != null)
                     {
                         resultItem.Ciudad = municipioClient.CapitalMcpo;
@@ -1590,7 +1597,12 @@ namespace AppService.Core.Services
         {
             var clientes = await _unitOfWork.MtrClienteRepository.GetAllActive(region);
 
-            //var clientesOrder = clientes.Where(x => x.Vendedor1.Trim() == "GR13").OrderByDescending(x => x.Codigo).ToList();
+
+            // var clientesOrder = _unitOfWork.MtrClienteRepository.GetById("724603");
+            //List<MtrCliente> listClientes = new List<MtrCliente>();
+            //var clientesOrder = clientes.Where(x => x.Codigo == "743488").OrderByDescending(x => x.Codigo).ToList();
+            //listClientes.Add(clientesOrder);
+
             var clientesOrder = clientes.OrderByDescending(x => x.Codigo).ToList();
             await UpdateClientesToOdoo(clientesOrder);
 

@@ -46,7 +46,7 @@ namespace AppService.Infrastructure.Repositories
             }
             catch (Exception e)
             {
-                var msg = e.InnerException.Message;
+
                 return null;
             }
 

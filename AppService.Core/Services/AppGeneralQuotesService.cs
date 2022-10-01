@@ -1127,17 +1127,17 @@ namespace AppService.Core.Services
                     response.Data = resultDto;
                     return response;
                 }
-                else
-                {
-                    if (direccionEntregarValidate.Codigo != appGeneralQuotesUpdateDto.IdCliente)
-                    {
-                        metadata.IsValid = false;
-                        metadata.Message = "Direccion Entregar No Corresponde al Cliente!!! " + appGeneralQuotesUpdateDto.IdDireccionEntregar.ToString();
-                        response.Meta = metadata;
-                        response.Data = resultDto;
-                        return response;
-                    }
-                }
+                //else
+                //{
+                //    if (direccionEntregarValidate.Codigo != appGeneralQuotesUpdateDto.IdCliente)
+                //    {
+                //        metadata.IsValid = false;
+                //        metadata.Message = "Direccion Entregar No Corresponde al Cliente!!! " + appGeneralQuotesUpdateDto.IdDireccionEntregar.ToString();
+                //        response.Meta = metadata;
+                //        response.Data = resultDto;
+                //        return response;
+                //    }
+                //}
 
 
                 if (await this._unitOfWork.MtrContactosRepository.GetById(appGeneralQuotesUpdateDto.IdContacto) == null)

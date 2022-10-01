@@ -1,7 +1,5 @@
-﻿using System;
-using AppService.Core.EntitiesClientes;
+﻿using AppService.Core.EntitiesClientes;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace AppService.Infrastructure.DataClientes
 {

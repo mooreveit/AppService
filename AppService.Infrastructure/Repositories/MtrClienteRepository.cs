@@ -30,7 +30,7 @@ namespace AppService.Infrastructure.Repositories
         public async Task<List<MtrCliente>> GetAllActive(string region)
         {
 
-            return await _context.MtrCliente.ToListAsync();
+            return await _context.MtrCliente.Where(x => x.CodigoRegion == region).ToListAsync();
 
         }
 

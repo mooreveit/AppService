@@ -176,7 +176,9 @@ namespace AppService.Api
             services.AddTransient<IMtrContactosService, MtrContactosService>();
             services.AddTransient<ITPaTasaBancoCentralServices, TPaTasaBancoCentralServices>();
             services.AddTransient<ICobMatrixMonedaValidaPagoService, CobMatrixMonedaValidaPagoService>();
+
             services.AddTransient<IAppGeneralQuotesService, AppGeneralQuotesService>();
+
             services.AddTransient<IMtrCondicionPagoService, MtrCondicionPagoService>();
             services.AddTransient<IAppStatusQuoteService, AppStatusQuoteService>();
             services.AddTransient<IAppUnitsService, AppUnitsService>();
@@ -224,6 +226,10 @@ namespace AppService.Api
 
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+            //services.AddHostedService<Worker>()
+            //        .AddSingleton<ICotizacionService, CotizacionService>();
+
             services.AddSingleton<IUriService>(provider =>
             {
                 IHttpContextAccessor accesor = provider.GetRequiredService<IHttpContextAccessor>();
@@ -340,13 +346,12 @@ namespace AppService.Api
             //**
 
             //var cotizacionServices = serviceProvider.GetService<ICotizacionService>();
-            //recurringJobManager.AddOrUpdate("Integrar_cotizaciones", () => cotizacionServices.IntegrarCotizaciones(), "*/30 * * * * *");
-
-            //recurringJobManager.AddOrUpdate("ActualizarEstadoCuentaMultimonedas", () => cobEstadoCuentaService.GenerateEstadoCuentaMultimoneda(), "0 0/15 0 ? * * *");
+            // recurringJobManager.AddOrUpdate("Integrar_cotizaciones_odoo", () => cotizacionServices.UpdateCotizacionesToOdoo(), "*/30 * * * * *");
 
 
-            //var cobEstadoCuentaService = serviceProvider.GetService<ICobEstadoCuentaService>();
-            //recurringJobManager.AddOrUpdate("ActualizarEstadoCuentaMultimonedas", () => cobEstadoCuentaService.GenerateEstadoCuentaMultimoneda(), Cron.Daily());
+
+            // var cobEstadoCuentaService = serviceProvider.GetService<ICobEstadoCuentaService>();
+            // recurringJobManager.AddOrUpdate("ActualizarEstadoCuentaMultimonedas", () => cobEstadoCuentaService.GenerateEstadoCuentaMultimoneda(), Cron.Daily());
 
 
         }

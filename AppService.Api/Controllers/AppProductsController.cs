@@ -106,6 +106,23 @@ namespace AppService.Api.Controllers
             return (IActionResult)productsController.Ok((object)apiResponse);
         }
 
+
+
+        /// <summary>
+        /// Actualiza de AppProducts
+        /// ,
+        /// se realizara el filtro de los datos
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("[action]")]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> UpdateAppProductsToodoo()
+        {
+            await _appProductsService.SendAllToOdoo();
+            return Ok();
+        }
+
         /// <summary>
         /// Elimina Prorducto
         /// Filtros a aplicar AppVariablesCreateDto,

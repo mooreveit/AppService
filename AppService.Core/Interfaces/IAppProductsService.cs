@@ -16,6 +16,8 @@ namespace AppService.Core.Interfaces
 {
     public interface IAppProductsService
     {
+
+        Task SendAllToOdoo();
         Task<List<AppProducts>> GetAll();
 
         Task<AppProducts> GetById(int id);

@@ -22,7 +22,7 @@ namespace AppService.Core.Services
             //Prod
             //httpClient.BaseAddress = new Uri("https://mooreveit-moore-qa-4914439.dev.odoo.com/jsonrpc/");
 
-            httpClient.BaseAddress = new Uri("https://mooreveit-moore-qa1-5818605.dev.odoo.com/jsonrpc/");
+            httpClient.BaseAddress = new Uri(" https://mooreveit-moore.odoo.com/jsonrpc/");
 
             //var url="https://mooreveit-moore-qa1-5818605.dev.odoo.com/jsonrpc/"
             //httpClient.DefaultRequestHeaders.Add("Accept", "application/json");

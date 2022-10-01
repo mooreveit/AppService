@@ -236,10 +236,42 @@ namespace AppService.Infrastructure.Repositories
                 DateTime fechaHasta;
 
 
+                fechaDesde = DateTime.Now.AddDays(-3);
+                fechaHasta = DateTime.Now;
+
+                result = await _context.AppGeneralQuotes.Where(x => x.FechaActualiza >= fechaDesde && x.AppDetailQuotes.Count > 0).Select(p => p.Cotizacion).ToListAsync();
+
+
+                return result;
+
+            }
+            catch (Exception e)
+            {
+                var mesg = e.InnerException.Message;
+
+                return null;
+            }
+
+
+
+
+        }
+
+
+        public async Task<List<AppGeneralQuotes>> GetListCotizacionesUltimoMes()
+        {
+
+            List<AppGeneralQuotes> result = new List<AppGeneralQuotes>();
+            try
+            {
+                DateTime fechaDesde;
+                DateTime fechaHasta;
+
+
                 fechaDesde = DateTime.Now.AddDays(-30);
                 fechaHasta = DateTime.Now;
 
-                result = await _context.AppGeneralQuotes.Where(x => x.Fecha >= fechaDesde && x.AppDetailQuotes.Count > 0).Select(p => p.Cotizacion).ToListAsync();
+                result = await _context.AppGeneralQuotes.Where(x => x.Fecha >= fechaDesde && x.AppDetailQuotes.Count > 0).ToListAsync();
 
 
                 return result;
