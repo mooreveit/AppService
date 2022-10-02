@@ -21,7 +21,8 @@ namespace AppService.Core.Interfaces
 
         string ProximaCotizacion(string Cod_Vendedor);
 
-        Task<List<string>> GetListCotizaciones();
+
+        Task<List<string>> GetListCotizaciones(int diasAcualizaPresupuesto);
         Task<Wsmy501> GetByCotizacionAsNoTracking(string cotizacion);
 
     }

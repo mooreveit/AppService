@@ -68,18 +68,16 @@ namespace AppService.Infrastructure.Repositories
         }
 
 
-        public async Task<List<string>> GetListCotizaciones()
+        public async Task<List<string>> GetListCotizaciones(int diasAcualizaPresupuesto)
         {
 
             List<string> result = new List<string>();
             try
             {
                 DateTime fechaDesde;
-                DateTime fechaHasta;
 
+                fechaDesde = DateTime.Now.AddDays(-diasAcualizaPresupuesto);
 
-                fechaDesde = DateTime.Now.AddDays(-2);
-                fechaHasta = DateTime.Now;
                 result = await _context.Wsmy501.Where(x => x.FechaActualiza >= fechaDesde).OrderByDescending(x => x.Fecha).Select(p => p.Cotizacion).ToListAsync();
 
                 //result = await _context.Wsmy501.Where(x => x.Fecha >= fechaDesde).Select(p => p.Cotizacion).ToListAsync();

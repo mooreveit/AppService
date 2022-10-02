@@ -16,9 +16,12 @@ using AppService.Infrastructure.DataNomina;
 using AppService.Infrastructure.DataSap;
 using AppService.Infrastructure.DataSpi;
 using AppService.Infrastructure.Repositories;
+using Automata.Workers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
 
 internal class Program
 {
@@ -141,16 +144,125 @@ internal class Program
         serviceCollection.AddTransient<IAprobacionesServices, AprobacionesServices>();
         serviceCollection.AddTransient<IAppUnitsService, AppUnitsService>();
         serviceCollection.AddTransient<IMtrTipoMonedaService, MtrTipoMonedaService>();
-        serviceCollection.AddTransient<ICotizacionService, CotizacionService>();
+
         serviceCollection.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
         serviceCollection.AddTransient<IUnitOfWork, UnitOfWork>();
+        serviceCollection.AddTransient<ICotizacionService, CotizacionService>();
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
-
-
         var cotizacionServices = serviceProvider.GetRequiredService<ICotizacionService>();
-        Console.WriteLine("Iniciando envio de cotizaciones a Odoo");
-        await cotizacionServices.UpdateCotizacionesToOdoo();
-        Console.WriteLine("Culminado envio de cotizaciones a Odoo");
+        //Console.WriteLine("Iniciando envio de cotizaciones a Odoo");
+        //await cotizacionServices.UpdateCotizacionesToOdoo();
+        //Console.WriteLine("Culminado envio de cotizaciones a Odoo");
+
+        IHost host = Host.CreateDefaultBuilder(args)
+            .ConfigureServices(services =>
+                {
+                    services.AddHostedService<WorkerPresupuestoOdoo>()
+                            .AddSingleton<ICotizacionService, CotizacionService>()
+                            .AddSingleton<IUnitOfWork, UnitOfWork>()
+                            .AddDbContext<RRDContext>(options =>
+                            {
+                                options.UseSqlServer(rrdConection);
+
+                            })
+                            .AddDbContext<SapContext>(options =>
+
+                                options.UseSqlServer(sapConecction)
+
+                            )
+                           .AddDbContext<MooreveContext>(options =>
+                            {
+                                options.UseSqlServer(mooreveConecction);
+
+                            })
+                            .AddDbContext<ClientesContext>(options =>
+
+                                 options.UseSqlServer(clientesConecction)
+
+                            )
+                            .AddDbContext<MCContext>(options =>
+
+                                options.UseSqlServer(mcConecction)
+
+                            )
+                            .AddDbContext<CXCContext>(options =>
+
+                                options.UseSqlServer(cxcConecction)
+
+                            )
+                            .AddDbContext<IMaestrosContext>(options =>
+
+                                 options.UseSqlServer(maestrosConecction)
+
+                            )
+                            .AddDbContext<FacturacionContext>(options =>
+
+                                  options.UseSqlServer(facturacionConecction)
+
+                             )
+                            .AddDbContext<ContratosStockContext>(options =>
+
+                                 options.UseSqlServer(contratosStockConecction)
+
+                            )
+                            .AddDbContext<DWContext>(options =>
+
+                                  options.UseSqlServer(dwConecction)
+
+                            )
+
+                            .AddDbContext<NominaContext>(options =>
+
+                                options.UseSqlServer(nominaConecction)
+                            )
+
+                            .AddDbContext<SpiContext>(options =>
+                                 options.UseOracle(spiConnection, b => b.UseOracleSQLCompatibility("11")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                            )
+                            .AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
+                            .AddTransient<IAppConfigAppService, AppConfigAppService>()
+                            .AddTransient<IAppVariablesService, AppVariablesService>()
+                            .AddTransient<IHelperService, HelperService>()
+                            .AddTransient<IAppRecipesByAppDetailQuotesService, AppRecipesByAppDetailQuotesService>()
+                            .AddTransient<IAppTemplateConversionUnitService, AppTemplateConversionUnitService>()
+                            .AddTransient<IAppDetailQuotesConversionUnitService, AppDetailQuotesConversionUnitService>()
+                            .AddTransient<IMtrContactosService, MtrContactosService>()
+                            .AddTransient<IAppProductConversionService, AppProductConversionService>()
+                            .AddTransient<IAppSubCategoryService, AppSubCategoryService>()
+                            .AddTransient<IAppVariableSearchService, AppVariableSearchService>()
+                            .AddTransient<IAppProductVariableSearchTextService, AppProductVariableSearchTextService>()
+                            .AddTransient<IAppProductsService, AppProductsService>()
+                            .AddTransient<IAprobacionesServices, AprobacionesServices>()
+                            .AddTransient<IAppUnitsService, AppUnitsService>()
+                            .AddTransient<IMtrTipoMonedaService, MtrTipoMonedaService>()
+                            .AddHttpClient<IOdooClient, OdooClient>();
+
+                })
+                .Build();
+
+        await host.RunAsync();
+
+        //var serviceProvider = serviceCollection.BuildServiceProvider();
+        //var cotizacionServices = serviceProvider.GetRequiredService<ICotizacionService>();
+        //Console.WriteLine("Iniciando envio de cotizaciones a Odoo");
+        //await cotizacionServices.UpdateCotizacionesToOdoo();
+        //Console.WriteLine("Culminado envio de cotizaciones a Odoo");
+        /*
+
+
+
+
+
+                        
+           .AddHttpClient<IOdooClient, OdooClient>()
+
+     */
+
+
+
+
+
+
     }
 }

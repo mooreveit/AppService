@@ -1824,7 +1824,15 @@ namespace AppService.Core.Services
 
         public async Task<List<string>> GetListCotizaciones()
         {
-            return await _unitOfWork.CotizacionRepository.GetListCotizaciones();
+            var diasAcualizaPresupuesto = 1;
+            var appConfig = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooDiasActualizarPresupuesto");
+
+            if (appConfig == null)
+            {
+                diasAcualizaPresupuesto = int.Parse(appConfig.Valor);
+            }
+
+            return await _unitOfWork.CotizacionRepository.GetListCotizaciones(diasAcualizaPresupuesto);
         }
 
     }

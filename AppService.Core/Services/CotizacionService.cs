@@ -2071,8 +2071,15 @@ namespace AppService.Core.Services
 
         public async Task UpdateCotizacionesToOdoo()
         {
+            var diasAcualizaPresupuesto = 1;
+            var appConfig = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooDiasActualizarPresupuesto");
 
-            var cotizaciones = await _unitOfWork.CotizacionRepository.GetListCotizaciones();
+            if (appConfig == null)
+            {
+                diasAcualizaPresupuesto = int.Parse(appConfig.Valor);
+            }
+
+            var cotizaciones = await _unitOfWork.CotizacionRepository.GetListCotizaciones(diasAcualizaPresupuesto);
 
             //#####ACTUALIZACION DE CLIENTE PROSPECTO
             MtrClienteQueryFilter filter = new MtrClienteQueryFilter();
