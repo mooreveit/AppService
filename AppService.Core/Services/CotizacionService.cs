@@ -304,7 +304,7 @@ namespace AppService.Core.Services
                         }
 
                     }
-                    //await UpdateCotizacionToOdoo(generalQuotes.Cotizacion);
+                    await UpdateCotizacionToOdoo(generalQuotes.Cotizacion);
                     generalQuotes = (AppGeneralQuotes)null;
                 }
 
