@@ -304,7 +304,7 @@ namespace AppService.Core.Services
                         }
 
                     }
-                    await UpdateCotizacionToOdoo(generalQuotes.Cotizacion);
+                    //await UpdateCotizacionToOdoo(generalQuotes.Cotizacion);
                     generalQuotes = (AppGeneralQuotes)null;
                 }
 
@@ -2131,8 +2131,9 @@ namespace AppService.Core.Services
                     StringContent data = new StringContent(json1, Encoding.UTF8, "application/json");
 
 
-
+                    Console.WriteLine("iniciando envio de cotizacion: " + item);
                     var result = await _odooClient.Post(data);
+                    Console.WriteLine("finalizando envio de cotizacion: " + item);
                     try
                     {
                         OdooResultCotizacion respuesta = new OdooResultCotizacion();

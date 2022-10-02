@@ -1,4 +1,3 @@
-using AppService.Api.Extensions;
 using AppService.Core.CustomEntities;
 using AppService.Core.Interfaces;
 using AppService.Core.Services;
@@ -22,7 +21,6 @@ using AppService.Infrastructure.Services;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using FluentValidation.AspNetCore;
-using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -277,7 +275,7 @@ namespace AppService.Api
                        .AllowAnyHeader();
             }));
 
-            services.ConfigureHangFire(Configuration);
+            // services.ConfigureHangFire(Configuration);
 
             services.AddControllersWithViews();
 
@@ -298,7 +296,7 @@ namespace AppService.Api
                                 IApplicationBuilder app,
                                 IWebHostEnvironment env,
                                 ILoggerFactory loggerFactory,
-                                IRecurringJobManager recurringJobManager,
+                                //IRecurringJobManager recurringJobManager,
                                 IServiceProvider serviceProvider)
         {
 
@@ -327,7 +325,7 @@ namespace AppService.Api
 
             app.UseCors("charppolicy");
 
-            app.UseHangfireDashboard();
+            //  app.UseHangfireDashboard();
 
             app.UseAuthentication();
 
