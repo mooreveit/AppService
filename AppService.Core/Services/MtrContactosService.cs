@@ -866,6 +866,16 @@ namespace AppService.Core.Services
                 newMtrContactos.Inactivo = false;
                 newMtrContactos.FechaCreacion = DateTime.Now;
                 newMtrContactos.Usuario = dto.UsuarioConectado;
+                if (dto.IdContactoOdoo > 0)
+                {
+                    newMtrContactos.IdContactoOdoo = dto.IdContactoOdoo;
+                }
+                if (dto.IdClienteOdoo > 0)
+                {
+                    newMtrContactos.IdClienteOdoo = dto.IdClienteOdoo;
+                }
+
+
                 await _unitOfWork.MtrContactosRepository.Add(newMtrContactos);
 
                 Wsmy265 newWsmy265 = new Wsmy265();
@@ -910,6 +920,17 @@ namespace AppService.Core.Services
                 newWsmy265.AceptaEmail = "X";
                 newWsmy265.FechaCreacion = DateTime.Now;
                 newWsmy265.Usuario = dto.UsuarioConectado;
+
+
+                if (dto.IdContactoOdoo > 0)
+                {
+                    newWsmy265.IdContactoOdoo = dto.IdContactoOdoo;
+                }
+                if (dto.IdClienteOdoo > 0)
+                {
+                    newWsmy265.IdClienteOdoo = dto.IdClienteOdoo;
+                }
+
 
                 await _unitOfWork.Wsmy265Repository.Add(newWsmy265);
 
@@ -1104,6 +1125,15 @@ namespace AppService.Core.Services
                     mtrContactos.Inactivo = false;
                     mtrContactos.FechaCreacion = DateTime.Now;
                     mtrContactos.Usuario = dto.UsuarioConectado;
+                    if (dto.IdContactoOdoo > 0)
+                    {
+                        mtrContactos.IdContactoOdoo = dto.IdContactoOdoo;
+                    }
+                    if (dto.IdClienteOdoo > 0)
+                    {
+                        mtrContactos.IdClienteOdoo = dto.IdClienteOdoo;
+                    }
+
                     _unitOfWork.MtrContactosRepository.Update(mtrContactos);
 
                     SapContactos sapContactos = await _unitOfWork.SapContactoRepository.GetById(mtrContactos.IdContacto);
@@ -1175,6 +1205,14 @@ namespace AppService.Core.Services
                         wsmy265.TomaDecision = sapPoderContacto.Id;
                         wsmy265.AceptaEmail = "X";
                         wsmy265.Usuario = dto.UsuarioConectado;
+                        if (dto.IdContactoOdoo > 0)
+                        {
+                            wsmy265.IdContactoOdoo = dto.IdContactoOdoo;
+                        }
+                        if (dto.IdClienteOdoo > 0)
+                        {
+                            wsmy265.IdClienteOdoo = dto.IdClienteOdoo;
+                        }
 
                         _unitOfWork.Wsmy265Repository.Update(wsmy265);
 

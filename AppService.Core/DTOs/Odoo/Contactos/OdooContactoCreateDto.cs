@@ -24,6 +24,10 @@
 
         public string Email { get; set; }
 
+        public int? IdContactoOdoo { get; set; }
+
+        public int? IdClienteOdoo { get; set; }
+
         public string UsuarioConectado { get; set; }
 
     }

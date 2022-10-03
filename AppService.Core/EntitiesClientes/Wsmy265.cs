@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace AppService.Core.EntitiesClientes
 {
@@ -25,5 +24,8 @@ namespace AppService.Core.EntitiesClientes
         public string AceptaEmail { get; set; }
         public string AceptaSms { get; set; }
         public decimal Id { get; set; }
+        public int? IdContactoOdoo { get; set; }
+
+        public int? IdClienteOdoo { get; set; }
     }
 }
