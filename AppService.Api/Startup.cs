@@ -12,6 +12,7 @@ using AppService.Infrastructure.DataMc;
 
 using AppService.Infrastructure.DataMooreve;
 using AppService.Infrastructure.DataNomina;
+using AppService.Infrastructure.DataPlanta;
 using AppService.Infrastructure.DataSap;
 using AppService.Infrastructure.DataSpi;
 using AppService.Infrastructure.Filters;
@@ -128,6 +129,14 @@ namespace AppService.Api
                           options.UseSqlServer(Configuration.GetConnectionString("facturacionConecction"))
 
                       );
+
+            services.AddDbContext<PlantaContext>(options =>
+
+                         options.UseSqlServer(Configuration.GetConnectionString("plantaConecction"))
+
+                     );
+
+
 
             services.AddDbContext<ContratosStockContext>(options =>
 

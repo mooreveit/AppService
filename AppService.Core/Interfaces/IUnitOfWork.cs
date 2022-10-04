@@ -180,6 +180,13 @@ namespace AppService.Core.Interfaces
         ISpiNmm024Repository SpiNmm024Repository { get; }
         ISpiNmt033Repository SpiNmt033Repository { get; }
 
+
+
+        //Planta
+
+        ICpry012Repository Cpry012Repository { get; }
+        ICsmy021Repository Csmy021Repository { get; }
+
         bool SaveChanges();
 
         Task<bool> SaveChangesAsync();

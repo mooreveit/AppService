@@ -18,5 +18,6 @@ namespace AppService.Core.Interfaces
         Task<List<MtrCliente>> ListCliente(MtrClienteQueryFilter filter);
         Task<List<MtrCliente>> GetAllByRegion(string region);
 
+        MtrCliente Update(MtrCliente mtrCliente);
     }
 }

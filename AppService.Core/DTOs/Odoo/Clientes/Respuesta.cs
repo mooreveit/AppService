@@ -21,6 +21,9 @@ namespace AppService.Core.DTOs.Odoo.Clientes
             public int IdContacto { get; set; }
             public bool success { get; set; }
             public string action { get; set; }
+            public int IdClienteOdoo { get; set; }
+            public int IdContactoOdoo { get; set; }
+
 
         }
 

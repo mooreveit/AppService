@@ -9,6 +9,7 @@ using AppService.Infrastructure.DataMc;
 
 using AppService.Infrastructure.DataMooreve;
 using AppService.Infrastructure.DataNomina;
+using AppService.Infrastructure.DataPlanta;
 using AppService.Infrastructure.DataSap;
 using AppService.Infrastructure.DataSpi;
 using System.Threading.Tasks;
@@ -24,6 +25,7 @@ namespace AppService.Infrastructure.Repositories
         private readonly SapContext _sapContext;
         private readonly ClientesContext _clientesContext;
         private readonly FacturacionContext _facturacionContext;
+        private readonly PlantaContext _plantaContext;
         private readonly ContratosStockContext _contratosStockContext;
         private readonly DWContext _dWContext;
         private readonly NominaContext _nominaContext;
@@ -198,9 +200,10 @@ namespace AppService.Infrastructure.Repositories
         public readonly IWsmy501BorradosRepository _wsmy501BorradosRepository;
 
 
+        public readonly ICpry012Repository _cpry012Repository;
+        public readonly ICsmy021Repository _csmy021Repository;
 
-
-        public UnitOfWork(RRDContext context, MooreveContext mooreveContext, MCContext mcContext, IMaestrosContext maestrosContext, SapContext sapContext, ClientesContext clientesContext, FacturacionContext facturacionContext, ContratosStockContext contratosStockContext, DWContext dWContext, NominaContext nominaContext, SpiContext spiContext)
+        public UnitOfWork(RRDContext context, MooreveContext mooreveContext, MCContext mcContext, IMaestrosContext maestrosContext, SapContext sapContext, ClientesContext clientesContext, FacturacionContext facturacionContext, ContratosStockContext contratosStockContext, DWContext dWContext, NominaContext nominaContext, SpiContext spiContext, PlantaContext plantaContext)
         {
             _context = context;
             _mooreveContext = mooreveContext;
@@ -213,6 +216,7 @@ namespace AppService.Infrastructure.Repositories
             _dWContext = dWContext;
             _nominaContext = nominaContext;
             _spiContext = spiContext;
+            _plantaContext = plantaContext;
         }
 
 
@@ -407,6 +411,14 @@ namespace AppService.Infrastructure.Repositories
         public ICsmy005Repository Csmy005Repository => _csmy005Repository ?? new Csmy005Repository(_maestrosContext);
 
 
+        //Planta
+        public ICpry012Repository Cpry012Repository => _cpry012Repository ?? new Cpry012Repository(_plantaContext);
+        public ICsmy021Repository Csmy021Repository => _csmy021Repository ?? new Csmy021Repository(_plantaContext);
+
+
+
+
+
         public void Dispose()
         {
             if (_context == null)
@@ -449,6 +461,10 @@ namespace AppService.Infrastructure.Repositories
             {
                 _spiContext.Dispose();
             }
+            if (_plantaContext == null)
+            {
+                _plantaContext.Dispose();
+            }
 
         }
 
@@ -467,6 +483,7 @@ namespace AppService.Infrastructure.Repositories
                 _contratosStockContext.SaveChanges();
                 _dWContext.SaveChanges();
                 _nominaContext.SaveChanges();
+                _plantaContext.SaveChanges();
                 return true;
             }
             catch (System.Exception e)
@@ -496,6 +513,7 @@ namespace AppService.Infrastructure.Repositories
                 await _contratosStockContext.SaveChangesAsync();
                 await _dWContext.SaveChangesAsync();
                 await _nominaContext.SaveChangesAsync();
+                await _plantaContext.SaveChangesAsync();
                 return true;
             }
             catch (System.Exception e)

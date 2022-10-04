@@ -1,6 +1,6 @@
 ﻿using AppService.Core.CustomEntities;
 using AppService.Core.Interfaces;
-
+using AppService.Core.Utility;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -19,10 +19,21 @@ namespace AppService.Core.Services
             /*OdooUrlBaseProd
             OdooUrlBaseDev*/
 
-            //Prod
-            //httpClient.BaseAddress = new Uri("https://mooreveit-moore-qa-4914439.dev.odoo.com/jsonrpc/");
 
-            httpClient.BaseAddress = new Uri(" https://mooreveit-moore.odoo.com/jsonrpc/");
+            var ambiente = Ambiente.ValorAmbiente();
+
+            //Prod
+            //httpClient.BaseAddress = new Uri("https://mooreveit-moore-qa1-5818605.dev.odoo.com/jsonrpc/");
+
+            if (ambiente == 1)
+            {
+                httpClient.BaseAddress = new Uri(" https://mooreveit-moore.odoo.com/jsonrpc/");
+            }
+            else
+            {
+                httpClient.BaseAddress = new Uri("https://mooreveit-moore-qa1-5818605.dev.odoo.com/jsonrpc/");
+            }
+
 
             //var url="https://mooreveit-moore-qa1-5818605.dev.odoo.com/jsonrpc/"
             //httpClient.DefaultRequestHeaders.Add("Accept", "application/json");

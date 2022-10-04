@@ -10,6 +10,7 @@ using AppService.Core.EntitiesSap;
 using AppService.Core.Interfaces;
 using AppService.Core.QueryFilters;
 using AppService.Core.Responses;
+using AppService.Core.Utility;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
@@ -1344,16 +1345,16 @@ namespace AppService.Core.Services
                     }
                     else
                     {
-                        result.Ramo = "999";
-                        result.Sector = "999";
+                        result.Ramo = Ambiente.ValorRamo();
+                        result.Sector = Ambiente.ValorSector();
 
                     }
                 }
                 catch (Exception e)
                 {
 
-                    result.Ramo = "999";
-                    result.Sector = "999";
+                    result.Ramo = Ambiente.ValorRamo(); ;
+                    result.Sector = Ambiente.ValorSector();
                 }
 
             }
@@ -1518,8 +1519,21 @@ namespace AppService.Core.Services
              OdooTokenProd
              OdooTokenDev*/
 
-            var server = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooServerProd");
-            var token = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooTokenProd");
+            AppConfigApp server = new AppConfigApp();
+            AppConfigApp token = new AppConfigApp();
+
+            var ambiente = Ambiente.ValorAmbiente();
+            if (ambiente == 1)
+            {
+                server = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooServerProd");
+                token = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooTokenProd");
+            }
+            else
+            {
+                server = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooServerDev");
+                token = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooTokenDev");
+            }
+
 
             ArrayList arr = new ArrayList();
             arr.Add(server.Valor.Trim());
@@ -1657,9 +1671,22 @@ namespace AppService.Core.Services
               OdooServerDev
               OdooTokenProd
               OdooTokenDev*/
+            AppConfigApp server = new AppConfigApp();
+            AppConfigApp token = new AppConfigApp();
 
-            var server = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooServerProd");
-            var token = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooTokenProd");
+            var ambiente = Ambiente.ValorAmbiente(); ;
+            if (ambiente == 1)
+            {
+                server = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooServerProd");
+                token = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooTokenProd");
+            }
+            else
+            {
+                server = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooServerDev");
+                token = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooTokenDev");
+            }
+
+
             ArrayList arr = new ArrayList();
             arr.Add(server.Valor.Trim());
             arr.Add(2);
@@ -1824,6 +1851,28 @@ namespace AppService.Core.Services
 
 
                     Metadata result = await _odooClient.Post(data);
+                    Respuesta respuesta = new Respuesta();
+                    respuesta = Newtonsoft.Json.JsonConvert.DeserializeObject<Respuesta>(result.Message);
+                    var datosRespuesta = respuesta.result.Data.FirstOrDefault();
+
+
+                    MtrContactos mtrContactoUpdate = await _unitOfWork.MtrContactosRepository.GetById(item.IdContacto);
+                    if (mtrContactoUpdate != null)
+                    {
+                        mtrContactoUpdate.IdClienteOdoo = datosRespuesta.IdClienteOdoo;
+                        mtrContactoUpdate.IdContactoOdoo = datosRespuesta.IdContactoOdoo;
+                    }
+                    Wsmy265 wsmy265 = await _unitOfWork.Wsmy265Repository.GetById(mtrContactoUpdate.IdContacto);
+                    if (wsmy265 != null)
+                    {
+                        wsmy265.IdClienteOdoo = datosRespuesta.IdClienteOdoo;
+                        wsmy265.IdContactoOdoo = datosRespuesta.IdContactoOdoo;
+                    }
+                    await _unitOfWork.SaveChangesAsync();
+
+
+
+
 
                 }
                 catch (Exception e)

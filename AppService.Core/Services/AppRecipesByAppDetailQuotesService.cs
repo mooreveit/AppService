@@ -448,7 +448,9 @@ namespace AppService.Core.Services
                     result = 0M;
                     return result;
                 }
-                string valueFormula = await this.GetValueFormula(recipe.CalculoId, recipe.Formula, recipe.Appproducts.Code, recipe.Code);
+                var producto = await _unitOfWork.AppProductsRepository.GetById((int)recipe.AppproductsId);
+
+                string valueFormula = await this.GetValueFormula(recipe.CalculoId, recipe.Formula, producto.Code, recipe.Code);
                 object obj = new DataTable().Compute(valueFormula, "");
                 obj.ToString();
                 result = Convert.ToDecimal(obj.ToString());

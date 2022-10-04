@@ -152,6 +152,14 @@ namespace AppService.Core.DTOs.Odoo.Cotizaciones.Enviar
             public string idMunicipio { get; set; } = string.Empty;
 
 
+            [JsonProperty("IdClienteOdoo")]
+            [JsonPropertyName("IdClienteOdoo")]
+            public int IdClienteOdoo { get; set; }
+
+            [JsonProperty("IdContactoOdoo")]
+            [JsonPropertyName("IdContactoOdoo")]
+            public int IdContactoOdoo { get; set; }
+
 
         }
 

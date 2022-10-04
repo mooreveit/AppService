@@ -64,6 +64,23 @@ namespace AppService.Infrastructure.Repositories
 
         }
 
+        public MtrCliente Update(MtrCliente mtrCliente)
+        {
+            try
+            {
+                _context.MtrCliente.Update(mtrCliente);
+                return mtrCliente;
+            }
+            catch (System.Exception e)
+            {
+                var msg = e.InnerException.Message;
+                return null;
+            }
+
+
+        }
+
+
         public async Task<IEnumerable<MtrCliente>> ListClientesPorUsuario(MtrClienteQueryFilter filter)
         {
             List<MtrCliente> result = new List<MtrCliente>();
@@ -172,6 +189,8 @@ namespace AppService.Infrastructure.Repositories
             return result;
 
         }
+
+
 
         public async Task AddMtrClienteEnvioOdooLog(MtrClienteEnvioOdooLog entity)
         {

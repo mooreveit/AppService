@@ -13,6 +13,7 @@ using AppService.Infrastructure.DataMaestros;
 using AppService.Infrastructure.DataMc;
 using AppService.Infrastructure.DataMooreve;
 using AppService.Infrastructure.DataNomina;
+using AppService.Infrastructure.DataPlanta;
 using AppService.Infrastructure.DataSap;
 using AppService.Infrastructure.DataSpi;
 using AppService.Infrastructure.Repositories;
@@ -48,6 +49,7 @@ internal class Program
         string sapConecction = "Server=172.28.107.19;Database=SAP;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
         string clientesConecction = "Server=172.28.107.19\\FSVEMCYN03D;Database=Clientes;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
         string facturacionConecction = "Server=172.28.107.19\\FSVEMCYN03D;Database=Facturacion;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
+        string plantaConecction = "Server=172.28.107.19\\FSVEMCYN03D;Database=Planta;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
         string contratosStockConecction = "Server=172.28.107.19\\FSVEMCYN03D;Database=Contratos Stock;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
         string dwConecction = "Server=172.28.107.19\\FSVEMCYN03D;Database=DW;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
         string nominaConecction = "Server=172.28.107.19\\FSVEMCYN03D;Database=Nomina;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
@@ -104,6 +106,11 @@ internal class Program
                       options.UseSqlServer(facturacionConecction)
 
                   );
+        serviceCollection.AddDbContext<PlantaContext>(options =>
+
+                    options.UseSqlServer(plantaConecction)
+
+                );
 
         serviceCollection.AddDbContext<ContratosStockContext>(options =>
 
@@ -199,6 +206,11 @@ internal class Program
                             .AddDbContext<FacturacionContext>(options =>
 
                                   options.UseSqlServer(facturacionConecction)
+
+                             )
+                             .AddDbContext<PlantaContext>(options =>
+
+                                  options.UseSqlServer(plantaConecction)
 
                              )
                             .AddDbContext<ContratosStockContext>(options =>

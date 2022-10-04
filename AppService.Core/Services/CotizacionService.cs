@@ -8,6 +8,7 @@ using AppService.Core.EntitiesMooreve;
 using AppService.Core.Interfaces;
 using AppService.Core.QueryFilters;
 using AppService.Core.Responses;
+using AppService.Core.Utility;
 using AutoMapper;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -1753,6 +1754,49 @@ namespace AppService.Core.Services
         }
 
 
+        public async Task CopiarDatosOrdenAnterior(int orden, string cotizacion, int renglon, int propuesta)
+        {
+
+            var cpry012 = await _unitOfWork.Cpry012Repository.GetByOrdenAsync(orden);
+            if (cpry012 != null)
+            {
+                var aplicacion = await _unitOfWork.Wsmy406Repository.GetById((short)cpry012.CodAplicacion);
+                var wpry229 = await _unitOfWork.Wpry229Repository.GetByCotizacionRenglonPropuesta(cotizacion, renglon, propuesta);
+                if (wpry229 == null)
+                {
+                    Wpry229 wpry229New = new Wpry229();
+                    wpry229New.IdTipoProducto = aplicacion.CodAplicacion;
+                    wpry229New.DescripcionSolicitud = cpry012.NombreProducto;
+                    wpry229New.Cotizacion = cotizacion;
+                    wpry229New.Renglon = renglon;
+                    wpry229New.Propuesta = propuesta;
+                    wpry229New.CantidadProducto = (decimal)cpry012.CantOrdenada / 1000;
+                    wpry229New.IdTipoCantidad = 1;
+                    wpry229New.ValorVenta = (decimal)cpry012.PrecioVenta;
+                    wpry229New.Instrucciones = cpry012.InstFacturar.Trim();
+                    wpry229New.OrdenAnterior = cpry012.Orden;
+                    wpry229New.FlagFiscal = cpry012.Fiscal;
+                    wpry229New.FechaEntrega = DateTime.Now;
+                    wpry229New.TipoOrden = 2;
+
+                    await _unitOfWork.Wpry229Repository.Add(wpry229New);
+                    await this._unitOfWork.SaveChangesAsync();
+
+                    var csmy021 = await _unitOfWork.Csmy021Repository.GetByOrdenAsync(orden);
+                    if (csmy021.Count > 0)
+                    {
+
+                    }
+
+
+
+                }
+
+
+            }
+
+        }
+
 
 
         //######################################################
@@ -2034,8 +2078,21 @@ namespace AppService.Core.Services
             OdooTokenProd
             OdooTokenDev*/
 
-            var server = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooServerProd");
-            var token = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooTokenProd");
+            AppConfigApp server = new AppConfigApp();
+            AppConfigApp token = new AppConfigApp();
+
+            var ambiente = Ambiente.ValorAmbiente();
+            if (ambiente == 1)
+            {
+                server = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooServerProd");
+                token = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooTokenProd");
+            }
+            else
+            {
+                server = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooServerDev");
+                token = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooTokenDev");
+            }
+
 
             ArrayList arr = new ArrayList();
             arr.Add(server.Valor.Trim());
@@ -2081,14 +2138,13 @@ namespace AppService.Core.Services
 
             var cotizaciones = await _unitOfWork.CotizacionRepository.GetListCotizaciones(diasAcualizaPresupuesto);
 
+            //cotizaciones = cotizaciones.Where(x => x == "LN01202210002").ToList();
             //#####ACTUALIZACION DE CLIENTE PROSPECTO
             MtrClienteQueryFilter filter = new MtrClienteQueryFilter();
             filter.Codigo = "000000";
             filter.Usuario = "RR105841";
-            var mtrClientes = await _unitOfWork.MtrClienteRepository.ListCliente(filter);
-            await _mtrContactosService.UpdateClientesToOdoo(mtrClientes);
-
-            //var cot = cotizaciones.Where(x => x == "GJ33202205008");
+            // var mtrClientes = await _unitOfWork.MtrClienteRepository.ListCliente(filter);
+            // await _mtrContactosService.UpdateClientesToOdoo(mtrClientes);
 
             var cont = 0;
             foreach (var item in cotizaciones)
@@ -2103,29 +2159,15 @@ namespace AppService.Core.Services
 
                     filter.Usuario = "RR105841";
 
-                    if (filter.Codigo != "000000")
-                    {
-                        mtrClientes = await _unitOfWork.MtrClienteRepository.ListCliente(filter);
+                    var mtrClientes = await _unitOfWork.MtrClienteRepository.ListCliente(filter);
 
-                        await _mtrContactosService.UpdateClientesToOdoo(mtrClientes);
-                    }
-                    else
-                    {
-                        var detener = string.Empty;
-                        Console.WriteLine("cliente prospecto");
-                    }
+                    await _mtrContactosService.UpdateClientesToOdoo(mtrClientes);
+
+
 
 
                     var odooProduct = await GetOdooCotizacion(item);
-                    //JsonSerializerOptions options = new JsonSerializerOptions
-                    //{
-                    //    IgnoreNullValues = true,
-                    //    WriteIndented = true,
-                    //    PropertyNameCaseInsensitive = true
-                    //};
-                    //string json = JsonSerializer.Serialize(odooProduct, options);
 
-                    //StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
 
                     string json1 = JsonConvert.SerializeObject(odooProduct);
                     StringContent data = new StringContent(json1, Encoding.UTF8, "application/json");
@@ -2255,17 +2297,11 @@ namespace AppService.Core.Services
 
                 filter.Usuario = "RR105841";
 
-                if (filter.Codigo != "000000")
-                {
-                    var mtrClientes = await _unitOfWork.MtrClienteRepository.ListCliente(filter);
 
-                    await _mtrContactosService.UpdateClientesToOdoo(mtrClientes);
-                }
-                else
-                {
-                    var detener = string.Empty;
-                    Console.WriteLine("cliente prospecto");
-                }
+                var mtrClientes = await _unitOfWork.MtrClienteRepository.ListCliente(filter);
+
+                await _mtrContactosService.UpdateClientesToOdoo(mtrClientes);
+
 
 
                 var odooProduct = await GetOdooCotizacion(cotizacion);
@@ -2453,11 +2489,16 @@ namespace AppService.Core.Services
             if (contactoCot != null)
             {
                 result.idContacto = (int)generalQuotes.IdContacto;
+                result.IdClienteOdoo = (int)contactoCot.IdClienteOdoo;
+                result.IdContactoOdoo = (int)contactoCot.IdContactoOdoo;
+
             }
             else
             {
                 var contact = contacto.FirstOrDefault();
                 result.idContacto = (int)contact.IdContacto;
+                result.IdClienteOdoo = (int)contact.IdClienteOdoo;
+                result.IdContactoOdoo = (int)contact.IdContactoOdoo;
             }
             //result.idContacto = (int)generalQuotes.IdContacto;
             result.idCliente = generalQuotes.IdCliente.Trim();
@@ -2514,7 +2555,12 @@ namespace AppService.Core.Services
                 {
                     result.idComercial = (int)vendedor.IdUsuarioOdoo;
                 }
-
+                var ambiente = Ambiente.ValorAmbiente();
+                if (ambiente == 2)
+                {
+                    result.idComercial = 2;
+                    result.idEquipoVentas = 5;
+                }
 
             }
 
@@ -2730,11 +2776,16 @@ namespace AppService.Core.Services
             if (contactoCot != null)
             {
                 result.idContacto = (int)wsmy501.IdContacto;
+                result.IdClienteOdoo = (int)contactoCot.IdClienteOdoo;
+                result.IdContactoOdoo = (int)contactoCot.IdContactoOdoo;
+
             }
             else
             {
                 var contact = contacto.FirstOrDefault();
                 result.idContacto = (int)contact.IdContacto;
+                result.IdClienteOdoo = (int)contact.IdClienteOdoo;
+                result.IdContactoOdoo = (int)contact.IdContactoOdoo;
             }
 
 
@@ -2798,6 +2849,13 @@ namespace AppService.Core.Services
                 if (vendedor.IdUsuarioOdoo != null && vendedor.IdUsuarioOdoo > 0 && vendedor.Activo == "X")
                 {
                     result.idComercial = (int)vendedor.IdUsuarioOdoo;
+                }
+
+                var ambiente = Ambiente.ValorAmbiente();
+                if (ambiente == 2)
+                {
+                    result.idComercial = 2;
+                    result.idEquipoVentas = 5;
                 }
 
             }

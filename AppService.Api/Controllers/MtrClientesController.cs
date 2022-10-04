@@ -1,6 +1,7 @@
 ﻿using AppService.Api.Responses;
 using AppService.Core.CustomEntities;
 using AppService.Core.DTOs;
+using AppService.Core.DTOs.Odoo.Clientes;
 using AppService.Core.DTOs.Odoo.Contactos;
 using AppService.Core.Entities;
 using AppService.Core.EntitiesSap;
@@ -240,6 +241,19 @@ namespace AppService.Api.Controllers
 
 
         //***********************************CONTACTOS ODOO****************************************
+
+
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<IActionResult> OdooUpdateClienteTipoSectorRamo(OdooClienteTipoSectorRamo dto)
+        {
+
+            var response = await _mtrClienteService.UpdateTipoSectorRamoPorCliente(dto);
+            return Ok(response);
+
+        }
+
+
         [HttpPost]
         [Route("[action]")]
         public async Task<IActionResult> OdooCreateContacto(OdooContactoCreateDto dto)

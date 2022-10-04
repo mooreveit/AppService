@@ -1,9 +1,9 @@
 ﻿using AppService.Core.DTOs;
+using AppService.Core.DTOs.Odoo.Clientes;
 using AppService.Core.Entities;
 using AppService.Core.QueryFilters;
-using System;
+using AppService.Core.Responses;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AppService.Core.Interfaces
@@ -15,6 +15,8 @@ namespace AppService.Core.Interfaces
         Task<MtrCliente> GetByIdAsync(string id);
         Task<List<MtrDireccionesDto>> GetDireccionestDtoByCodigo(string codigo);
         Task<MtrDireccionesDto> GetDireccionestDtoById(decimal id);
+        Task<ApiResponse<OdooClienteTipoSectorRamo>> UpdateTipoSectorRamoPorCliente(OdooClienteTipoSectorRamo dto);
 
     }
+
 }
