@@ -166,6 +166,11 @@ namespace AppService.Core.DTOs.Odoo.Clientes.OdooClients
         [JsonPropertyName("IdComerciante")]
         public int IdComerciante { get; set; }
 
+        [JsonProperty("ClienteInactivo")]
+        [JsonPropertyName("ClienteInactivo")]
+        public bool ClienteInactivo { get; set; }
+
+
         [JsonProperty("Direcciones")]
         [JsonPropertyName("Direcciones")]
         public List<Direcciones> Direcciones { get; set; }

@@ -1416,6 +1416,15 @@ namespace AppService.Core.Services
             }
 
 
+            if (mtrCliente.FlagInactivo.Trim() == "X")
+            {
+                result.ClienteInactivo = true;
+            }
+            else
+            {
+                result.ClienteInactivo = false;
+            }
+
 
 
 
