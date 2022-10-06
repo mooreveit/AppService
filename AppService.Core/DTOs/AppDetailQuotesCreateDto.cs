@@ -32,6 +32,8 @@ namespace AppService.Core.DTOs
         public decimal UnitPriceConverted { get; set; }
         public decimal CantidadPorUnidadProduccion { get; set; }
         public int QuantityPerPackage { get; set; }
+        public long OrdenAnterior { get; set; }
+
         public Decimal MedidaBasica { get; set; }
 
         public Decimal MedidaOpuesta { get; set; }

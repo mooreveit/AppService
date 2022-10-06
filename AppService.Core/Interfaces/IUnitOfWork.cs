@@ -139,9 +139,10 @@ namespace AppService.Core.Interfaces
 
         IWsmy501EnviarOdooRepository Wsmy501EnviarOdooRepository { get; }
         IWsmy501BorradosRepository Wsmy501BorradosRepository { get; }
-
-
-
+        IWsmy369Repository Wsmy369Repository { get; }
+        IWpry243Repository Wpry243Repository { get; }
+        IWpry249Repository Wpry249Repository { get; }
+        IWpry251Repository Wpry251Repository { get; }
         ICobEstadoDeCuentaMultimonedaRepository CobEstadoDeCuentaMultimonedaRepository { get; }
 
 

@@ -203,6 +203,12 @@ namespace AppService.Infrastructure.Repositories
         public readonly ICpry012Repository _cpry012Repository;
         public readonly ICsmy021Repository _csmy021Repository;
 
+        public readonly IWsmy369Repository _wsmy369Repository;
+        public readonly IWpry243Repository _wpry243Repository;
+        public readonly IWpry249Repository _wpry249Repository;
+        public readonly IWpry251Repository _wpry251Repository;
+
+
         public UnitOfWork(RRDContext context, MooreveContext mooreveContext, MCContext mcContext, IMaestrosContext maestrosContext, SapContext sapContext, ClientesContext clientesContext, FacturacionContext facturacionContext, ContratosStockContext contratosStockContext, DWContext dWContext, NominaContext nominaContext, SpiContext spiContext, PlantaContext plantaContext)
         {
             _context = context;
@@ -358,6 +364,10 @@ namespace AppService.Infrastructure.Repositories
 
         public IWsmy501EnviarOdooRepository Wsmy501EnviarOdooRepository => _wsmy501EnviarOdooRepository ?? new Wsmy501EnviarOdooRepository(_mooreveContext);
         public IWsmy501BorradosRepository Wsmy501BorradosRepository => _wsmy501BorradosRepository ?? new Wsmy501BorradosRepository(_mooreveContext);
+        public IWsmy369Repository Wsmy369Repository => _wsmy369Repository ?? new Wsmy369Repository(_mooreveContext);
+        public IWpry243Repository Wpry243Repository => _wpry243Repository ?? new Wpry243Repository(_mooreveContext);
+        public IWpry249Repository Wpry249Repository => _wpry249Repository ?? new Wpry249Repository(_mooreveContext);
+        public IWpry251Repository Wpry251Repository => _wpry251Repository ?? new Wpry251Repository(_mooreveContext);
 
 
 

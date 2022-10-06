@@ -20,6 +20,7 @@ namespace AppService.Infrastructure.DataMooreve
 
 
 
+        public virtual DbSet<ValoresAdicionalesProducto> ValoresAdicionalesProducto { get; set; }
         public virtual DbSet<Activos> Activos { get; set; }
         public virtual DbSet<AjustesPorPagoFueraPeriodo> AjustesPorPagoFueraPeriodo { get; set; }
         public virtual DbSet<AppBacklogInicial> AppBacklogInicial { get; set; }

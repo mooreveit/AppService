@@ -85,6 +85,8 @@ namespace AppService.Core.Entities
 
         public int? OdooId { get; set; }
 
+        public long? OrdenAnterior { get; set; }
+
         public virtual AppGeneralQuotes AppGeneralQuotes { get; set; }
 
         public virtual AppStatusQuote IdEstatusNavigation { get; set; }

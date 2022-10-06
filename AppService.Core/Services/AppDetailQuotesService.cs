@@ -108,6 +108,7 @@ namespace AppService.Core.Services
                     AppDetailQuotes byId3 = await this.GetById(item.Id);
 
                     item.StatusAprobacionDto = await this.StatusAprobacion(byId3);
+
                     appProductsFind = (AppProducts)null;
                 }
 

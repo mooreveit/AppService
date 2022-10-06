@@ -11,6 +11,7 @@ using AppService.Core.Responses;
 using AppService.Core.Utility;
 using AutoMapper;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -498,17 +499,6 @@ namespace AppService.Core.Services
                 await this._unitOfWork.SaveChangesAsync();
                 await this.UpdatePropuestaCotizacion(appDetailQuotes, renglon.Renglon);
 
-
-
-                if (!appProducts.Inventariable)
-
-                {
-                    await this.UpdateWpry229(appDetailQuotes, renglon.Renglon);
-                    await this.UpdateWpry240(appDetailQuotes, renglon.Renglon);
-                    await this.UpdateWpry241(appDetailQuotes, renglon.Renglon);
-                    appProducts = (AppProducts)null;
-                    renglon = (Wsmy502)null;
-                }
             }
             else
             {
@@ -570,12 +560,7 @@ namespace AppService.Core.Services
                         ApiResponse<Wsmy647> apiResponse = await this._aprobacionesServices.ActivarWORKFLOW(renglonNew.Cotizacion, renglonNew.Renglon, 1, appDetailQuotes.UserCreate, appDetailQuotes);
                     }
                 }
-                if (!appProducts.Inventariable)
-                {
-                    await this.UpdateWpry229(appDetailQuotes, renglonNew.Renglon);
-                    await this.UpdateWpry240(appDetailQuotes, renglonNew.Renglon);
-                    await this.UpdateWpry241(appDetailQuotes, renglonNew.Renglon);
-                }
+
                 renglonNew = (Wsmy502)null;
                 appProducts = (AppProducts)null;
                 renglon = (Wsmy502)null;
@@ -697,6 +682,14 @@ namespace AppService.Core.Services
 
                 this._unitOfWork.PropuestaRepository.Update(propuesta);
                 await this._unitOfWork.SaveChangesAsync();
+                if (!prod.Inventariable)
+                {
+                    await this.UpdateWpry229(appDetailQuotes, propuesta.Renglon);
+                    await this.UpdateWpry240(appDetailQuotes, propuesta.Renglon);
+                    await this.UpdateWpry241(appDetailQuotes, propuesta.Renglon);
+
+                }
+
                 if (!ganandoProducto)
                 {
                     valoresCotizacion = (ValoresCotizacionDto)null;
@@ -817,12 +810,33 @@ namespace AppService.Core.Services
 
                 await _unitOfWork.PropuestaRepository.Add(propuestaNew);
                 await _unitOfWork.SaveChangesAsync();
+                if (!prod.Inventariable)
+                {
+                    if (appDetailQuotes.OrdenAnterior > 0)
+                    {
+                        await CopiarDatosOrdenAnterior((int)appDetailQuotes.OrdenAnterior, propuesta.Cotizacion, propuesta.Renglon, propuesta.Propuesta);
+                    }
+                    else
+                    {
+                        await this.UpdateWpry229(appDetailQuotes, propuesta.Renglon);
+                        await this.UpdateWpry240(appDetailQuotes, propuesta.Renglon);
+                        await this.UpdateWpry241(appDetailQuotes, propuesta.Renglon);
+                    }
+
+
+                }
+
+
                 await MarcarEnviarOdoo(appDetailQuotes.Cotizacion);
 
                 propuestaNew = (Wsmy515)null;
                 valoresCotizacion = (ValoresCotizacionDto)null;
                 propuesta = (Wsmy515)null;
             }
+
+
+
+
         }
 
         public async Task UpdateWpry229(AppDetailQuotes appDetailQuotes, int renglon)
@@ -1782,9 +1796,106 @@ namespace AppService.Core.Services
                     await _unitOfWork.Wpry229Repository.Add(wpry229New);
                     await this._unitOfWork.SaveChangesAsync();
 
+                    //AGREGAMOS LAS ESPECIFICACIONES ADICIONALES GENERALES
+                    //BuscaValoresAdocionales(Orden)
+                    await BuscacaValoresAdicionales(cpry012, cotizacion, renglon, propuesta);
                     var csmy021 = await _unitOfWork.Csmy021Repository.GetByOrdenAsync(orden);
                     if (csmy021.Count > 0)
                     {
+                        foreach (var item in csmy021)
+                        {
+                            var wpry240 = await _unitOfWork.Wpry240Repository.GetByCotizacionRenglonPropuestaParte(cotizacion, renglon, propuesta, item.Parte);
+                            if (wpry240 == null)
+                            {
+                                Wpry240 wpry240New = new Wpry240();
+                                wpry240New.Cotizacion = cotizacion;
+                                wpry240New.Renglon = renglon;
+                                wpry240New.Propuesta = propuesta;
+                                wpry240New.IdParte = item.Parte;
+                                wpry240New.IdPapel = item.CodPapel;
+                                wpry240New.IdConstruccion = 3;
+                                wpry240New.LargoCm = item.MedidaPapel;
+                                wpry240New.AnchoCm = (decimal)cpry012.MedidaBase;
+                                wpry240New.Cantidad = (decimal)(cpry012.CantOrdenada / 1000);
+                                wpry240New.MedidaBase = cpry012.MedidaBase;
+                                wpry240New.MedidaOpuesta = item.MedidaPapel;
+                                var wpry229Find = await _unitOfWork.Wpry229Repository.GetByCotizacionRenglonPropuesta(cotizacion, renglon, propuesta);
+                                if (wpry229Find != null)
+                                {
+                                    wpry229Find.TalonExtra = item.TalonExtra;
+                                    _unitOfWork.Wpry229Repository.Update(wpry229Find);
+                                }
+                                if (!item.FraseMarginal.IsNullOrEmpty())
+                                {
+                                    wpry240New.FrasesMarginales = item.FraseMarginal;
+
+                                }
+                                else
+                                {
+                                    var wsmy369 = await _unitOfWork.Wsmy369Repository.GetByOrdenParte(orden, item.Parte);
+                                    if (wsmy369 != null) ;
+                                    {
+                                        wpry240New.FrasesMarginales = wsmy369.FraseMarg;
+                                    }
+                                }
+                                await _unitOfWork.Wpry240Repository.Add(wpry240New);
+                            }
+
+                            //Agregar tintas por parte
+                            var idFrente = await _unitOfWork.Wpry243Repository.BuscarIdFrente();
+
+                            var idRespaldo = await _unitOfWork.Wpry243Repository.BuscarIdRespaldo();
+                            //ArrayList TintasFrente = new ArrayList();
+
+                            string[] tintasFrente = { item.PrimTintaFte, item.SegTintaFrent, item.TercTintaFren, item.CuarTintaFren, item.QuinTintaFren, item.SexTintaFren };
+                            string[] tintasRespaldo = { item.PrimTintaResp, item.SegTintaResp, item.TercTintaResp, item.CuarTintaResp, item.QuinTintaResp, item.SexTintaResp };
+
+
+
+                            for (int i = 0; i <= 5; i++)
+                            {
+                                var idTintaFrente = tintasFrente[i];
+                                if (!idTintaFrente.ToString().IsNullOrEmpty())
+                                {
+                                    var wpry241FindFrente = await _unitOfWork.Wpry241Repository.GetByCotizacionRenglonPropuestaParteTinta(cotizacion, renglon, propuesta, item.NoPartePapel, idTintaFrente);
+                                    if (wpry241FindFrente == null)
+                                    {
+                                        Wpry241 wpry241New = new Wpry241();
+                                        wpry241New.Cotizacion = cotizacion;
+                                        wpry241New.Renglon = renglon;
+                                        wpry241New.Propuesta = propuesta;
+                                        wpry241New.IdParte = item.NoPartePapel;
+                                        wpry241New.IdUbicacion = idFrente;
+                                        wpry241New.IdTinta = idTintaFrente;
+                                        await _unitOfWork.Wpry241Repository.Add(wpry241New);
+                                    }
+
+
+                                }
+
+                                var idTintarespaldo = tintasRespaldo[i];
+                                if (!idTintarespaldo.ToString().IsNullOrEmpty())
+                                {
+                                    var wpry241FindRespaldo = await _unitOfWork.Wpry241Repository.GetByCotizacionRenglonPropuestaParteTinta(cotizacion, renglon, propuesta, item.NoPartePapel, idTintarespaldo);
+                                    if (wpry241FindRespaldo == null)
+                                    {
+                                        Wpry241 wpry241New = new Wpry241();
+                                        wpry241New.Cotizacion = cotizacion;
+                                        wpry241New.Renglon = renglon;
+                                        wpry241New.Propuesta = propuesta;
+                                        wpry241New.IdParte = item.NoPartePapel;
+                                        wpry241New.IdUbicacion = idRespaldo;
+                                        wpry241New.IdTinta = idTintarespaldo;
+                                        await _unitOfWork.Wpry241Repository.Add(wpry241New);
+                                    }
+
+
+                                }
+
+                            }//RRECORRE ARREGLO DE TINTAS FRENTE Y RESPALDO
+
+
+                        }//RECORRIDO DE PARTES EN CSMY021
 
                     }
 
@@ -1797,6 +1908,39 @@ namespace AppService.Core.Services
 
         }
 
+
+        public async Task BuscacaValoresAdicionales(AppService.Core.EntitiesPlanta.Cpry012 cpry012, string cotizacion, int renglon, int propuesta)
+        {
+
+            var propuestaOrdenAnterior = await _unitOfWork.PropuestaRepository.GetByOrden(cpry012.Orden);
+            if (propuestaOrdenAnterior != null)
+            {
+                var wpry251List = await _unitOfWork.Wpry251Repository.GetByCotizacionRenglonPropuesta(propuestaOrdenAnterior.Cotizacion, propuestaOrdenAnterior.Renglon, propuestaOrdenAnterior.Propuesta);
+                if (wpry251List.Count > 0)
+                {
+                    foreach (var item in wpry251List)
+                    {
+                        Wpry251 wpry251New = new Wpry251();
+                        wpry251New.Cotizacion = cotizacion;
+                        wpry251New.Renglon = renglon;
+                        wpry251New.Propuesta = propuesta;
+                        wpry251New.IdVariable = item.IdVariable;
+                        wpry251New.IdParte = item.IdParte;
+                        wpry251New.Valor = item.Valor;
+                        wpry251New.FechaRegistro = DateTime.Now;
+                        await _unitOfWork.Wpry251Repository.Add(wpry251New);
+                        await _unitOfWork.SaveChangesAsync();
+
+
+                    }
+
+                }
+
+            }
+
+
+
+        }
 
 
         //######################################################
@@ -2128,6 +2272,8 @@ namespace AppService.Core.Services
 
         public async Task UpdateCotizacionesToOdoo()
         {
+
+
             var diasAcualizaPresupuesto = 1;
             var appConfig = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooDiasActualizarPresupuesto");
 

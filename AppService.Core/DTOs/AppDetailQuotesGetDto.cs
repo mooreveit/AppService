@@ -31,6 +31,7 @@ namespace AppService.Core.DTOs
         public decimal CantidadPorUnidadProduccion { get; set; }
 
         public string ObsSolicitud { get; set; }
+        public long OrdenAnterior { get; set; }
 
         public Decimal MedidaBasica { get; set; }
 

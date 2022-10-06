@@ -1824,6 +1824,8 @@ namespace AppService.Core.Services
 
         public async Task<List<string>> GetListCotizaciones()
         {
+
+
             var diasAcualizaPresupuesto = 1;
             var appConfig = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooDiasActualizarPresupuesto");
 
