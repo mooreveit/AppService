@@ -17,6 +17,20 @@ namespace AppService.Infrastructure.Data
         {
         }
 
+
+        public virtual DbSet<AppService.Core.Entities.AppRepeticionClienteProducto> AppRepeticionClienteProducto { get; set; }
+        public virtual DbSet<AppService.Core.Entities.AppRepeticionClienteNombreForma> AppRepeticionClienteNombreForma { get; set; }
+        public virtual DbSet<AppService.Core.Entities.AppRepeticionClienteBasica> AppRepeticionClienteBasica { get; set; }
+        public virtual DbSet<AppService.Core.Entities.AppRepeticionClienteOpuesta> AppRepeticionClienteOpuesta { get; set; }
+        public virtual DbSet<AppService.Core.Entities.AppRepeticionClientePartes> AppRepeticionClientePartes { get; set; }
+        public virtual DbSet<AppService.Core.Entities.AppRepeticionClienteTintas> AppRepeticionClienteTintas { get; set; }
+        public virtual DbSet<AppService.Core.Entities.AppRepeticionClientePapelPrimeraParte> AppRepeticionClientePapelPrimeraParte { get; set; }
+        public virtual DbSet<AppService.Core.Entities.AppRepeticionClientePapelSegundaParte> AppRepeticionClientePapelSegundaParte { get; set; }
+        public virtual DbSet<AppService.Core.Entities.AppRepeticionClientePapelTerceraParte> AppRepeticionClientePapelTerceraParte { get; set; }
+        public virtual DbSet<AppService.Core.Entities.AppRepeticionClientePapelCuartaParte> AppRepeticionClientePapelCuartaParte { get; set; }
+        public virtual DbSet<AppService.Core.Entities.AppRepeticionClientePapelQuintaParte> AppRepeticionClientePapelQuintaParte { get; set; }
+
+
         public virtual DbSet<AppService.Core.Entities.MtrClienteEnvioOdooLog> MtrClienteEnvioOdooLog { get; set; }
 
 

@@ -8,5 +8,6 @@ namespace AppService.Core.Interfaces
     {
         Task<ApiResponse<ListaRepeticiones>> GetAllFilter(AppOrdenProductoRepeticionFilterDto filter);
 
+
     }
 }

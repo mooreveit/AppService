@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AppService.Core.Entities;
+using System;
 using System.Collections.Generic;
 
 namespace AppService.Core.DTOs.Repeticiones
@@ -6,18 +7,18 @@ namespace AppService.Core.DTOs.Repeticiones
     public class ListaRepeticiones
     {
         public List<AppOrdenProductoRepeticionGetDto> AppOrdenProductoRepeticionGetDto { get; set; }
-        public List<PapelPrimeraParte> PapelesPrimeraParte { get; set; }
-        public List<PapelSegundaParte> PapelesSegundaParte { get; set; }
-        public List<PapelTerceraParte> PapelesTerceraParte { get; set; }
-        public List<PapelCuartaParte> PapelesCuartaParte { get; set; }
-        public List<PapelQuintaParte> PapelesQuintaParte { get; set; }
-        public List<Basica> MedidasBasica { get; set; }
-        public List<Opuesta> MedidasOpuesta { get; set; }
-        public List<CantidadTintas> CantidadTintas { get; set; }
-        public List<CantidadPartes> CantidadPartes { get; set; }
-        public List<Productos> Productos { get; set; }
-        public List<ProductosExternos> ProductosExternos { get; set; }
-        public List<NombresForma> NombresForma { get; set; }
+        public List<AppRepeticionClienteProducto> AppRepeticionClienteProducto { get; set; }
+        public List<AppRepeticionClienteNombreForma> AppRepeticionClienteNombreForma { get; set; }
+        public List<AppRepeticionClienteBasica> AppRepeticionClienteBasica { get; set; }
+        public List<AppRepeticionClienteOpuesta> AppRepeticionClienteOpuesta { get; set; }
+        public List<AppRepeticionClientePartes> AppRepeticionClientePartes { get; set; }
+        public List<AppRepeticionClienteTintas> AppRepeticionClienteTintas { get; set; }
+        public List<AppRepeticionClientePapelPrimeraParte> AppRepeticionClientePapelPrimeraParte { get; set; }
+        public List<AppRepeticionClientePapelSegundaParte> AppRepeticionClientePapelSegundaParte { get; set; }
+        public List<AppRepeticionClientePapelTerceraParte> AppRepeticionClientePapelTerceraParte { get; set; }
+        public List<AppRepeticionClientePapelCuartaParte> AppRepeticionClientePapelCuartaParte { get; set; }
+        public List<AppRepeticionClientePapelQuintaParte> AppRepeticionClientePapelQuintaParte { get; set; }
+
     }
 
 
@@ -51,59 +52,6 @@ namespace AppService.Core.DTOs.Repeticiones
 
     }
 
-    public class NombresForma
-    {
-        public string descripcion { get; set; }
 
-    }
-
-    public class ProductosExternos
-    {
-
-        public string NombreProducto { get; set; }
-    }
-
-    public class Productos
-    {
-
-        public string AppproductsDecription { get; set; }
-    }
-
-    public class CantidadPartes
-    {
-        public int Cantidad { get; set; }
-    }
-    public class CantidadTintas
-    {
-        public int Cantidad { get; set; }
-    }
-    public class Basica
-    {
-        public string MedidaBasica { get; set; }
-    }
-    public class Opuesta
-    {
-        public string MedidaOpuesta { get; set; }
-    }
-    public class PapelPrimeraParte
-    {
-        public string Papel { get; set; }
-    }
-    public class PapelSegundaParte
-    {
-        public string Papel { get; set; }
-    }
-    public class PapelTerceraParte
-    {
-        public string Papel { get; set; }
-    }
-    public class PapelCuartaParte
-    {
-        public string Papel { get; set; }
-    }
-    public class PapelQuintaParte
-    {
-        public string Papel { get; set; }
-    }
 
 }

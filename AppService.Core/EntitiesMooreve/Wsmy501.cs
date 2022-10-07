@@ -75,6 +75,8 @@ namespace AppService.Core.EntitiesMooreve
         public bool? ExcepcionApro { get; set; }
         public bool? EnviarOdoo { get; set; }
         public string? ErrorOdoo { get; set; }
+        public DateTime? FechaEnvioOdoo { get; set; }
+
 
 
 

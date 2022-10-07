@@ -66,102 +66,30 @@ namespace AppService.Core.Services
                 }
                 resultDto.AppOrdenProductoRepeticionGetDto = listOrdenProducto;
 
+                var listAppRepeticionClienteProducto = await _unitOfWork.AppOrdenProductoRepeticionRepository.GetAppRepeticionClienteProductoByCliente(filter.IdCliente);
+                var lisAppRepeticionClienteNombreForma = await _unitOfWork.AppOrdenProductoRepeticionRepository.GetAppRepeticionClienteNombreFormaByCliente(filter.IdCliente);
+                var listAppRepeticionClienteBasica = await _unitOfWork.AppOrdenProductoRepeticionRepository.GetAppRepeticionClienteBasicaByCliente(filter.IdCliente);
+                var listAppRepeticionClienteOpuesta = await _unitOfWork.AppOrdenProductoRepeticionRepository.GetAppRepeticionClienteOpuestaByCliente(filter.IdCliente);
+                var listAppRepeticionClientePartes = await _unitOfWork.AppOrdenProductoRepeticionRepository.GetAppRepeticionClientePartesByCliente(filter.IdCliente);
+                var listAppRepeticionClienteTintas = await _unitOfWork.AppOrdenProductoRepeticionRepository.GetAppRepeticionClienteTintasByCliente(filter.IdCliente);
+                var listAppRepeticionClientePapelPrimeraParte = await _unitOfWork.AppOrdenProductoRepeticionRepository.GetAppRepeticionClientePapelPrimeraParteByCliente(filter.IdCliente);
+                var listAppRepeticionClientePapelSegundaParte = await _unitOfWork.AppOrdenProductoRepeticionRepository.GetAppRepeticionClientePapelSegundaParteByCliente(filter.IdCliente);
+                var listAppRepeticionClientePapelTerceraParte = await _unitOfWork.AppOrdenProductoRepeticionRepository.GetAppRepeticionClientePapelTerceraParteByCliente(filter.IdCliente);
+                var listAppRepeticionClientePapelCuartaParte = await _unitOfWork.AppOrdenProductoRepeticionRepository.GetAppRepeticionClientePapelCuartaParteByCliente(filter.IdCliente);
+                var listAppRepeticionClientePapelQuintaParte = await _unitOfWork.AppOrdenProductoRepeticionRepository.GetAppRepeticionClientePapelQuintaParteByCliente(filter.IdCliente);
 
-                List<CantidadTintas> listaCantidadTintas = (from item in listOrdenProducto
-                                                            group item by item.CantTintas into x
-                                                            select new CantidadTintas
-                                                            {
-                                                                Cantidad = x.Key,
-                                                            }).ToList();
+                resultDto.AppRepeticionClienteProducto = listAppRepeticionClienteProducto;
+                resultDto.AppRepeticionClienteNombreForma = lisAppRepeticionClienteNombreForma;
+                resultDto.AppRepeticionClienteBasica = listAppRepeticionClienteBasica;
+                resultDto.AppRepeticionClienteOpuesta = listAppRepeticionClienteOpuesta;
 
-                List<CantidadPartes> listaCantidadPartes = (from item in listOrdenProducto
-                                                            group item by item.PartesFormula into x
-                                                            select new CantidadPartes
-                                                            {
-                                                                Cantidad = x.Key,
-                                                            }).ToList();
-
-                List<Basica> listaBasica = (from item in listOrdenProducto
-                                            group item by item.BasicaHumano into x
-                                            select new Basica
-                                            {
-                                                MedidaBasica = x.Key,
-                                            }).ToList();
-                List<Opuesta> listaOpuesta = (from item in listOrdenProducto
-                                              group item by item.OpuestaHumano into x
-                                              select new Opuesta
-                                              {
-                                                  MedidaOpuesta = x.Key,
-                                              }).ToList();
-
-                List<PapelPrimeraParte> listaPapelPrimeraParte = (from item in listOrdenProducto
-                                                                  group item by item.PapelPrimeraParte into x
-                                                                  select new PapelPrimeraParte
-                                                                  {
-                                                                      Papel = x.Key,
-                                                                  }).ToList();
-
-                List<PapelSegundaParte> listaPapelSegundaParte = (from item in listOrdenProducto
-                                                                  group item by item.PapelSegundaParte into x
-                                                                  select new PapelSegundaParte
-                                                                  {
-                                                                      Papel = x.Key,
-                                                                  }).ToList();
-
-                List<PapelTerceraParte> listaPapelTerceraParte = (from item in listOrdenProducto
-                                                                  group item by item.PapelTerceraParte into x
-                                                                  select new PapelTerceraParte
-                                                                  {
-                                                                      Papel = x.Key,
-                                                                  }).ToList();
-
-                List<PapelCuartaParte> listaPapelCuartaParte = (from item in listOrdenProducto
-                                                                group item by item.PapelCuartaParte into x
-                                                                select new PapelCuartaParte
-                                                                {
-                                                                    Papel = x.Key,
-                                                                }).ToList();
-
-                List<PapelQuintaParte> listaPapelQuintaParte = (from item in listOrdenProducto
-                                                                group item by item.PapelQuintaParte into x
-                                                                select new PapelQuintaParte
-                                                                {
-                                                                    Papel = x.Key,
-                                                                }).ToList();
-
-                List<NombresForma> listaNombresForma = (from item in listOrdenProducto
-                                                        group item by item.NombreForma into x
-                                                        select new NombresForma
-                                                        {
-                                                            descripcion = x.Key,
-                                                        }).ToList();
-
-                List<Productos> listaProductos = (from item in listOrdenProducto
-                                                  group item by item.AppproductsDecription into x
-                                                  select new Productos
-                                                  {
-                                                      AppproductsDecription = x.Key,
-                                                  }).ToList();
-
-                List<ProductosExternos> listaProductosExternos = (from item in listOrdenProducto
-                                                                  group item by item.NombreProducto into x
-                                                                  select new ProductosExternos
-                                                                  {
-                                                                      NombreProducto = x.Key,
-                                                                  }).ToList();
-
-                resultDto.CantidadTintas = listaCantidadTintas;
-                resultDto.CantidadPartes = listaCantidadPartes;
-                resultDto.MedidasBasica = listaBasica;
-                resultDto.MedidasOpuesta = listaOpuesta;
-                resultDto.PapelesPrimeraParte = listaPapelPrimeraParte.Where(x => x.Papel != null).ToList();
-                resultDto.PapelesSegundaParte = listaPapelSegundaParte.Where(x => x.Papel != null).ToList();
-                resultDto.PapelesTerceraParte = listaPapelTerceraParte.Where(x => x.Papel != null).ToList();
-                resultDto.PapelesCuartaParte = listaPapelCuartaParte.Where(x => x.Papel != null).ToList();
-                resultDto.PapelesQuintaParte = listaPapelQuintaParte.Where(x => x.Papel != null).ToList();
-                resultDto.NombresForma = listaNombresForma.Where(x => x.descripcion != null && x.descripcion != "").ToList();
-                resultDto.Productos = listaProductos.Where(x => x.AppproductsDecription != null && x.AppproductsDecription != "").ToList();
-                resultDto.ProductosExternos = listaProductosExternos.Where(x => x.NombreProducto != null && x.NombreProducto != "").ToList();
+                resultDto.AppRepeticionClientePartes = listAppRepeticionClientePartes;
+                resultDto.AppRepeticionClienteTintas = listAppRepeticionClienteTintas;
+                resultDto.AppRepeticionClientePapelPrimeraParte = listAppRepeticionClientePapelPrimeraParte;
+                resultDto.AppRepeticionClientePapelSegundaParte = listAppRepeticionClientePapelSegundaParte;
+                resultDto.AppRepeticionClientePapelTerceraParte = listAppRepeticionClientePapelTerceraParte;
+                resultDto.AppRepeticionClientePapelCuartaParte = listAppRepeticionClientePapelCuartaParte;
+                resultDto.AppRepeticionClientePapelQuintaParte = listAppRepeticionClientePapelQuintaParte;
 
             }
 

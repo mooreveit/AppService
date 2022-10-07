@@ -2277,7 +2277,7 @@ namespace AppService.Core.Services
             var diasAcualizaPresupuesto = 1;
             var appConfig = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooDiasActualizarPresupuesto");
 
-            if (appConfig == null)
+            if (appConfig != null)
             {
                 diasAcualizaPresupuesto = int.Parse(appConfig.Valor);
             }
@@ -2339,7 +2339,15 @@ namespace AppService.Core.Services
                                 if (!respuesta.result.success)
                                 {
                                     var errorDetail = respuesta.result.data.FirstOrDefault();
-                                    mensajeError = errorDetail.message;
+                                    if (errorDetail.message != null)
+                                    {
+                                        mensajeError = errorDetail.message;
+                                    }
+                                    else
+                                    {
+                                        mensajeError = result.Message;
+                                    }
+
                                 }
                             }
 
@@ -2350,6 +2358,7 @@ namespace AppService.Core.Services
 
                                 wsmy501.ErrorOdoo = mensajeError;
                                 wsmy501.EnviarOdoo = true;
+                                wsmy501.FechaEnvioOdoo = DateTime.Now;
                                 this._unitOfWork.CotizacionRepository.Update(wsmy501);
                                 await this._unitOfWork.SaveChangesAsync();
                             }
@@ -2363,6 +2372,7 @@ namespace AppService.Core.Services
 
                                 wsmy501.ErrorOdoo = String.Empty;
                                 wsmy501.EnviarOdoo = false;
+                                wsmy501.FechaEnvioOdoo = DateTime.Now;
                                 this._unitOfWork.CotizacionRepository.Update(wsmy501);
                                 var resultSave = await this._unitOfWork.SaveChangesAsync();
                                 if (!resultSave)
