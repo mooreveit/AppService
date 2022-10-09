@@ -30,6 +30,11 @@ namespace AppService.Core.Entities
         public decimal MEDIDA_VARIABLE_DECIMAL { get; set; }
         public string BasicaHumano { get; set; }
         public string OpuestaHumano { get; set; }
+        public decimal? CANT_ORDENADA { get; set; }
+        public decimal? PrecioUnitarioUsd { get; set; }
+        public decimal? TotalPropuestaUsd { get; set; }
+
+
 
 
     }

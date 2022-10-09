@@ -29,6 +29,7 @@ namespace AppService.Core.DTOs.Repeticiones
         public string NombreCliente { get; set; }
         public string Orden { get; set; }
         public DateTime Fecha { get; set; }
+        public string FechaString { get; set; }
         public int AppproductsId { get; set; }
         public string AppproductsDecription { get; set; }
         public string CodProducto { get; set; }
@@ -48,7 +49,10 @@ namespace AppService.Core.DTOs.Repeticiones
         public decimal MedidaVariableDecimal { get; set; }
         public string BasicaHumano { get; set; }
         public string OpuestaHumano { get; set; }
-
+        public decimal? CANT_ORDENADA { get; set; }
+        public decimal? Millares { get; set; }
+        public decimal? PrecioUnitarioUsd { get; set; }
+        public decimal? TotalPropuestaUsd { get; set; }
 
     }
 

@@ -3,6 +3,7 @@ using AppService.Core.DTOs.Repeticiones;
 using AppService.Core.Interfaces;
 using AppService.Core.Responses;
 using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,7 +36,8 @@ namespace AppService.Core.Services
             if (appOrdenProductoRepeticion.Count > 0)
             {
                 List<AppOrdenProductoRepeticionGetDto> listOrdenProducto = new List<AppOrdenProductoRepeticionGetDto>();
-                foreach (var item in appOrdenProductoRepeticion.Where(x => x.AppproductsId > 0).ToList())
+                //foreach (var item in appOrdenProductoRepeticion.Where(x => x.AppproductsId > 0).ToList())
+                foreach (var item in appOrdenProductoRepeticion)
                 {
                     AppOrdenProductoRepeticionGetDto itemOrdenProducto = new AppOrdenProductoRepeticionGetDto();
                     itemOrdenProducto.Id = item.Id;
@@ -43,6 +45,7 @@ namespace AppService.Core.Services
                     itemOrdenProducto.IdCliente = item.IdCliente;
                     itemOrdenProducto.Orden = item.Orden.ToString();
                     itemOrdenProducto.Fecha = item.Fecha;
+                    itemOrdenProducto.FechaString = FechaString(item.Fecha);
                     itemOrdenProducto.AppproductsId = item.AppproductsId;
                     itemOrdenProducto.AppproductsDecription = item.AppproductsDecription.Trim();
                     itemOrdenProducto.CodProducto = item.COD_PRODUCTO.Trim();
@@ -61,10 +64,27 @@ namespace AppService.Core.Services
                     itemOrdenProducto.PapelTerceraParte = item.PAPELTERCERAPARTE;
                     itemOrdenProducto.PapelCuartaParte = item.PAPELCUARTAPARTE;
                     itemOrdenProducto.PapelQuintaParte = item.PAPELQUINTAPARTE;
+                    if (item.CANT_ORDENADA == null)
+                    {
+                        item.CANT_ORDENADA = 0;
+                    }
+                    itemOrdenProducto.CANT_ORDENADA = item.CANT_ORDENADA;
+                    itemOrdenProducto.Millares = item.CANT_ORDENADA / 1000;
+                    if (item.PrecioUnitarioUsd == null)
+                    {
+                        item.PrecioUnitarioUsd = 0;
+                    }
+                    itemOrdenProducto.PrecioUnitarioUsd = item.PrecioUnitarioUsd;
+                    if (item.TotalPropuestaUsd == null)
+                    {
+                        item.TotalPropuestaUsd = 0;
+                    }
+                    itemOrdenProducto.TotalPropuestaUsd = item.TotalPropuestaUsd;
+
                     listOrdenProducto.Add(itemOrdenProducto);
 
                 }
-                resultDto.AppOrdenProductoRepeticionGetDto = listOrdenProducto;
+                resultDto.AppOrdenProductoRepeticionGetDto = listOrdenProducto.OrderByDescending(x => x.Fecha).ToList();
 
                 var listAppRepeticionClienteProducto = await _unitOfWork.AppOrdenProductoRepeticionRepository.GetAppRepeticionClienteProductoByCliente(filter.IdCliente);
                 var lisAppRepeticionClienteNombreForma = await _unitOfWork.AppOrdenProductoRepeticionRepository.GetAppRepeticionClienteNombreFormaByCliente(filter.IdCliente);
@@ -102,7 +122,65 @@ namespace AppService.Core.Services
 
         }
 
+        private string FechaString(DateTime fecha)
+        {
+            string result = "";
+            string año = "";
+            string mes = "";
+            string dia = "";
+            string hora = "";
+            string minuto = "";
+            string segundo = "";
+            año = fecha.Year.ToString();
+            if (fecha.Month.ToString().Length < 2)
+            {
+                mes = fecha.Month.ToString().PadLeft(2, '0');
+            }
+            else
+            {
+                mes = fecha.Month.ToString();
+            }
 
+            if (fecha.Day.ToString().Length < 2)
+            {
+                dia = fecha.Day.ToString().PadLeft(2, '0');
+            }
+            else
+            {
+                dia = fecha.Day.ToString();
+            }
+
+            if (fecha.Hour.ToString().Length < 2)
+            {
+                hora = fecha.Hour.ToString().PadLeft(2, '0');
+            }
+            else
+            {
+                hora = fecha.Hour.ToString();
+            }
+
+            if (fecha.Minute.ToString().Length < 2)
+            {
+                minuto = fecha.Minute.ToString().PadLeft(2, '0');
+            }
+            else
+            {
+                minuto = fecha.Minute.ToString();
+            }
+
+            if (fecha.Second.ToString().Length < 2)
+            {
+                segundo = fecha.Second.ToString().PadLeft(2, '0');
+            }
+            else
+            {
+                segundo = fecha.Second.ToString();
+            }
+
+            result = dia + "-" + mes + "-" + año;
+
+            return result;
+        }
 
 
     }
