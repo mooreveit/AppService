@@ -68,7 +68,7 @@ namespace AppService.Core.Services
                     {
                         item.CANT_ORDENADA = 0;
                     }
-                    itemOrdenProducto.CANT_ORDENADA = item.CANT_ORDENADA;
+                    itemOrdenProducto.CantidadOrdenada = item.CANT_ORDENADA;
                     itemOrdenProducto.Millares = item.CANT_ORDENADA / 1000;
                     if (item.PrecioUnitarioUsd == null)
                     {
