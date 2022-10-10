@@ -49,7 +49,7 @@ namespace AppService.Core.DTOs.Repeticiones
         public decimal MedidaVariableDecimal { get; set; }
         public string BasicaHumano { get; set; }
         public string OpuestaHumano { get; set; }
-        public decimal? CantidadOrdenada { get; set; }
+        public long? CantidadOrdenada { get; set; }
         public decimal? Millares { get; set; }
         public decimal? PrecioUnitarioUsd { get; set; }
         public decimal? TotalPropuestaUsd { get; set; }
