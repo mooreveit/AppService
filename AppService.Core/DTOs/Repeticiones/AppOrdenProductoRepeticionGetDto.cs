@@ -53,6 +53,8 @@ namespace AppService.Core.DTOs.Repeticiones
         public decimal? Millares { get; set; }
         public decimal? PrecioUnitarioUsd { get; set; }
         public decimal? TotalPropuestaUsd { get; set; }
+        public AppProductsGetDto AppProductsGetDto { get; set; }
+        public AppProductConversionGetDto AppProductConversionGetDto { get; set; }
 
     }
 

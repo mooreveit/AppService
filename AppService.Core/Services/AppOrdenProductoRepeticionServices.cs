@@ -1,8 +1,12 @@
 ﻿using AppService.Core.CustomEntities;
+using AppService.Core.DTOs;
 using AppService.Core.DTOs.Repeticiones;
+using AppService.Core.Entities;
 using AppService.Core.Interfaces;
+using AppService.Core.Map;
 using AppService.Core.Responses;
 using AutoMapper;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +18,21 @@ namespace AppService.Core.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-
-        public AppOrdenProductoRepeticionServices(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly PaginationOptions _paginationOptions;
+        private readonly IAppProductsService _appProductsService;
+        private readonly IAppUnitsService _appUnitsService;
+        public AppOrdenProductoRepeticionServices(IUnitOfWork unitOfWork,
+                                                 IMapper mapper,
+                                                 IOptions<PaginationOptions> options,
+                                                  IAppProductsService appProductsService,
+                                                     IAppUnitsService appUnitsService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            this._paginationOptions = options.Value;
+
+            this._appProductsService = appProductsService;
+            this._appUnitsService = appUnitsService;
         }
         public async Task<ApiResponse<ListaRepeticiones>> GetAllFilter(AppOrdenProductoRepeticionFilterDto filter)
         {
@@ -80,6 +94,30 @@ namespace AppService.Core.Services
                         item.TotalPropuestaUsd = 0;
                     }
                     itemOrdenProducto.TotalPropuestaUsd = item.TotalPropuestaUsd;
+
+                    AppProducts appProductsFind = await this._appProductsService.GetById(item.AppproductsId);
+                    if (appProductsFind != null)
+                    {
+                        AppProductConversion unitAlternativeUnit = await this._unitOfWork.AppProductConversionRepository.GetByProductBaseUnitAlternativeUnit(item.AppproductsId, appProductsFind.ProductionUnitId.Value, (int)appProductsFind.AppUnitsId);
+                        if (unitAlternativeUnit != null)
+                            itemOrdenProducto.AppProductConversionGetDto = MapAppProductConversion.MapAppProductConversionToAppProductConversionGetDto(unitAlternativeUnit);
+
+                        AppProductsGetDto appProductsGetDto = this._mapper.Map<AppProductsGetDto>((object)appProductsFind);
+
+                        AppUnits byId = await this._appUnitsService.GetById(appProductsFind.ProductionUnitId.Value);
+                        if (byId != null)
+                            appProductsGetDto.ProductionUnitGetDto = this._mapper.Map<AppUnitsGetDto>((object)byId);
+                        appProductsGetDto.Link = appProductsFind.UrlImage == "" || appProductsFind.UrlImage == null ? this._paginationOptions.UrlGetFiles + "NoImage.png" : this._paginationOptions.UrlGetFiles + appProductsFind.UrlImage;
+                        List<AppPrice> allByAppProduct = await this._unitOfWork.AppPriceRepository.GetAllByAppProduct(item.AppproductsId);
+                        if (allByAppProduct != null && allByAppProduct.Count > 0)
+                        {
+                            List<AppPriceDto> appPriceDtoList = this._mapper.Map<List<AppPriceDto>>((object)allByAppProduct);
+                            appProductsGetDto.PrecioPorRango = true;
+                            appProductsGetDto.AppPriceDto = appPriceDtoList;
+                        }
+                        itemOrdenProducto.AppProductsGetDto = appProductsGetDto;
+
+                    }
 
                     listOrdenProducto.Add(itemOrdenProducto);
 
