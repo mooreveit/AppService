@@ -34,6 +34,8 @@ namespace AppService.Core.Services
             this._appProductsService = appProductsService;
             this._appUnitsService = appUnitsService;
         }
+
+
         public async Task<ApiResponse<ListaRepeticiones>> GetAllFilter(AppOrdenProductoRepeticionFilterDto filter)
         {
             ListaRepeticiones resultDto = new ListaRepeticiones();

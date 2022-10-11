@@ -306,7 +306,7 @@ namespace AppService.Core.Services
                         }
 
                     }
-                    await UpdateCotizacionToOdoo(generalQuotes.Cotizacion);
+                    //await UpdateCotizacionToOdoo(generalQuotes.Cotizacion);
                     generalQuotes = (AppGeneralQuotes)null;
                 }
 
@@ -814,13 +814,13 @@ namespace AppService.Core.Services
                 {
                     if (appDetailQuotes.OrdenAnterior > 0)
                     {
-                        await CopiarDatosOrdenAnterior((int)appDetailQuotes.OrdenAnterior, propuesta.Cotizacion, propuesta.Renglon, propuesta.Propuesta);
+                        await CopiarDatosOrdenAnterior((int)appDetailQuotes.OrdenAnterior, propuestaNew.Cotizacion, propuestaNew.Renglon, propuestaNew.Propuesta);
                     }
                     else
                     {
-                        await this.UpdateWpry229(appDetailQuotes, propuesta.Renglon);
-                        await this.UpdateWpry240(appDetailQuotes, propuesta.Renglon);
-                        await this.UpdateWpry241(appDetailQuotes, propuesta.Renglon);
+                        await this.UpdateWpry229(appDetailQuotes, propuestaNew.Renglon);
+                        await this.UpdateWpry240(appDetailQuotes, propuestaNew.Renglon);
+                        await this.UpdateWpry241(appDetailQuotes, propuestaNew.Renglon);
                     }
 
 
