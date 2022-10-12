@@ -1604,15 +1604,15 @@ namespace AppService.Core.Services
                         mtrClienteEnvioOdooLog.Fecha = DateTime.Now;
                         await _unitOfWork.MtrClienteRepository.AddMtrClienteEnvioOdooLog(mtrClienteEnvioOdooLog);
                     }
-                    else
-                    {
-                        //Enviamos los contactos de cada cliente
-                        var mtrContactos = await _unitOfWork.MtrContactosRepository.GetByIdCliente(item.Codigo);
-                        if (mtrContactos.Count > 0)
-                        {
-                            await UpdateContactosToOdoo(mtrContactos);
-                        }
-                    }
+                    //else
+                    //{
+                    //    //Enviamos los contactos de cada cliente
+                    //    var mtrContactos = await _unitOfWork.MtrContactosRepository.GetByIdCliente(item.Codigo);
+                    //    if (mtrContactos.Count > 0)
+                    //    {
+                    //        await UpdateContactosToOdooByListMtrContacto(mtrContactos);
+                    //    }
+                    //}
 
                 }
                 catch (Exception ex)
@@ -1643,7 +1643,7 @@ namespace AppService.Core.Services
                 var mtrContactos = await _unitOfWork.MtrContactosRepository.GetByIdCliente(item.Codigo);
                 if (mtrContactos.Count > 0)
                 {
-                    await UpdateContactosToOdoo(mtrContactos);
+                    await UpdateContactosToOdooByListMtrContacto(mtrContactos);
                 }
 
 
@@ -1737,6 +1737,10 @@ namespace AppService.Core.Services
             result.company_type = "person";
             result.IdContacto = (int)mtrContactos.IdContacto;
             result.IdCliente = mtrContactos.IdCliente.Trim();
+            if (mtrContactos.IdCliente.Trim() == "0")
+            {
+                result.IdCliente = "000000";
+            }
             result.Rif = mtrContactos.Rif;
             result.Nombre = mtrContactos.Nombre.Trim();
             if (mtrContactos.Telefono1 == null)
@@ -1836,7 +1840,7 @@ namespace AppService.Core.Services
             return result;
         }
 
-        public async Task UpdateContactosToOdoo(List<MtrContactos> mtrContactos)
+        public async Task UpdateContactosToOdooByListMtrContacto(List<MtrContactos> mtrContactos)
         {
 
             foreach (var item in mtrContactos)

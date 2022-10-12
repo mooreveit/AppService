@@ -32,5 +32,6 @@ namespace AppService.Core.Interfaces
         Task EniarClientesAOdoo(string region);
         Task UpdateContactosToOdoo(List<MtrCliente> mtrClientes);
         Task UpdateClientesToOdoo(List<MtrCliente> mtrClientes);
+        Task UpdateContactosToOdooByListMtrContacto(List<MtrContactos> mtrContactos);
     }
 }

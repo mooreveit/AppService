@@ -2289,8 +2289,8 @@ namespace AppService.Core.Services
             MtrClienteQueryFilter filter = new MtrClienteQueryFilter();
             filter.Codigo = "000000";
             filter.Usuario = "RR105841";
-            // var mtrClientes = await _unitOfWork.MtrClienteRepository.ListCliente(filter);
-            // await _mtrContactosService.UpdateClientesToOdoo(mtrClientes);
+            //var mtrClientesProspecto = await _unitOfWork.MtrClienteRepository.ListCliente(filter);
+            //await _mtrContactosService.UpdateClientesToOdoo(mtrClientesProspecto);
 
             var cont = 0;
             foreach (var item in cotizaciones)
@@ -2308,8 +2308,19 @@ namespace AppService.Core.Services
                     var mtrClientes = await _unitOfWork.MtrClienteRepository.ListCliente(filter);
 
                     await _mtrContactosService.UpdateClientesToOdoo(mtrClientes);
+                    var cotizacion = await _unitOfWork.CotizacionRepository.GetByCotizacion(item);
+                    if (cotizacion != null)
+                    {
 
+                        var contacto = await _unitOfWork.MtrContactosRepository.GetById((long)cotizacion.IdContacto);
+                        if (contacto != null)
+                        {
+                            List<MtrContactos> listMtrContactos = new List<MtrContactos>();
+                            listMtrContactos.Add(contacto);
+                            await _mtrContactosService.UpdateContactosToOdooByListMtrContacto(listMtrContactos);
+                        }
 
+                    }
 
 
                     var odooProduct = await GetOdooCotizacion(item);
@@ -2640,22 +2651,16 @@ namespace AppService.Core.Services
             var estatus = await _unitOfWork.AppStatusQuoteRepository.GetById(generalQuotes.IdEstatus);
             if (estatus != null) result.state = estatus.OdooStatus;
 
-            var contacto = await _unitOfWork.MtrContactosRepository.GetByIdCliente(generalQuotes.IdCliente);
-            var contactoCot = contacto.Where(x => x.IdContacto == generalQuotes.IdContacto).FirstOrDefault();
-            if (contactoCot != null)
+            var contacto = await _unitOfWork.MtrContactosRepository.GetById((long)generalQuotes.IdContacto);
+            //var contactoCot = contacto.Where(x => x.IdContacto == wsmy501.IdContacto).FirstOrDefault();
+            if (contacto != null)
             {
                 result.idContacto = (int)generalQuotes.IdContacto;
-                result.IdClienteOdoo = (int)contactoCot.IdClienteOdoo;
-                result.IdContactoOdoo = (int)contactoCot.IdContactoOdoo;
+                result.IdClienteOdoo = (int)contacto.IdClienteOdoo;
+                result.IdContactoOdoo = (int)contacto.IdContactoOdoo;
 
             }
-            else
-            {
-                var contact = contacto.FirstOrDefault();
-                result.idContacto = (int)contact.IdContacto;
-                result.IdClienteOdoo = (int)contact.IdClienteOdoo;
-                result.IdContactoOdoo = (int)contact.IdContactoOdoo;
-            }
+
             //result.idContacto = (int)generalQuotes.IdContacto;
             result.idCliente = generalQuotes.IdCliente.Trim();
             if (result.idCliente.Trim() == "000000")
@@ -2927,21 +2932,14 @@ namespace AppService.Core.Services
             var estatus = await _unitOfWork.AppStatusQuoteRepository.GetById((int)wsmy501.Estatus);
             if (estatus != null) result.state = estatus.OdooStatus;
 
-            var contacto = await _unitOfWork.MtrContactosRepository.GetByIdCliente(wsmy501.CodCliente);
-            var contactoCot = contacto.Where(x => x.IdContacto == wsmy501.IdContacto).FirstOrDefault();
-            if (contactoCot != null)
+            var contacto = await _unitOfWork.MtrContactosRepository.GetById((long)wsmy501.IdContacto);
+            //var contactoCot = contacto.Where(x => x.IdContacto == wsmy501.IdContacto).FirstOrDefault();
+            if (contacto != null)
             {
                 result.idContacto = (int)wsmy501.IdContacto;
-                result.IdClienteOdoo = (int)contactoCot.IdClienteOdoo;
-                result.IdContactoOdoo = (int)contactoCot.IdContactoOdoo;
+                result.IdClienteOdoo = (int)contacto.IdClienteOdoo;
+                result.IdContactoOdoo = (int)contacto.IdContactoOdoo;
 
-            }
-            else
-            {
-                var contact = contacto.FirstOrDefault();
-                result.idContacto = (int)contact.IdContacto;
-                result.IdClienteOdoo = (int)contact.IdClienteOdoo;
-                result.IdContactoOdoo = (int)contact.IdContactoOdoo;
             }
 
 

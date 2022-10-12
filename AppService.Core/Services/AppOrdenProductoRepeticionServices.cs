@@ -97,6 +97,29 @@ namespace AppService.Core.Services
                     }
                     itemOrdenProducto.TotalPropuestaUsd = item.TotalPropuestaUsd;
 
+                    var orden = await _unitOfWork.Cpry012Repository.GetByOrdenAsync(item.Orden);
+                    if (orden != null)
+                    {
+                        var cotizacion = orden.Cotizacion.Trim().Substring(0, 13);
+                        var appDetailQuote = await _unitOfWork.AppDetailQuotesRepository.GetByQuetesProduct(cotizacion, item.AppproductsId);
+                        if (appDetailQuote != null)
+                        {
+                            itemOrdenProducto.MedidaBasicaCm = (decimal)appDetailQuote.MedidaBasica;
+                            itemOrdenProducto.MedidaOpuestaCm = (decimal)appDetailQuote.MedidaOpuesta;
+                        }
+                        else
+                        {
+                            itemOrdenProducto.MedidaBasicaCm = 0;
+                            itemOrdenProducto.MedidaOpuestaCm = 0;
+                        }
+                    }
+                    else
+                    {
+                        itemOrdenProducto.MedidaBasicaCm = 0;
+                        itemOrdenProducto.MedidaOpuestaCm = 0;
+                    }
+
+
                     AppProducts appProductsFind = await this._appProductsService.GetById(item.AppproductsId);
                     if (appProductsFind != null)
                     {

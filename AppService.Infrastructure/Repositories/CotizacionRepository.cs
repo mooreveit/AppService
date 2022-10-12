@@ -79,6 +79,9 @@ namespace AppService.Infrastructure.Repositories
                 fechaDesde = DateTime.Now.AddDays(-diasAcualizaPresupuesto);
 
                 result = await _context.Wsmy501.Where(x => x.FechaActualiza >= fechaDesde).OrderByDescending(x => x.FechaActualiza).Select(p => p.Cotizacion).ToListAsync();
+                //var COTIZACION = "WI01202210010";
+                //result = await _context.Wsmy501.Where(x => x.FechaActualiza >= fechaDesde && x.CodVendedor == "WI01").OrderByDescending(x => x.FechaActualiza).Select(p => p.Cotizacion).ToListAsync();
+
 
                 //result = await _context.Wsmy501.Where(x => x.Fecha >= fechaDesde).Select(p => p.Cotizacion).ToListAsync();
 

@@ -1,7 +1,7 @@
 ﻿using AppService.Core.EntitiesPlanta;
 using AppService.Core.Interfaces;
 using AppService.Infrastructure.DataPlanta;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
