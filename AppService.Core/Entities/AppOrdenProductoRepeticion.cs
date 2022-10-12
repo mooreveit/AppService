@@ -33,6 +33,8 @@ namespace AppService.Core.Entities
         public long? CANT_ORDENADA { get; set; }
         public decimal? PrecioUnitarioUsd { get; set; }
         public decimal? TotalPropuestaUsd { get; set; }
+        public decimal? MedidaBasicaCm { get; set; }
+        public decimal? MedidaOpuestaCm { get; set; }
 
 
 
