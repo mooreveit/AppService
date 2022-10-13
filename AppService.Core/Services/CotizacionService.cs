@@ -115,7 +115,10 @@ namespace AppService.Core.Services
         {
             if (await this.GetByCotizacion(cotizacion.Cotizacion) == null)
                 throw new Exception("Documento No existe");
+
+
             this._unitOfWork.CotizacionRepository.Update(cotizacion);
+
             await this._unitOfWork.SaveChangesAsync();
             return await this.GetByCotizacion(cotizacion.Cotizacion);
         }
@@ -814,7 +817,7 @@ namespace AppService.Core.Services
                 {
                     if (appDetailQuotes.OrdenAnterior > 0)
                     {
-                        await CopiarDatosOrdenAnterior((int)appDetailQuotes.OrdenAnterior, propuestaNew.Cotizacion, propuestaNew.Renglon, propuestaNew.Propuesta);
+                        await CopiarDatosOrdenAnterior((long)appDetailQuotes.OrdenAnterior, propuestaNew.Cotizacion, propuestaNew.Renglon, propuestaNew.Propuesta);
                     }
                     else
                     {
@@ -1768,7 +1771,7 @@ namespace AppService.Core.Services
         }
 
 
-        public async Task CopiarDatosOrdenAnterior(int orden, string cotizacion, int renglon, int propuesta)
+        public async Task CopiarDatosOrdenAnterior(long orden, string cotizacion, int renglon, int propuesta)
         {
 
             var cpry012 = await _unitOfWork.Cpry012Repository.GetByOrdenAsync(orden);
