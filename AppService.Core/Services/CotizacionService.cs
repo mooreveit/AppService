@@ -1777,6 +1777,7 @@ namespace AppService.Core.Services
             var cpry012 = await _unitOfWork.Cpry012Repository.GetByOrdenAsync(orden);
             if (cpry012 != null)
             {
+                ValoresCotizacionDto valoresCotizacion = await this.ValoresCotizacion(appDetailQuotes);
                 var aplicacion = await _unitOfWork.Wsmy406Repository.GetById((short)cpry012.CodAplicacion);
                 var wpry229 = await _unitOfWork.Wpry229Repository.GetByCotizacionRenglonPropuesta(cotizacion, renglon, propuesta);
                 if (wpry229 == null)
@@ -1789,7 +1790,9 @@ namespace AppService.Core.Services
                     wpry229New.Propuesta = propuesta;
                     wpry229New.CantidadProducto = appDetailQuotes.Cantidad / 1000;
                     wpry229New.IdTipoCantidad = 1;
-                    wpry229New.ValorVenta = appDetailQuotes.Precio;
+                    wpry229New.ValorVenta = (decimal)valoresCotizacion.PrecioUnitario;
+                    wpry229New.ValorVentaUsd = valoresCotizacion.PrecioUnitarioUsd;
+
                     wpry229New.Instrucciones = cpry012.InstFacturar.Trim();
                     wpry229New.OrdenAnterior = cpry012.Orden;
                     wpry229New.FlagFiscal = cpry012.Fiscal;
@@ -1836,7 +1839,7 @@ namespace AppService.Core.Services
                                 else
                                 {
                                     var wsmy369 = await _unitOfWork.Wsmy369Repository.GetByOrdenParte(orden, item.Parte);
-                                    if (wsmy369 != null) ;
+                                    if (wsmy369 != null)
                                     {
                                         wpry240New.FrasesMarginales = wsmy369.FraseMarg;
                                     }
