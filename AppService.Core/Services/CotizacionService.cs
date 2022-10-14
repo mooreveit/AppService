@@ -817,7 +817,7 @@ namespace AppService.Core.Services
                 {
                     if (appDetailQuotes.OrdenAnterior > 0)
                     {
-                        await CopiarDatosOrdenAnterior((long)appDetailQuotes.OrdenAnterior, propuestaNew.Cotizacion, propuestaNew.Renglon, propuestaNew.Propuesta);
+                        await CopiarDatosOrdenAnterior((long)appDetailQuotes.OrdenAnterior, propuestaNew.Cotizacion, propuestaNew.Renglon, propuestaNew.Propuesta, appDetailQuotes);
                     }
                     else
                     {
@@ -1771,7 +1771,7 @@ namespace AppService.Core.Services
         }
 
 
-        public async Task CopiarDatosOrdenAnterior(long orden, string cotizacion, int renglon, int propuesta)
+        public async Task CopiarDatosOrdenAnterior(long orden, string cotizacion, int renglon, int propuesta, AppDetailQuotes appDetailQuotes)
         {
 
             var cpry012 = await _unitOfWork.Cpry012Repository.GetByOrdenAsync(orden);
@@ -1787,9 +1787,9 @@ namespace AppService.Core.Services
                     wpry229New.Cotizacion = cotizacion;
                     wpry229New.Renglon = renglon;
                     wpry229New.Propuesta = propuesta;
-                    wpry229New.CantidadProducto = (decimal)cpry012.CantOrdenada / 1000;
+                    wpry229New.CantidadProducto = appDetailQuotes.Cantidad;
                     wpry229New.IdTipoCantidad = 1;
-                    wpry229New.ValorVenta = (decimal)cpry012.PrecioVenta;
+                    wpry229New.ValorVenta = appDetailQuotes.Precio;
                     wpry229New.Instrucciones = cpry012.InstFacturar.Trim();
                     wpry229New.OrdenAnterior = cpry012.Orden;
                     wpry229New.FlagFiscal = cpry012.Fiscal;
@@ -1819,7 +1819,7 @@ namespace AppService.Core.Services
                                 wpry240New.IdConstruccion = 3;
                                 wpry240New.LargoCm = item.MedidaPapel;
                                 wpry240New.AnchoCm = (decimal)cpry012.MedidaBase;
-                                wpry240New.Cantidad = (decimal)(cpry012.CantOrdenada / 1000);
+                                wpry240New.Cantidad = appDetailQuotes.Cantidad;
                                 wpry240New.MedidaBase = cpry012.MedidaBase;
                                 wpry240New.MedidaOpuesta = item.MedidaPapel;
                                 var wpry229Find = await _unitOfWork.Wpry229Repository.GetByCotizacionRenglonPropuesta(cotizacion, renglon, propuesta);

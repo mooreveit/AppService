@@ -148,9 +148,27 @@ namespace AppService.Core.Services
 
             try
             {
+                char invalidCharacter = char.Parse("0");
 
+                char lastCharacter = dto.Nombre.Trim()[dto.Nombre.Trim().Length - 1];
+                if (lastCharacter == invalidCharacter)
+                {
+                    metadata.IsValid = false;
+                    metadata.Message = "Nombre de Contacto contiene un caracter invalido: " + invalidCharacter;
+                    response.Data = false;
+                    response.Meta = metadata;
+                    return response;
+                }
 
-
+                lastCharacter = dto.Nombre.Trim()[dto.Apellido.Trim().Length - 1];
+                if (lastCharacter == invalidCharacter)
+                {
+                    metadata.IsValid = false;
+                    metadata.Message = "Apellido de Contacto contiene un caracter invalido: " + invalidCharacter;
+                    response.Data = false;
+                    response.Meta = metadata;
+                    return response;
+                }
 
                 SapTratamientoContacto sapTratamientoContacto = await _unitOfWork.SapTratamientoContactoRepository.GetById(dto.Tratamiento);
                 if (sapTratamientoContacto == null)
@@ -376,7 +394,27 @@ namespace AppService.Core.Services
             {
 
 
+                char invalidCharacter = char.Parse("0");
 
+                char lastCharacter = dto.Nombre.Trim()[dto.Nombre.Trim().Length - 1];
+                if (lastCharacter == invalidCharacter)
+                {
+                    metadata.IsValid = false;
+                    metadata.Message = "Nombre de Contacto contiene un caracter invalido: " + invalidCharacter;
+                    response.Data = false;
+                    response.Meta = metadata;
+                    return response;
+                }
+
+                lastCharacter = dto.Nombre.Trim()[dto.Apellido.Trim().Length - 1];
+                if (lastCharacter == invalidCharacter)
+                {
+                    metadata.IsValid = false;
+                    metadata.Message = "Apellido de Contacto contiene un caracter invalido: " + invalidCharacter;
+                    response.Data = false;
+                    response.Meta = metadata;
+                    return response;
+                }
 
 
                 SapTratamientoContacto sapTratamientoContacto = await _unitOfWork.SapTratamientoContactoRepository.GetById(dto.Tratamiento);
@@ -690,7 +728,27 @@ namespace AppService.Core.Services
 
             try
             {
+                char invalidCharacter = char.Parse("0");
 
+                char lastCharacter = dto.Nombre.Trim()[dto.Nombre.Trim().Length - 1];
+                if (lastCharacter == invalidCharacter)
+                {
+                    metadata.IsValid = false;
+                    metadata.Message = "Nombre de Contacto contiene un caracter invalido: " + invalidCharacter;
+                    response.Data = null;
+                    response.Meta = metadata;
+                    return response;
+                }
+
+                lastCharacter = dto.Nombre.Trim()[dto.Apellido.Trim().Length - 1];
+                if (lastCharacter == invalidCharacter)
+                {
+                    metadata.IsValid = false;
+                    metadata.Message = "Apellido de Contacto contiene un caracter invalido: " + invalidCharacter;
+                    response.Data = null;
+                    response.Meta = metadata;
+                    return response;
+                }
 
                 dto.Tratamiento = 1;
 
@@ -981,6 +1039,29 @@ namespace AppService.Core.Services
 
             try
             {
+                char invalidCharacter = char.Parse("0");
+
+                char lastCharacter = dto.Nombre.Trim()[dto.Nombre.Trim().Length - 1];
+                if (lastCharacter == invalidCharacter)
+                {
+                    metadata.IsValid = false;
+                    metadata.Message = "Nombre de Contacto contiene un caracter invalido: " + invalidCharacter;
+                    response.Data = null;
+                    response.Meta = metadata;
+                    return response;
+                }
+
+                lastCharacter = dto.Nombre.Trim()[dto.Apellido.Trim().Length - 1];
+                if (lastCharacter == invalidCharacter)
+                {
+                    metadata.IsValid = false;
+                    metadata.Message = "Apellido de Contacto contiene un caracter invalido: " + invalidCharacter;
+                    response.Data = null;
+                    response.Meta = metadata;
+                    return response;
+                }
+
+
 
                 var cliente = await _unitOfWork.MtrClienteRepository.GetByIdAsync(dto.IdCliente);
                 if (cliente == null)
