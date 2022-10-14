@@ -1787,7 +1787,7 @@ namespace AppService.Core.Services
                     wpry229New.Cotizacion = cotizacion;
                     wpry229New.Renglon = renglon;
                     wpry229New.Propuesta = propuesta;
-                    wpry229New.CantidadProducto = appDetailQuotes.Cantidad;
+                    wpry229New.CantidadProducto = appDetailQuotes.Cantidad / 1000;
                     wpry229New.IdTipoCantidad = 1;
                     wpry229New.ValorVenta = appDetailQuotes.Precio;
                     wpry229New.Instrucciones = cpry012.InstFacturar.Trim();
@@ -1819,7 +1819,7 @@ namespace AppService.Core.Services
                                 wpry240New.IdConstruccion = 3;
                                 wpry240New.LargoCm = item.MedidaPapel;
                                 wpry240New.AnchoCm = (decimal)cpry012.MedidaBase;
-                                wpry240New.Cantidad = appDetailQuotes.Cantidad;
+                                wpry240New.Cantidad = appDetailQuotes.Cantidad / 1000;
                                 wpry240New.MedidaBase = cpry012.MedidaBase;
                                 wpry240New.MedidaOpuesta = item.MedidaPapel;
                                 var wpry229Find = await _unitOfWork.Wpry229Repository.GetByCotizacionRenglonPropuesta(cotizacion, renglon, propuesta);
