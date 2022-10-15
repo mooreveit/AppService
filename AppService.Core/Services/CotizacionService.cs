@@ -1531,6 +1531,19 @@ namespace AppService.Core.Services
             }
         }
 
+        public async Task DeleteWpry251ByCotizacion(AppDetailQuotes appDetailQuotes)
+        {
+            List<Wpry251> byCotizacion = await this._unitOfWork.Wpry251Repository.GetByCotizacion(appDetailQuotes.Cotizacion);
+            if (byCotizacion == null)
+                return;
+            foreach (Wpry251 wpry251 in byCotizacion)
+            {
+                _unitOfWork.Wpry251Repository.Delete(wpry251);
+                await this._unitOfWork.SaveChangesAsync();
+            }
+        }
+
+
         public async Task DeletePropuestaCotizacion(AppDetailQuotes appDetailQuotes, int renglon)
         {
             if (await this._unitOfWork.PropuestaRepository.GetByCotizacionRenglonPropuesta(appDetailQuotes.Cotizacion, renglon, 1) == null)
@@ -1567,6 +1580,8 @@ namespace AppService.Core.Services
                         await this.DeleteWpry229ByCotizacion(item);
                         await this.DeleteWpry240ByCotizacion(item);
                         await this.DeleteWpry241ByCotizacion(item);
+                        await this.DeleteWpry251ByCotizacion(item);
+
                         await this.DeletePropuestaCotizacion(item, renglonObj.Renglon);
                         await this.DeleteRenglonCotizacion(item, renglonObj.Renglon);
                     }
@@ -1588,6 +1603,7 @@ namespace AppService.Core.Services
                     await this.DeleteWpry229ByCotizacion(appDetailQuotes);
                     await this.DeleteWpry240ByCotizacion(appDetailQuotes);
                     await this.DeleteWpry241ByCotizacion(appDetailQuotes);
+                    await this.DeleteWpry251ByCotizacion(appDetailQuotes);
                     await this.DeletePropuestaCotizacion(appDetailQuotes, item.Renglon);
                     await this.DeleteRenglonCotizacion(appDetailQuotes, item.Renglon);
 

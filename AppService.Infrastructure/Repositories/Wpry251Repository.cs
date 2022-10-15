@@ -29,6 +29,15 @@ namespace AppService.Infrastructure.Repositories
 
         }
 
+        public async Task<List<Wpry251>> GetByCotizacion(string cotizacion)
+        {
+
+            var wpry251 = await _context.Wpry251.Where(x => x.Cotizacion == cotizacion).ToListAsync();
+            return wpry251;
+
+        }
+
+
 
         public async Task Add(Wpry251 entity)
         {
@@ -50,6 +59,13 @@ namespace AppService.Infrastructure.Repositories
         public void Update(Wpry251 entity)
         {
             _context.Wpry251.Update(entity);
+
+        }
+
+
+        public void Delete(Wpry251 entity)
+        {
+            _context.Wpry251.Remove(entity);
 
         }
     }
