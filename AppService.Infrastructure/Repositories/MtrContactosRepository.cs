@@ -85,7 +85,7 @@ namespace AppService.Infrastructure.Repositories
             if (filter.SearchText.Length > 0)
             {
                 contactos = await _context.MtrContactos.Where(x => (x.IdCliente == idCliente || x.IdCliente == filter.Codigo)).OrderByDescending(x => x.FechaCreacion).ToListAsync();
-                contactos = contactos.Where(x => x.Rif == filter.Rif).OrderByDescending(x => x.FechaCreacion).Skip((filter.PageNumber - 1) * filter.PageSize).Take(filter.PageSize).ToList();
+                //contactos = contactos.Where(x => x.Rif == filter.Rif).OrderByDescending(x => x.FechaCreacion).Skip((filter.PageNumber - 1) * filter.PageSize).Take(filter.PageSize).ToList();
                 contactos = contactos.Where(x => (x.Cargo.ToLower().Contains(filter.SearchText.Trim().ToLower()) || x.Nombre.ToLower().Contains(filter.SearchText.Trim().ToLower()) || x.Email.ToLower().Contains(filter.SearchText.Trim().ToLower()))).OrderByDescending(x => x.FechaCreacion).Skip((filter.PageNumber - 1) * filter.PageSize).Take(filter.PageSize).ToList();
 
             }

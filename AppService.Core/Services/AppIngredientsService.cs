@@ -58,6 +58,7 @@ namespace AppService.Core.Services
                 Message = ""
 
             };
+
             ApiResponse<List<AppIngredientsGetDto>> response = new ApiResponse<List<AppIngredientsGetDto>>(resultDto);
 
             try
@@ -162,7 +163,7 @@ namespace AppService.Core.Services
             {
                 AppIngredients appIngredients = _mapper.Map<AppIngredients>(dto);
 
-                if (dto.Code== null || dto.Code =="")
+                if (dto.Code == null || dto.Code == "")
                 {
                     metadata.IsValid = false;
                     metadata.Message = "Codigo Invalido";
@@ -179,7 +180,7 @@ namespace AppService.Core.Services
                     response.Meta = metadata;
                     return response;
                 }
-                if (dto.Cost<=0)
+                if (dto.Cost <= 0)
                 {
                     metadata.IsValid = false;
                     metadata.Message = "Costo Invalido";
@@ -225,20 +226,20 @@ namespace AppService.Core.Services
                 var inserted = await Insert(appIngredients);
 
                 resultDto = _mapper.Map<AppIngredientsGetDto>(inserted);
-               
+
                 if (AppUnitsFind != null)
                 {
                     AppUnitsGetDto appUnitsGetDto = _mapper.Map<AppUnitsGetDto>(AppUnitsFind);
                     resultDto.AppUnitsGetDto = appUnitsGetDto;
                 }
-               
+
                 if (MtrTipoMonedaPrymaryFind != null)
                 {
                     MtrTipoMonedaDto mtrTipoMonedaDto = _mapper.Map<MtrTipoMonedaDto>(MtrTipoMonedaPrymaryFind);
                     resultDto.PrymaryMtrMonedaDto = mtrTipoMonedaDto;
                 }
 
-               
+
                 if (MtrTipoMonedaSecundaryFind != null)
                 {
                     MtrTipoMonedaDto mtrTipoMonedaDto = _mapper.Map<MtrTipoMonedaDto>(MtrTipoMonedaSecundaryFind);
@@ -267,7 +268,7 @@ namespace AppService.Core.Services
         }
 
 
-        
+
 
         public async Task<AppIngredients> Update(AppIngredients appIngredients)
         {
@@ -285,7 +286,7 @@ namespace AppService.Core.Services
 
 
         }
-       
+
         public async Task<ApiResponse<AppIngredientsGetDto>> UpdateAppIngredient(AppIngredientsUpdateDto dto)
         {
 
@@ -314,7 +315,7 @@ namespace AppService.Core.Services
                     return response;
                 }
 
-               
+
 
                 if (dto.Code == null || dto.Code == "")
                 {
@@ -510,7 +511,7 @@ namespace AppService.Core.Services
         public async Task RecalculateRecipesByIngredient(int id)
         {
 
-           
+
             var recipes = await _unitOfWork.AppRecipesRepository.GetListRecipesByIdIngredients(id);
 
             var newResult =
@@ -518,24 +519,24 @@ namespace AppService.Core.Services
             group c by new
             {
                 c.AppproductsId,
-              
+
             } into gcs
-            select new 
+            select new
             {
                 AppproductsId = (int)gcs.Key.AppproductsId,
-               
+
 
             };
 
 
-            if (newResult!=null )
+            if (newResult != null)
             {
 
                 foreach (var item in newResult)
                 {
-                    
 
-                   await  _appRecipesServices.CalulateRecipeByProduct(item.AppproductsId);
+
+                    await _appRecipesServices.CalulateRecipeByProduct(item.AppproductsId);
 
                 }
 

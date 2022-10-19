@@ -10,6 +10,7 @@ using AppService.Infrastructure.DataCXC;
 using AppService.Infrastructure.DataDW;
 using AppService.Infrastructure.DataFacturacion;
 using AppService.Infrastructure.DataMaestros;
+using AppService.Infrastructure.DataMateriales;
 using AppService.Infrastructure.DataMc;
 using AppService.Infrastructure.DataMooreve;
 using AppService.Infrastructure.DataNomina;
@@ -48,6 +49,7 @@ internal class Program
         string maestrosConecction = "Server=172.28.107.19\\FSVEMCYN03D;Database=Maestros;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
         string sapConecction = "Server=172.28.107.19;Database=SAP;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
         string clientesConecction = "Server=172.28.107.19\\FSVEMCYN03D;Database=Clientes;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
+        string materialesConecction = "Server=172.28.107.19\\FSVEMCYN03D;Database=Materiales;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
         string facturacionConecction = "Server=172.28.107.19\\FSVEMCYN03D;Database=Facturacion;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
         string plantaConecction = "Server=172.28.107.19\\FSVEMCYN03D;Database=Planta;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
         string contratosStockConecction = "Server=172.28.107.19\\FSVEMCYN03D;Database=Contratos Stock;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
@@ -82,6 +84,12 @@ internal class Program
           options.UseSqlServer(clientesConecction)
 
            );
+
+        serviceCollection.AddDbContext<MaterialesContext>(options =>
+
+         options.UseSqlServer(clientesConecction)
+
+          );
 
 
         serviceCollection.AddDbContext<MCContext>(options =>
@@ -186,6 +194,11 @@ internal class Program
                             .AddDbContext<ClientesContext>(options =>
 
                                  options.UseSqlServer(clientesConecction)
+
+                            )
+                             .AddDbContext<MaterialesContext>(options =>
+
+                                 options.UseSqlServer(materialesConecction)
 
                             )
                             .AddDbContext<MCContext>(options =>

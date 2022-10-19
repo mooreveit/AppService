@@ -5,6 +5,7 @@ using AppService.Infrastructure.DataContratosStock;
 using AppService.Infrastructure.DataDW;
 using AppService.Infrastructure.DataFacturacion;
 using AppService.Infrastructure.DataMaestros;
+using AppService.Infrastructure.DataMateriales;
 using AppService.Infrastructure.DataMc;
 
 using AppService.Infrastructure.DataMooreve;
@@ -30,6 +31,7 @@ namespace AppService.Infrastructure.Repositories
         private readonly DWContext _dWContext;
         private readonly NominaContext _nominaContext;
         private readonly SpiContext _spiContext;
+        private readonly MaterialesContext _materialesContext;
 
 
 
@@ -208,8 +210,10 @@ namespace AppService.Infrastructure.Repositories
         public readonly IWpry249Repository _wpry249Repository;
         public readonly IWpry251Repository _wpry251Repository;
 
+        public readonly IWimy001Repository _wimy001Repository;
 
-        public UnitOfWork(RRDContext context, MooreveContext mooreveContext, MCContext mcContext, IMaestrosContext maestrosContext, SapContext sapContext, ClientesContext clientesContext, FacturacionContext facturacionContext, ContratosStockContext contratosStockContext, DWContext dWContext, NominaContext nominaContext, SpiContext spiContext, PlantaContext plantaContext)
+
+        public UnitOfWork(RRDContext context, MooreveContext mooreveContext, MCContext mcContext, IMaestrosContext maestrosContext, SapContext sapContext, ClientesContext clientesContext, FacturacionContext facturacionContext, ContratosStockContext contratosStockContext, DWContext dWContext, NominaContext nominaContext, SpiContext spiContext, PlantaContext plantaContext, MaterialesContext materialesContext)
         {
             _context = context;
             _mooreveContext = mooreveContext;
@@ -223,6 +227,7 @@ namespace AppService.Infrastructure.Repositories
             _nominaContext = nominaContext;
             _spiContext = spiContext;
             _plantaContext = plantaContext;
+            _materialesContext = materialesContext;
         }
 
 
@@ -427,6 +432,9 @@ namespace AppService.Infrastructure.Repositories
 
 
 
+        public IWimy001Repository Wimy001Repository => _wimy001Repository ?? new Wimy001Repository(_materialesContext);
+
+
 
 
         public void Dispose()
@@ -475,6 +483,11 @@ namespace AppService.Infrastructure.Repositories
             {
                 _plantaContext.Dispose();
             }
+            if (_materialesContext == null)
+            {
+                _materialesContext.Dispose();
+            }
+
 
         }
 
@@ -494,6 +507,7 @@ namespace AppService.Infrastructure.Repositories
                 _dWContext.SaveChanges();
                 _nominaContext.SaveChanges();
                 _plantaContext.SaveChanges();
+                _materialesContext.SaveChanges();
                 return true;
             }
             catch (System.Exception e)
@@ -508,9 +522,6 @@ namespace AppService.Infrastructure.Repositories
 
         public async Task<bool> SaveChangesAsync()
         {
-
-
-
             try
             {
                 await _context.SaveChangesAsync();
@@ -524,6 +535,7 @@ namespace AppService.Infrastructure.Repositories
                 await _dWContext.SaveChangesAsync();
                 await _nominaContext.SaveChangesAsync();
                 await _plantaContext.SaveChangesAsync();
+                await _materialesContext.SaveChangesAsync();
                 return true;
             }
             catch (System.Exception e)

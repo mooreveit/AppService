@@ -1,7 +1,5 @@
 ﻿using AppService.Core.EntitiesMooreve;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AppService.Core.Interfaces
@@ -9,7 +7,7 @@ namespace AppService.Core.Interfaces
     public interface IWpry240Repository
     {
 
-
+        Task<List<Csmy011>> GetListTintasActivas();
         Task<List<Wpry240>> GetAll();
 
         Task<Wpry240> GetByCotizacionRenglonPropuestaParte(string cotizacion, int renglon, int propuesta, int parte);

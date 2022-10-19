@@ -42,6 +42,7 @@ namespace AppService.Core.DTOs
         public string descripcionMunicipio { get; set; }
         public bool IntegrarCotizacion { get; set; }
         public long Orden { get; set; }
+        public long OrdenAnterior { get; set; }
         public string ClaseCss { get; set; }
         public string ProductosCotizados { get; set; }
         public MunicipioGetDto MunicipioGetDto { get; set; }

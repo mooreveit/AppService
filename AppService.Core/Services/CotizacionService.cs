@@ -270,6 +270,8 @@ namespace AppService.Core.Services
 
         public async Task IntegrarCotizacion(int generalQuotesId, bool actualizarDetalle)
         {
+
+
             AppGeneralQuotes generalQuotes = await this._unitOfWork.AppGeneralQuotesRepository.GetById(generalQuotesId);
             if (generalQuotes == null)
             {
@@ -688,8 +690,12 @@ namespace AppService.Core.Services
                 if (!prod.Inventariable)
                 {
                     await this.UpdateWpry229(appDetailQuotes, propuesta.Renglon);
-                    await this.UpdateWpry240(appDetailQuotes, propuesta.Renglon);
-                    await this.UpdateWpry241(appDetailQuotes, propuesta.Renglon);
+                    if (appDetailQuotes.OrdenAnterior == 0)
+                    {
+                        await this.UpdateWpry240(appDetailQuotes, propuesta.Renglon);
+                        await this.UpdateWpry241(appDetailQuotes, propuesta.Renglon);
+                    }
+
 
                 }
 
@@ -1800,15 +1806,15 @@ namespace AppService.Core.Services
                 {
                     Wpry229 wpry229New = new Wpry229();
                     wpry229New.IdTipoProducto = aplicacion.CodAplicacion;
-                    wpry229New.DescripcionSolicitud = cpry012.NombreProducto;
+                    wpry229New.DescripcionSolicitud = cpry012.NombreProducto.Trim();
                     wpry229New.Cotizacion = cotizacion;
                     wpry229New.Renglon = renglon;
                     wpry229New.Propuesta = propuesta;
-                    wpry229New.CantidadProducto = appDetailQuotes.Cantidad / 1000;
+                    wpry229New.CantidadProducto = appDetailQuotes.Cantidad;
                     wpry229New.IdTipoCantidad = 1;
                     wpry229New.ValorVenta = (decimal)valoresCotizacion.PrecioUnitario;
                     wpry229New.ValorVentaUsd = valoresCotizacion.PrecioUnitarioUsd;
-
+                    wpry229New.Observaciones = appDetailQuotes.Observaciones;
                     wpry229New.Instrucciones = cpry012.InstFacturar.Trim();
                     wpry229New.OrdenAnterior = cpry012.Orden;
                     wpry229New.FlagFiscal = cpry012.Fiscal;
@@ -1826,21 +1832,25 @@ namespace AppService.Core.Services
                     {
                         foreach (var item in csmy021)
                         {
-                            var wpry240 = await _unitOfWork.Wpry240Repository.GetByCotizacionRenglonPropuestaParte(cotizacion, renglon, propuesta, item.Parte);
+                            var wpry240 = await _unitOfWork.Wpry240Repository.GetByCotizacionRenglonPropuestaParte(cotizacion, renglon, propuesta, item.NoPartePapel);
                             if (wpry240 == null)
                             {
                                 Wpry240 wpry240New = new Wpry240();
                                 wpry240New.Cotizacion = cotizacion;
                                 wpry240New.Renglon = renglon;
                                 wpry240New.Propuesta = propuesta;
-                                wpry240New.IdParte = item.Parte;
+                                wpry240New.IdParte = item.NoPartePapel;
                                 wpry240New.IdPapel = item.CodPapel;
                                 wpry240New.IdConstruccion = 3;
                                 wpry240New.LargoCm = item.MedidaPapel;
                                 wpry240New.AnchoCm = (decimal)cpry012.MedidaBase;
-                                wpry240New.Cantidad = appDetailQuotes.Cantidad / 1000;
+                                wpry240New.Cantidad = appDetailQuotes.Cantidad;
                                 wpry240New.MedidaBase = cpry012.MedidaBase;
                                 wpry240New.MedidaOpuesta = item.MedidaPapel;
+
+                                wpry240New.TipoPapel = wpry240New.IdPapel.Substring(0, 3);
+                                wpry240New.Gramaje = wpry240New.IdPapel.Substring(3, 3);
+
                                 var wpry229Find = await _unitOfWork.Wpry229Repository.GetByCotizacionRenglonPropuesta(cotizacion, renglon, propuesta);
                                 if (wpry229Find != null)
                                 {
@@ -1861,6 +1871,7 @@ namespace AppService.Core.Services
                                     }
                                 }
                                 await _unitOfWork.Wpry240Repository.Add(wpry240New);
+                                await this._unitOfWork.SaveChangesAsync();
                             }
 
                             //Agregar tintas por parte
@@ -1880,7 +1891,7 @@ namespace AppService.Core.Services
                                 if (!idTintaFrente.ToString().IsNullOrEmpty())
                                 {
                                     var wpry241FindFrente = await _unitOfWork.Wpry241Repository.GetByCotizacionRenglonPropuestaParteTinta(cotizacion, renglon, propuesta, item.NoPartePapel, idTintaFrente);
-                                    if (wpry241FindFrente == null)
+                                    if (wpry241FindFrente.Count == 0)
                                     {
                                         Wpry241 wpry241New = new Wpry241();
                                         wpry241New.Cotizacion = cotizacion;
@@ -1890,6 +1901,7 @@ namespace AppService.Core.Services
                                         wpry241New.IdUbicacion = idFrente;
                                         wpry241New.IdTinta = idTintaFrente;
                                         await _unitOfWork.Wpry241Repository.Add(wpry241New);
+                                        await this._unitOfWork.SaveChangesAsync();
                                     }
 
 
@@ -1899,7 +1911,7 @@ namespace AppService.Core.Services
                                 if (!idTintarespaldo.ToString().IsNullOrEmpty())
                                 {
                                     var wpry241FindRespaldo = await _unitOfWork.Wpry241Repository.GetByCotizacionRenglonPropuestaParteTinta(cotizacion, renglon, propuesta, item.NoPartePapel, idTintarespaldo);
-                                    if (wpry241FindRespaldo == null)
+                                    if (wpry241FindRespaldo.Count == 0)
                                     {
                                         Wpry241 wpry241New = new Wpry241();
                                         wpry241New.Cotizacion = cotizacion;
@@ -1909,6 +1921,7 @@ namespace AppService.Core.Services
                                         wpry241New.IdUbicacion = idRespaldo;
                                         wpry241New.IdTinta = idTintarespaldo;
                                         await _unitOfWork.Wpry241Repository.Add(wpry241New);
+                                        await this._unitOfWork.SaveChangesAsync();
                                     }
 
 

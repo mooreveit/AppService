@@ -231,6 +231,8 @@ namespace AppService.Core.Services
           AppRecipesUpdateDto dto)
         {
 
+            //await CalculateAllProduct();
+
             AppConfigApp appConfigApp = await _unitOfWork.AppConfigAppRepository.GetByKey("RecalcularTodosLosProductos");
             if (appConfigApp != null && appConfigApp.Valor == "1")
             {

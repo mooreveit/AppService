@@ -2,15 +2,13 @@
 using AppService.Core.Interfaces;
 using AppService.Infrastructure.DataMooreve;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AppService.Infrastructure.Repositories
 {
-    public class Wpry241Repository: IWpry241Repository
+    public class Wpry241Repository : IWpry241Repository
     {
 
         private readonly MooreveContext _context;
@@ -31,19 +29,24 @@ namespace AppService.Infrastructure.Repositories
         public async Task<Wpry241> GetById(int id)
         {
 
-            return await _context.Wpry241.Where(x => x.Recnum==id).FirstOrDefaultAsync();
+            return await _context.Wpry241.Where(x => x.Recnum == id).FirstOrDefaultAsync();
         }
 
-        public async Task<List<Wpry241>> GetByCotizacionRenglonPropuestaParteTinta(string cotizacion, int renglon, int propuesta, int parte,string idTinta)
+        public async Task<List<Wpry241>> GetByCotizacionRenglonPropuestaParteTinta(string cotizacion, int renglon, int propuesta, int parte, string idTinta)
         {
 
-            return await _context.Wpry241.Where(x => x.Cotizacion == cotizacion && x.Renglon == renglon && x.Propuesta == propuesta && x.IdParte == parte && x.IdTinta==idTinta).ToListAsync();
+            return await _context.Wpry241.Where(x => x.Cotizacion == cotizacion && x.Renglon == renglon && x.Propuesta == propuesta && x.IdParte == parte && x.IdTinta == idTinta).ToListAsync();
+        }
+        public async Task<List<Wpry241>> GetByCotizacionRenglonPropuestaParte(string cotizacion, int renglon, int propuesta, int parte)
+        {
+
+            return await _context.Wpry241.Where(x => x.Cotizacion == cotizacion && x.Renglon == renglon && x.Propuesta == propuesta && x.IdParte == parte).ToListAsync();
         }
 
         public async Task<List<Wpry241>> GetByCotizacion(string cotizacion)
         {
 
-            return await _context.Wpry241.Where(x => x.Cotizacion == cotizacion ).ToListAsync();
+            return await _context.Wpry241.Where(x => x.Cotizacion == cotizacion).ToListAsync();
         }
 
         public async Task Add(Wpry241 entity)
@@ -68,7 +71,7 @@ namespace AppService.Infrastructure.Repositories
         }
 
 
-       
+
 
 
 

@@ -307,6 +307,7 @@ namespace AppService.Core.Services
                         itemAppGeneralQuotesGetDto.ProductosCotizados = "";
                         foreach (var itemDetail in listDetail.Data)
                         {
+                            itemAppGeneralQuotesGetDto.OrdenAnterior = itemDetail.OrdenAnterior;
                             itemAppGeneralQuotesGetDto.ProductosCotizados = itemAppGeneralQuotesGetDto.ProductosCotizados + "" + itemDetail.NombreComercialProducto;
                         }
                         itemAppGeneralQuotesGetDto.AppDetailQuotesGetDto = listDetail.Data;

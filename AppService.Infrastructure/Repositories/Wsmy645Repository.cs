@@ -2,15 +2,13 @@
 using AppService.Core.Interfaces;
 using AppService.Infrastructure.DataMooreve;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AppService.Infrastructure.Repositories
 {
-    public class Wsmy645Repository: IWsmy645Repository
+    public class Wsmy645Repository : IWsmy645Repository
     {
 
         private readonly MooreveContext _context;
@@ -60,7 +58,7 @@ namespace AppService.Infrastructure.Repositories
         public async Task<Wsmy645> EstatusPendiente()
         {
 
-            return await _context.Wsmy645.Where(x=>x.FlagPendiente=="X").FirstOrDefaultAsync();
+            return await _context.Wsmy645.Where(x => x.FlagPendiente == "X").FirstOrDefaultAsync();
         }
 
         public async Task<Wsmy645> EstatusAprobado()

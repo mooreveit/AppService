@@ -108,6 +108,12 @@ namespace AppService.Core.Services
                     AppDetailQuotes byId3 = await this.GetById(item.Id);
 
                     item.StatusAprobacionDto = await this.StatusAprobacion(byId3);
+                    if (byId3.OrdenAnterior == null)
+                    {
+                        byId3.OrdenAnterior = 0;
+
+                    }
+                    item.OrdenAnterior = (long)byId3.OrdenAnterior;
 
                     appProductsFind = (AppProducts)null;
                 }
@@ -359,6 +365,7 @@ namespace AppService.Core.Services
                     response.Data = resultDto;
                     return response;
                 }
+                appDetailQuotesInserted.OrdenAnterior = appDetailQuotesDto.OrdenAnterior;
                 appDetailQuotesInserted = await this.Insert(appDetailQuotes);
                 await this._unitOfWork.SaveChangesAsync();
                 await this._cotizacionService.IntegrarCotizacion(appDetailQuotesInserted.AppGeneralQuotesId, true);
@@ -374,6 +381,7 @@ namespace AppService.Core.Services
                     AppStatusQuote byId3 = await this._appStatusQuoteService.GetById(appDetailQuotesInserted.IdEstatus);
                     if (byId3 != null)
                         resultDto.AppStatusQuoteGetDto = this._mapper.Map<AppStatusQuoteGetDto>((object)byId3);
+                    resultDto.OrdenAnterior = (long)appDetailQuotesInserted.OrdenAnterior;
                     metadata.IsValid = true;
                     metadata.Message = "A la Cotizacion: " + resultDto.Cotizacion + " se le adiciono producto Satisfactoriamente!!";
                 }
@@ -620,6 +628,7 @@ namespace AppService.Core.Services
                     AppStatusQuote byId3 = await this._appStatusQuoteService.GetById(appDetailQuotesUpdated.IdEstatus);
                     if (byId3 != null)
                         resultDto.AppStatusQuoteGetDto = this._mapper.Map<AppStatusQuoteGetDto>((object)byId3);
+                    resultDto.OrdenAnterior = (long)appDetailQuotesUpdated.OrdenAnterior;
                     metadata.IsValid = true;
                     metadata.Message = "Cotizacion: " + resultDto.Cotizacion + " actualizado Satisfactoriamente!!";
                 }
@@ -671,6 +680,18 @@ namespace AppService.Core.Services
 
                         await this._cotizacionService.DeleteCotizacionRenglon(byId);
                         await this.DeteleAppDetailQuotesByDetailQuotesId(appDetailQuotesDeleteDto.Id);
+                        var details = await _unitOfWork.AppDetailQuotesRepository.GetByAppGeneralQuotesId(byId.AppGeneralQuotesId);
+                        if (details.Count == 0)
+                        {
+                            var general = await _unitOfWork.AppGeneralQuotesRepository.GetById(byId.AppGeneralQuotesId);
+                            if (general != null)
+                            {
+                                general.IdEstatus = 1;
+                                _unitOfWork.AppGeneralQuotesRepository.Update(general);
+                                _unitOfWork.SaveChanges();
+
+                            }
+                        }
                         int num = await this.Delete(appDetailQuotesDeleteDto.Id) ? 1 : 0;
                         metadata.IsValid = true;
                         metadata.Message = "Cotizacion: " + appDetailQuotesDeleteDto.Cotizacion + " Eliminada Satisfactoriamente!!";

@@ -8,6 +8,7 @@ using AppService.Infrastructure.DataCXC;
 using AppService.Infrastructure.DataDW;
 using AppService.Infrastructure.DataFacturacion;
 using AppService.Infrastructure.DataMaestros;
+using AppService.Infrastructure.DataMateriales;
 using AppService.Infrastructure.DataMc;
 
 using AppService.Infrastructure.DataMooreve;
@@ -100,11 +101,17 @@ namespace AppService.Api
 
             });
 
-            services.AddDbContext<ClientesContext>(options =>
+            services.AddDbContext<MaterialesContext>(options =>
 
-              options.UseSqlServer(Configuration.GetConnectionString("clientesConecction"))
+              options.UseSqlServer(Configuration.GetConnectionString("materialesConecction"))
 
                );
+
+            services.AddDbContext<ClientesContext>(options =>
+
+             options.UseSqlServer(Configuration.GetConnectionString("clientesConecction"))
+
+              );
 
 
             services.AddDbContext<MCContext>(options =>
@@ -220,6 +227,8 @@ namespace AppService.Api
             services.AddTransient<IAprobacionesServices, AprobacionesServices>();
 
             services.AddTransient<IMunicipioServices, MunicipioServices>();
+
+            services.AddTransient<IAppEspecificacionesServices, AppEspecificacionesServices>();
 
 
             services.AddHttpClient<ISapClient, SapClient>();

@@ -188,6 +188,10 @@ namespace AppService.Core.Interfaces
         ICpry012Repository Cpry012Repository { get; }
         ICsmy021Repository Csmy021Repository { get; }
 
+        //Materiales
+        IWimy001Repository Wimy001Repository { get; }
+
+
         bool SaveChanges();
 
         Task<bool> SaveChangesAsync();

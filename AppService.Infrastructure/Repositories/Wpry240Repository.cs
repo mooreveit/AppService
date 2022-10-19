@@ -5,12 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AppService.Infrastructure.Repositories
 {
-    public  class Wpry240Repository: IWpry240Repository
+    public class Wpry240Repository : IWpry240Repository
     {
 
 
@@ -21,6 +20,12 @@ namespace AppService.Infrastructure.Repositories
             _context = context;
         }
 
+        public async Task<List<Csmy011>> GetListTintasActivas()
+        {
+
+            return await _context.Csmy011.Where(x => x.FlagEliminada != "X").OrderByDescending(x => x.Frecuencia).ToListAsync();
+
+        }
 
         public async Task<List<Wpry240>> GetAll()
         {
@@ -29,27 +34,27 @@ namespace AppService.Infrastructure.Repositories
 
         }
 
-        
 
-        public async Task<Wpry240> GetByCotizacionRenglonPropuestaParte(string cotizacion, int renglon, int propuesta,int parte)
+
+        public async Task<Wpry240> GetByCotizacionRenglonPropuestaParte(string cotizacion, int renglon, int propuesta, int parte)
         {
 
-            return await _context.Wpry240.Where(x => x.Cotizacion == cotizacion && x.Renglon == renglon && x.Propuesta == propuesta && x.IdParte==parte).FirstOrDefaultAsync();
+            return await _context.Wpry240.Where(x => x.Cotizacion == cotizacion && x.Renglon == renglon && x.Propuesta == propuesta && x.IdParte == parte).FirstOrDefaultAsync();
         }
         public async Task<List<Wpry240>> GetByCotizacion(string cotizacion)
         {
 
-            return await _context.Wpry240.Where(x => x.Cotizacion == cotizacion ).ToListAsync();
+            return await _context.Wpry240.Where(x => x.Cotizacion == cotizacion).ToListAsync();
         }
         public async Task<List<Wpry240>> GetByCotizacionRenglon(string cotizacion, int renglon)
         {
 
-            return await _context.Wpry240.Where(x => x.Cotizacion == cotizacion && x.Renglon == renglon ).ToListAsync();
+            return await _context.Wpry240.Where(x => x.Cotizacion == cotizacion && x.Renglon == renglon).ToListAsync();
         }
 
         public async Task Add(Wpry240 entity)
         {
-           
+
 
             try
             {
