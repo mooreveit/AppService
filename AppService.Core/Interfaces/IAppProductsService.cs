@@ -26,7 +26,7 @@ namespace AppService.Core.Interfaces
 
         Task<AppProducts> Update(AppProducts appProducts);
 
-        Task<bool> Delete(short id);
+        Task<bool> Delete(int id);
 
         Task<ApiResponse<bool>> DeleteProduct(AppProductsDeleteDto dto);
 

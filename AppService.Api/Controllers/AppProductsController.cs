@@ -128,7 +128,7 @@ namespace AppService.Api.Controllers
         /// Filtros a aplicar AppVariablesCreateDto,
         /// se realizara el filtro de los datos
         /// </summary>
-        /// <param name="filters"></param>
+        /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
@@ -146,7 +146,7 @@ namespace AppService.Api.Controllers
         /// Filtros a aplicar AppVariablesCreateDto,
         /// se realizara el filtro de los datos
         /// </summary>
-        /// <param name="filters"></param>
+        /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
@@ -156,7 +156,7 @@ namespace AppService.Api.Controllers
         {
             AppProductsController productsController = this;
             Core.Responses.ApiResponse<List<AppProductsGetDto>> response = new Core.Responses.ApiResponse<List<AppProductsGetDto>>(null);
-            Core.Responses.ApiResponse<AppProductsGetDto> newProduct = await productsController._appProductsService.CopyProduct((int)dto.Id);
+            Core.Responses.ApiResponse<AppProductsGetDto> newProduct = await productsController._appProductsService.CopyProduct(dto.Id);
             if (await productsController._appProductsService.GetById(newProduct.Data.Id) != null)
             {
                 Core.Responses.ApiResponse<List<AppRecipesGetDto>> apiResponse = await productsController._appRecipesServices.CopyRecipes(new AppCopyRecipesDto()

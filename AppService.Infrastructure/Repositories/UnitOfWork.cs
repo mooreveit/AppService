@@ -213,6 +213,11 @@ namespace AppService.Infrastructure.Repositories
         public readonly IWimy001Repository _wimy001Repository;
 
 
+        public readonly IAppVariablesEspecificacionesPartesRepository _appVariablesEspecificacionesPartesRepository;
+        public readonly IAppValoresVariablesEspecificacionesPartesRepository _appValoresVariablesEspecificacionesPartesRepository;
+
+
+
         public UnitOfWork(RRDContext context, MooreveContext mooreveContext, MCContext mcContext, IMaestrosContext maestrosContext, SapContext sapContext, ClientesContext clientesContext, FacturacionContext facturacionContext, ContratosStockContext contratosStockContext, DWContext dWContext, NominaContext nominaContext, SpiContext spiContext, PlantaContext plantaContext, MaterialesContext materialesContext)
         {
             _context = context;
@@ -374,6 +379,8 @@ namespace AppService.Infrastructure.Repositories
         public IWpry249Repository Wpry249Repository => _wpry249Repository ?? new Wpry249Repository(_mooreveContext);
         public IWpry251Repository Wpry251Repository => _wpry251Repository ?? new Wpry251Repository(_mooreveContext);
 
+        public IAppVariablesEspecificacionesPartesRepository AppVariablesEspecificacionesPartesRepository => _appVariablesEspecificacionesPartesRepository ?? new AppVariablesEspecificacionesPartesRepository(_mooreveContext);
+        public IAppValoresVariablesEspecificacionesPartesRepository AppValoresVariablesEspecificacionesPartesRepository => _appValoresVariablesEspecificacionesPartesRepository ?? new AppValoresVariablesEspecificacionesPartesRepository(_mooreveContext);
 
 
         public ICobEstadoDeCuentaMultimonedaRepository CobEstadoDeCuentaMultimonedaRepository => _cobEstadoDeCuentaMultimonedaRepository ?? new CobEstadoDeCuentaMultimonedaRepository(_mooreveContext);

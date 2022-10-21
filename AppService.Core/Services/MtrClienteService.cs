@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AppService.Core.Services
@@ -69,7 +70,7 @@ namespace AppService.Core.Services
         public async Task<List<MtrDireccionesDto>> GetDireccionestDtoByCodigo(string codigo)
         {
             var direcciones = await GetDireccionestByCodigo(codigo);
-
+            direcciones = direcciones.Where(x => x.Inactivo == false).ToList();
             List<MtrDireccionesDto> result = new List<MtrDireccionesDto>();
 
             if (direcciones != null)

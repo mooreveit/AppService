@@ -53,6 +53,9 @@ namespace AppService.Core.Services
 
                 List<Wpry240> wpry240 = await _unitOfWork.Wpry240Repository.GetByCotizacion(filter.Cotizacion);
 
+                var appProducts = await _unitOfWork.AppProductsRepository.GetById(appDetailQuotes.IdProducto);
+
+                Wsmy406 aplicacionProducto = await this._unitOfWork.Wsmy406Repository.GetByProduct(appProducts.ExternalCode.Trim());
 
                 if (wpry240 != null && appDetailQuotes != null)
                 {
@@ -103,7 +106,8 @@ namespace AppService.Core.Services
                         var tintasParte = await _unitOfWork.Wpry241Repository.GetByCotizacionRenglonPropuestaParte(item.Cotizacion, item.Renglon, item.Propuesta, item.IdParte);
                         if (tintasParte.Count > 0)
                         {
-
+                            itemPartesGetDto.TintasFrente = "";
+                            itemPartesGetDto.TintasRespaldo = "";
                             foreach (var itemTintas in tintasParte)
                             {
                                 TintasGetDto itemTintasGetDto = new TintasGetDto();
@@ -114,6 +118,30 @@ namespace AppService.Core.Services
                                 itemTintasGetDto.IdUbicacion = itemTintas.IdUbicacion;
                                 itemTintasGetDto.IdTinta = itemTintas.IdTinta;
                                 listTintasGetDto.Add(itemTintasGetDto);
+                                if (itemTintasGetDto.IdUbicacion == 1)
+                                {
+                                    if (itemPartesGetDto.TintasFrente == "")
+                                    {
+                                        itemPartesGetDto.TintasFrente = itemTintas.IdTinta;
+                                    }
+                                    else
+                                    {
+                                        itemPartesGetDto.TintasFrente = itemPartesGetDto.TintasFrente + ";" + itemTintas.IdTinta;
+                                    }
+
+                                }
+                                else
+                                {
+                                    if (itemPartesGetDto.TintasRespaldo == "")
+                                    {
+                                        itemPartesGetDto.TintasRespaldo = itemTintas.IdTinta;
+                                    }
+                                    else
+                                    {
+                                        itemPartesGetDto.TintasRespaldo = itemPartesGetDto.TintasRespaldo + ";" + itemTintas.IdTinta;
+                                    }
+
+                                }
                             }
 
 
@@ -134,7 +162,64 @@ namespace AppService.Core.Services
 
                         }
 
+                        List<AppVariablesEspecificacionesPartesGetDto> appVariablesEspecificacionesPartesGetDto = new List<AppVariablesEspecificacionesPartesGetDto>();
 
+                        var appVariablesEspecificaciones = await _unitOfWork.AppVariablesEspecificacionesPartesRepository.GetByCodAplicacion(aplicacionProducto.CodAplicacion);
+                        if (appVariablesEspecificaciones.Count > 0)
+                        {
+                            foreach (var itemappVariablesEspecificaciones in appVariablesEspecificaciones)
+                            {
+                                AppVariablesEspecificacionesPartesGetDto itemAppVariablesEspecificacionesPartesGetDto = new AppVariablesEspecificacionesPartesGetDto();
+                                itemAppVariablesEspecificacionesPartesGetDto.Id = itemappVariablesEspecificaciones.Id;
+                                itemAppVariablesEspecificacionesPartesGetDto.CodAplicacion = itemappVariablesEspecificaciones.CodAplicacion;
+                                itemAppVariablesEspecificacionesPartesGetDto.IdVariable = itemappVariablesEspecificaciones.IdVariable;
+                                itemAppVariablesEspecificacionesPartesGetDto.NombreVariable = itemappVariablesEspecificaciones.NombreVariable;
+                                itemAppVariablesEspecificacionesPartesGetDto.FlagObligatorio = itemappVariablesEspecificaciones.FlagObligatorio;
+                                itemAppVariablesEspecificacionesPartesGetDto.FlagGralParte = itemappVariablesEspecificaciones.FlagGralParte;
+                                itemAppVariablesEspecificacionesPartesGetDto.Orden = itemappVariablesEspecificaciones.Orden;
+                                List<AppValoresVariablesEspecificacionesPartesGetDto> appValoresVariablesEspecificacionesPartesGetDto = new List<AppValoresVariablesEspecificacionesPartesGetDto>();
+                                var valores = await _unitOfWork.AppValoresVariablesEspecificacionesPartesRepository.GetListByIdVariable(itemappVariablesEspecificaciones.IdVariable);
+                                if (valores.Count > 0)
+                                {
+
+                                    foreach (var itemvalores in valores)
+                                    {
+                                        AppValoresVariablesEspecificacionesPartesGetDto itemAppValoresVariablesEspecificacionesPartesGetDto = new AppValoresVariablesEspecificacionesPartesGetDto();
+                                        itemAppValoresVariablesEspecificacionesPartesGetDto.Id = itemvalores.Id;
+                                        itemAppValoresVariablesEspecificacionesPartesGetDto.IdVariable = itemvalores.IdVariable;
+                                        itemAppValoresVariablesEspecificacionesPartesGetDto.Valor = itemvalores.Valor;
+                                        itemAppValoresVariablesEspecificacionesPartesGetDto.FlagMultipleValor = itemvalores.FlagMultipleValor;
+                                        var especificacionesParteCotizacion = await _unitOfWork.Wpry251Repository.GetByCotizacionRenglonPropuestaVariableParte(item.Cotizacion, item.Renglon, item.Propuesta, itemvalores.IdVariable, item.IdParte);
+                                        if (especificacionesParteCotizacion != null)
+                                        {
+                                            itemAppValoresVariablesEspecificacionesPartesGetDto.ValorReal = especificacionesParteCotizacion.Valor;
+                                        }
+                                        else
+                                        {
+                                            itemAppValoresVariablesEspecificacionesPartesGetDto.ValorReal = "";
+                                        }
+                                        itemAppValoresVariablesEspecificacionesPartesGetDto.Cheked = true;
+                                        if (itemAppValoresVariablesEspecificacionesPartesGetDto.Valor != itemAppValoresVariablesEspecificacionesPartesGetDto.ValorReal)
+                                        {
+                                            itemAppValoresVariablesEspecificacionesPartesGetDto.ValorReal = "";
+                                            itemAppValoresVariablesEspecificacionesPartesGetDto.Cheked = false;
+                                        }
+
+
+                                        appValoresVariablesEspecificacionesPartesGetDto.Add(itemAppValoresVariablesEspecificacionesPartesGetDto);
+                                    }
+                                    itemAppVariablesEspecificacionesPartesGetDto.AppValoresVariablesEspecificacionesPartesGetDto = appValoresVariablesEspecificacionesPartesGetDto;
+                                }
+                                appVariablesEspecificacionesPartesGetDto.Add(itemAppVariablesEspecificacionesPartesGetDto);
+
+                            }
+
+
+
+
+
+                        }
+                        itemPartesGetDto.AppVariablesEspecificacionesPartesGetDto = appVariablesEspecificacionesPartesGetDto;
                         itemPartesGetDto.ListTintasGetDto = listTintasGetDto;
                         itemPartesGetDto.PapelesValidos = papelesValidos;
                         resultPartesDto.Add(itemPartesGetDto);
@@ -152,6 +237,8 @@ namespace AppService.Core.Services
                         }
 
                     }
+
+
 
                     resultDto.ListTintasValidasGetDto = listTintasValidasGetDto;
                     resultDto.ListPartesGetDto = resultPartesDto;

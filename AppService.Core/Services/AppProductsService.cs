@@ -652,7 +652,7 @@ namespace AppService.Core.Services
             }
 
         }
-        public async Task<bool> Delete(short id)
+        public async Task<bool> Delete(int id)
         {
             await this._unitOfWork.AppProductsRepository.Delete((int)id);
             await this._unitOfWork.SaveChangesAsync();

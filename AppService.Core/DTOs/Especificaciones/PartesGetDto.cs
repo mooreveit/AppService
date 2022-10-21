@@ -14,8 +14,11 @@ namespace AppService.Core.DTOs.Especificaciones
         public string FrasesMarginales { get; set; }
         public string TipoPapel { get; set; }
         public string Gramaje { get; set; }
+        public string TintasFrente { get; set; }
+        public string TintasRespaldo { get; set; }
         public List<PapelesTipoGramaje> PapelesValidos { get; set; }
         public List<TintasGetDto> ListTintasGetDto { get; set; }
+        public List<AppVariablesEspecificacionesPartesGetDto> AppVariablesEspecificacionesPartesGetDto { get; set; }
 
 
 

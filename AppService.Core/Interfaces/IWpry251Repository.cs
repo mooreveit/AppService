@@ -12,6 +12,7 @@ namespace AppService.Core.Interfaces
         void Update(Wpry251 entity);
         Task<List<Wpry251>> GetByCotizacion(string cotizacion);
         void Delete(Wpry251 entity);
+        Task<Wpry251> GetByCotizacionRenglonPropuestaVariableParte(string cotizacion, int renglon, int propuesta, string idVariable, int idParte);
 
 
 

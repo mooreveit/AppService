@@ -145,6 +145,8 @@ namespace AppService.Core.Interfaces
         IWpry251Repository Wpry251Repository { get; }
         ICobEstadoDeCuentaMultimonedaRepository CobEstadoDeCuentaMultimonedaRepository { get; }
 
+        IAppValoresVariablesEspecificacionesPartesRepository AppValoresVariablesEspecificacionesPartesRepository { get; }
+        IAppVariablesEspecificacionesPartesRepository AppVariablesEspecificacionesPartesRepository { get; }
 
 
         //Maestros

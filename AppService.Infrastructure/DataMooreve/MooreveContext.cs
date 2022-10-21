@@ -19,6 +19,8 @@ namespace AppService.Infrastructure.DataMooreve
 
 
 
+        public virtual DbSet<AppVariablesEspecificacionesPartes> AppVariablesEspecificacionesPartes { get; set; }
+        public virtual DbSet<AppValoresVariablesEspecificacionesPartes> AppValoresVariablesEspecificacionesPartes { get; set; }
 
         public virtual DbSet<ValoresAdicionalesProducto> ValoresAdicionalesProducto { get; set; }
         public virtual DbSet<Activos> Activos { get; set; }

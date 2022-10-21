@@ -29,6 +29,14 @@ namespace AppService.Infrastructure.Repositories
 
         }
 
+        public async Task<Wpry251> GetByCotizacionRenglonPropuestaVariableParte(string cotizacion, int renglon, int propuesta, string idVariable, int idParte)
+        {
+
+            var wpry251 = await _context.Wpry251.Where(x => x.Cotizacion == cotizacion && x.Renglon == renglon && x.Propuesta == propuesta && x.IdVariable.Trim() == idVariable.Trim() && x.IdParte == idParte).FirstOrDefaultAsync();
+            return wpry251;
+
+        }
+
         public async Task<List<Wpry251>> GetByCotizacion(string cotizacion)
         {
 

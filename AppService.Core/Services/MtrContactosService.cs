@@ -728,23 +728,13 @@ namespace AppService.Core.Services
 
             try
             {
-                char invalidCharacter = char.Parse("0");
 
-                char lastCharacter = dto.Nombre.Trim()[dto.Nombre.Trim().Length - 1];
-                if (lastCharacter == invalidCharacter)
+
+
+                if (dto.Apellido.Trim() == "0")
                 {
                     metadata.IsValid = false;
-                    metadata.Message = "Nombre de Contacto contiene un caracter invalido: " + invalidCharacter;
-                    response.Data = null;
-                    response.Meta = metadata;
-                    return response;
-                }
-
-                lastCharacter = dto.Nombre.Trim()[dto.Apellido.Trim().Length - 1];
-                if (lastCharacter == invalidCharacter)
-                {
-                    metadata.IsValid = false;
-                    metadata.Message = "Apellido de Contacto contiene un caracter invalido: " + invalidCharacter;
+                    metadata.Message = "Apellido de Contacto contiene un caracter invalido: " + dto.Apellido.Trim();
                     response.Data = null;
                     response.Meta = metadata;
                     return response;
@@ -1889,8 +1879,10 @@ namespace AppService.Core.Services
                 result.Poder = "4";
                 result.Departamento = "2";
             }
-
-
+            if (mtrContactos.IdClienteOdoo == null) mtrContactos.IdClienteOdoo = 0;
+            if (mtrContactos.IdContactoOdoo == null) mtrContactos.IdContactoOdoo = 0;
+            result.IdClienteOdoo = (int)mtrContactos.IdClienteOdoo;
+            result.IdContactoOdoo = (int)mtrContactos.IdContactoOdoo;
 
 
             result.TipoNegocio = "";

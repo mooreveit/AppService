@@ -248,9 +248,7 @@ namespace AppService.Infrastructure.Repositories
         }
 
 
-        public bool VariablesInRecipes(
-     List<AppVariableSearchCompareQueryFilter> listVariables,
-     List<AppRecipes> recipes)
+        public bool VariablesInRecipes(List<AppVariableSearchCompareQueryFilter> listVariables, List<AppRecipes> recipes)
         {
             bool flag = false;
             foreach (AppVariableSearchCompareQueryFilter listVariable in listVariables)
