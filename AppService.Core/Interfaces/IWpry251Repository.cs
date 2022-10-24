@@ -13,7 +13,8 @@ namespace AppService.Core.Interfaces
         Task<List<Wpry251>> GetByCotizacion(string cotizacion);
         void Delete(Wpry251 entity);
         Task<Wpry251> GetByCotizacionRenglonPropuestaVariableParte(string cotizacion, int renglon, int propuesta, string idVariable, int idParte);
-
+        Task<List<Wpry251>> GetListByCotizacionRenglonPropuestaVariableParte(string cotizacion, int renglon, int propuesta, string idVariable, int idParte);
+        void DeleteRange(List<Wpry251> entities);
 
 
     }

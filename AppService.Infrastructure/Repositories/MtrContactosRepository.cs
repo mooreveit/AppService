@@ -95,23 +95,23 @@ namespace AppService.Infrastructure.Repositories
 
             }
 
-            List<MtrContactos> result = new List<MtrContactos>();
+            //List<MtrContactos> result = new List<MtrContactos>();
 
 
-            MtrContactos resultItem = new MtrContactos();
+            //MtrContactos resultItem = new MtrContactos();
 
-            foreach (var item in contactos)
-            {
-                var resultBusqueda = result.Where(x => x.Email.Trim() == item.Email.Trim()).FirstOrDefault();
-                if (resultBusqueda == null)
-                {
-                    result.Add(item);
+            //foreach (var item in contactos)
+            //{
+            //    var resultBusqueda = result.Where(x => x.Email.Trim() == item.Email.Trim()).FirstOrDefault();
+            //    if (resultBusqueda == null)
+            //    {
+            //        result.Add(item);
 
-                }
+            //    }
 
-            }
+            //}
 
-            return result;
+            return contactos;
         }
 
 

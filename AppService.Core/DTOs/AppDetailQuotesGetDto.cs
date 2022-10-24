@@ -37,6 +37,8 @@ namespace AppService.Core.DTOs
 
         public Decimal MedidaOpuesta { get; set; }
 
+        public decimal CantidadTintas { get; set; }
+
         public AppProductConversionGetDto AppProductConversionGetDto { get; set; }
 
         public AppProductsGetDto AppProductsGetDto { get; set; }

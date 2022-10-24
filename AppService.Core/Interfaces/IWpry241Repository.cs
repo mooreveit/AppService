@@ -17,6 +17,7 @@ namespace AppService.Core.Interfaces
         void Update(Wpry241 entity);
 
         Task Delete(int id);
+        Task DeleteRange(List<Wpry241> entities);
 
         Task<List<Wpry241>> GetByCotizacion(string cotizacion);
 

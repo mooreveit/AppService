@@ -37,6 +37,14 @@ namespace AppService.Infrastructure.Repositories
 
         }
 
+        public async Task<List<Wpry251>> GetListByCotizacionRenglonPropuestaVariableParte(string cotizacion, int renglon, int propuesta, string idVariable, int idParte)
+        {
+
+            var wpry251 = await _context.Wpry251.Where(x => x.Cotizacion == cotizacion && x.Renglon == renglon && x.Propuesta == propuesta && x.IdVariable.Trim() == idVariable.Trim() && x.IdParte == idParte).ToListAsync();
+            return wpry251;
+
+        }
+
         public async Task<List<Wpry251>> GetByCotizacion(string cotizacion)
         {
 
@@ -74,6 +82,12 @@ namespace AppService.Infrastructure.Repositories
         public void Delete(Wpry251 entity)
         {
             _context.Wpry251.Remove(entity);
+
+        }
+
+        public void DeleteRange(List<Wpry251> entities)
+        {
+            _context.Wpry251.RemoveRange(entities);
 
         }
     }

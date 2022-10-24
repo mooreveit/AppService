@@ -114,6 +114,8 @@ namespace AppService.Core.Services
 
                     }
                     item.OrdenAnterior = (long)byId3.OrdenAnterior;
+                    var cantTintas = await _appProductsService.CantidaTintasProducto(item.IdProducto);
+                    item.CantidadTintas = cantTintas;
 
                     appProductsFind = (AppProducts)null;
                 }
@@ -446,6 +448,11 @@ namespace AppService.Core.Services
                     return response;
                 }
 
+                if (appDetailQuotesUpdateDto.IdProducto != appDetailQuotes.IdProducto)
+                {
+                    await _cotizacionService.DeleteCotizacionRenglon(appDetailQuotes);
+                }
+
 
 
 
@@ -521,6 +528,8 @@ namespace AppService.Core.Services
                     response.Data = resultDto;
                     return response;
                 }
+
+
                 Decimal precioLista = appDetailQuotesUpdateDto.PrecioLista;
                 AppService.Core.EntitiesMC.TPaTasaReferencial tasaByFecha = await this._tPaTasaReferencialServices.GetTasaByFecha(DateTime.Now);
                 long? idMtrTipoMoneda = appDetailQuotes.AppGeneralQuotes.IdMtrTipoMoneda;

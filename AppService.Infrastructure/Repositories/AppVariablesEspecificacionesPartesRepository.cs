@@ -23,6 +23,14 @@ namespace AppService.Infrastructure.Repositories
             return await _context.AppVariablesEspecificacionesPartes.Where(x => x.CodAplicacion == codAplicacion && x.FlagGralParte == "").ToListAsync();
 
         }
+        public async Task<List<AppVariablesEspecificacionesPartes>> GetByCodAplicacionGeneral(int codAplicacion)
+        {
+
+            return await _context.AppVariablesEspecificacionesPartes.Where(x => x.CodAplicacion == codAplicacion && x.FlagGralParte != "").ToListAsync();
+
+        }
+
+
 
     }
 }

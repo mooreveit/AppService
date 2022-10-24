@@ -6,7 +6,7 @@ namespace AppService.Core.DTOs.Especificaciones
     {
         public List<PartesGetDto> ListPartesGetDto { get; set; }
         public List<TintasValidasGetDto> ListTintasValidasGetDto { get; set; }
-
+        public List<AppVariablesEspecificacionesGeneralGetDto> AppVariablesEspecificacionesGeneralGetDto { get; set; }
 
     }
 }

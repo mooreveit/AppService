@@ -45,6 +45,28 @@ namespace AppService.Api.Controllers
 
 
         }
+        /// <summary>
+        /// Crea y Retorna los datos de AppGeneralQuotes
+        ///  
+        /// 
+        /// </summary>
+        /// <param name="filter">Filtros a aplicar PartesFilter, si en el objeto incluye Cotizacion, se realizara el filtro de los datos</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("[action]")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<List<PartesGetDto>>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateEspecificaciones(EspecificacionesUpdateDto dto)
+        {
+
+
+            var result = await _appEspecificacionesServices.UpdateEspecificaciones(dto);
+            return Ok(result);
+
+
+        }
+
+
 
     }
 }

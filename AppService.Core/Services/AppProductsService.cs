@@ -425,7 +425,19 @@ namespace AppService.Core.Services
                 return (AppProducts)null;
             }
         }
-
+        public async Task<decimal> CantidaTintasProducto(int idProduct)
+        {
+            var recipes = await _unitOfWork.AppRecipesRepository.GetListRecipesByProductIdVariableCode(idProduct, "CANT_TINTAS");
+            if (recipes.Count > 0)
+            {
+                var recipe = recipes[0];
+                return (decimal)recipe.Quantity;
+            }
+            else
+            {
+                return 0;
+            }
+        }
 
         public async Task SendAllToOdoo()
         {

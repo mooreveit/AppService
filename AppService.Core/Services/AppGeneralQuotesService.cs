@@ -23,6 +23,7 @@ namespace AppService.Core.Services
         private readonly IMtrClienteService _mtrClienteService;
         private readonly IAppDetailQuotesService _appDetailQuotesService;
         private readonly ICotizacionService _cotizacionService;
+        private readonly IAppProductsService _appProductsService;
         private readonly PaginationOptions _paginationOptions;
 
         public AppGeneralQuotesService(IUnitOfWork unitOfWork,
@@ -31,7 +32,8 @@ namespace AppService.Core.Services
                                         IOfdCotizacionService ofdCotizacionService,
                                         IMtrClienteService mtrClienteService,
                                         IAppDetailQuotesService appDetailQuotesService,
-                                        ICotizacionService cotizacionService
+                                        ICotizacionService cotizacionService,
+                                        IAppProductsService appProductsService
                                         )
         {
             _unitOfWork = unitOfWork;
@@ -40,6 +42,7 @@ namespace AppService.Core.Services
             _mtrClienteService = mtrClienteService;
             _appDetailQuotesService = appDetailQuotesService;
             _cotizacionService = cotizacionService;
+            _appProductsService = appProductsService;
             _paginationOptions = options.Value;
         }
 
@@ -308,6 +311,8 @@ namespace AppService.Core.Services
                         foreach (var itemDetail in listDetail.Data)
                         {
                             itemAppGeneralQuotesGetDto.OrdenAnterior = itemDetail.OrdenAnterior;
+
+
                             itemAppGeneralQuotesGetDto.ProductosCotizados = itemAppGeneralQuotesGetDto.ProductosCotizados + "" + itemDetail.NombreComercialProducto;
                         }
                         itemAppGeneralQuotesGetDto.AppDetailQuotesGetDto = listDetail.Data;

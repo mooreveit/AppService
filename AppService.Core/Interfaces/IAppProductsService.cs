@@ -17,6 +17,7 @@ namespace AppService.Core.Interfaces
     public interface IAppProductsService
     {
 
+        Task<decimal> CantidaTintasProducto(int idProduct);
         Task SendAllToOdoo();
         Task<List<AppProducts>> GetAll();
 
