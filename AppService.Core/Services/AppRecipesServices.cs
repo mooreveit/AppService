@@ -6,6 +6,7 @@ using AppService.Core.QueryFilters;
 using AppService.Core.Responses;
 using AutoMapper;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -362,7 +363,7 @@ namespace AppService.Core.Services
                     recipe.Formula = dto.Formula;
                     recipe.FormulaValue = "";
                 }
-                await ValidaFormula(recipe);
+                //await ValidaFormula(recipe);
                 await UpdateVariableSearchByProduct((int)dto.AppproductsId);
                 List<AppRecipesGetDto> appRecipesGetDtoList = await CalulateRecipeByProduct((int)dto.AppproductsId);
                 metadata.IsValid = true;
@@ -487,6 +488,14 @@ namespace AppService.Core.Services
                         mensaje = mensaje + item + " con orden de calculo" + recetaVariable.OrderCalculate + " >= " + recipe.OrderCalculate + " " + recipe.Description;
                     }
                 }
+                else
+                {
+                    var config = await _unitOfWork.AppConfigAppRepository.GetByKey(item);
+                    if (config == null)
+                    {
+                        mensaje = mensaje + item + " No existe en Receta y no existe en Variables Generales (AppConfig)";
+                    }
+                }
 
             }
 
@@ -513,23 +522,35 @@ namespace AppService.Core.Services
                     return result;
                 }
                 string valueFormula = await this.GetValueFormula(recipe.Formula, recipe.Appproducts.Code, recipe.Code);
-                object obj = new DataTable().Compute(valueFormula, "");
-                obj.ToString();
-                result = Convert.ToDecimal(obj.ToString());
-                if (recipe.AfectaCosto.Value)
+                recipe.FormulaValue = valueFormula;
+                var mensaje = await ValidaFormula(recipe);
+                if (mensaje.IsNullOrEmpty())
                 {
-                    recipe.TotalCost = new Decimal?(result);
+                    object obj = new DataTable().Compute(valueFormula, "");
+                    obj.ToString();
+                    result = Convert.ToDecimal(obj.ToString());
+                    if (recipe.AfectaCosto.Value)
+                    {
+                        recipe.TotalCost = new Decimal?(result);
+                    }
+                    else
+                    {
+                        bool? truncarEntero = recipe.TruncarEntero;
+                        bool flag = true;
+                        recipe.Quantity = !(truncarEntero.GetValueOrDefault() == flag & truncarEntero.HasValue) ? new Decimal?(result) : new Decimal?(Decimal.Truncate(result));
+                    }
+                    AppRecipes appRecipes = await this.Update(recipe);
                 }
                 else
                 {
-                    bool? truncarEntero = recipe.TruncarEntero;
-                    bool flag = true;
-                    recipe.Quantity = !(truncarEntero.GetValueOrDefault() == flag & truncarEntero.HasValue) ? new Decimal?(result) : new Decimal?(Decimal.Truncate(result));
+                    recipe.MensajeValidacionFormula = mensaje;
+                    AppRecipes appRecipes = await this.Update(recipe);
+                    result = 0M;
                 }
-                recipe.FormulaValue = valueFormula;
-                var mensaje = await ValidaFormula(recipe);
-                recipe.MensajeValidacionFormula = mensaje;
-                AppRecipes appRecipes = await this.Update(recipe);
+
+
+
+
                 return result;
             }
             catch (Exception ex)
@@ -631,7 +652,10 @@ namespace AppService.Core.Services
                 return resultDto;
             foreach (AppRecipes recipe in recipesByProductId)
             {
-
+                if (recipe.Code == "CORRIDA")
+                {
+                    var detener = 1;
+                }
                 Decimal formula = await this.CalculateFormula(recipe);
             }
             await this.UpdatePriceByProduct(productId);

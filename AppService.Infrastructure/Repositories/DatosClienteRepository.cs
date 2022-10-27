@@ -57,30 +57,19 @@ namespace AppService.Infrastructure.Repositories
             try
             {
 
-                var vendedor = _rrdContext.MtrVendedor.Where(x => x.Codigo == codVendedor).FirstOrDefault();
-                if (vendedor != null)
-                {
-                    var ultimaCotizacion = _context.DatosCliente.Where(x => x.CodVend == codVendedor).OrderByDescending(x => x.NumCot).FirstOrDefault();
-                    if (ultimaCotizacion != null)
-                    {
-                        result = ultimaCotizacion.NumCot + 1;
-                    }
-                    else
-                    {
-                        result = 1;
-                    }
 
+                var ultimaCotizacion = _context.DatosCliente.OrderByDescending(x => x.NumCot).FirstOrDefault();
+                if (ultimaCotizacion != null)
+                {
+                    result = ultimaCotizacion.NumCot + 1;
                 }
                 else
                 {
-                    var proxima = vendedor.NroVendedor.ToString() + "0001";
-                    result = decimal.Parse(proxima);
+                    result = 1;
                 }
-                //var query = $"select mooreve.dbo.FnCorrelativoStock('{ codVendedor.Trim()}')";
-                //var data = _context.DatosCliente.FromSqlRaw("select mooreve.dbo.FnCorrelativoStock({0})", codVendedor.Trim()).Single();
-                //var result = _context.DatosCliente.FromSqlRaw(query).Select(b => new {
-                //    NumCot = b.NumCot
-                //}).Single();
+
+
+
 
                 return result; //result.NumCot;
             }

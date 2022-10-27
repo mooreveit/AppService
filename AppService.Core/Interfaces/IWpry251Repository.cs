@@ -15,7 +15,7 @@ namespace AppService.Core.Interfaces
         Task<Wpry251> GetByCotizacionRenglonPropuestaVariableParte(string cotizacion, int renglon, int propuesta, string idVariable, int idParte);
         Task<List<Wpry251>> GetListByCotizacionRenglonPropuestaVariableParte(string cotizacion, int renglon, int propuesta, string idVariable, int idParte);
         void DeleteRange(List<Wpry251> entities);
-
+        Task<Wpry251> GetByCotizacionRenglonPropuestaVariableParteValor(string cotizacion, int renglon, int propuesta, string idVariable, int idParte, string valor);
 
     }
 }

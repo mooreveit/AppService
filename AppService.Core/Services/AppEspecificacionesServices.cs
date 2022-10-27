@@ -190,7 +190,7 @@ namespace AppService.Core.Services
                                         itemAppValoresVariablesEspecificacionesPartesGetDto.IdVariable = itemvalores.IdVariable;
                                         itemAppValoresVariablesEspecificacionesPartesGetDto.Valor = itemvalores.Valor;
                                         itemAppValoresVariablesEspecificacionesPartesGetDto.FlagMultipleValor = itemvalores.FlagMultipleValor;
-                                        var especificacionesParteCotizacion = await _unitOfWork.Wpry251Repository.GetByCotizacionRenglonPropuestaVariableParte(item.Cotizacion, item.Renglon, item.Propuesta, itemvalores.IdVariable, item.IdParte);
+                                        var especificacionesParteCotizacion = await _unitOfWork.Wpry251Repository.GetByCotizacionRenglonPropuestaVariableParteValor(item.Cotizacion, item.Renglon, item.Propuesta, itemvalores.IdVariable, item.IdParte, itemvalores.Valor);
                                         if (especificacionesParteCotizacion != null)
                                         {
                                             itemAppValoresVariablesEspecificacionesPartesGetDto.ValorReal = especificacionesParteCotizacion.Valor;
@@ -199,10 +199,13 @@ namespace AppService.Core.Services
                                         {
                                             itemAppValoresVariablesEspecificacionesPartesGetDto.ValorReal = "";
                                         }
-                                        itemAppValoresVariablesEspecificacionesPartesGetDto.Cheked = true;
-                                        if (itemAppValoresVariablesEspecificacionesPartesGetDto.Valor != itemAppValoresVariablesEspecificacionesPartesGetDto.ValorReal)
+
+                                        if (itemAppValoresVariablesEspecificacionesPartesGetDto.ValorReal.Length > 0)
                                         {
-                                            itemAppValoresVariablesEspecificacionesPartesGetDto.ValorReal = "";
+                                            itemAppValoresVariablesEspecificacionesPartesGetDto.Cheked = true;
+                                        }
+                                        else
+                                        {
                                             itemAppValoresVariablesEspecificacionesPartesGetDto.Cheked = false;
                                         }
 
@@ -263,7 +266,7 @@ namespace AppService.Core.Services
                                     itemAppValoresVariablesEspecificacionesGeneralGetDto.IdVariable = itemvalores.IdVariable;
                                     itemAppValoresVariablesEspecificacionesGeneralGetDto.Valor = itemvalores.Valor;
                                     itemAppValoresVariablesEspecificacionesGeneralGetDto.FlagMultipleValor = itemvalores.FlagMultipleValor;
-                                    var especificacionesParteCotizacion = await _unitOfWork.Wpry251Repository.GetByCotizacionRenglonPropuestaVariableParte(filter.Cotizacion, 1, 1, itemvalores.IdVariable, 0);
+                                    var especificacionesParteCotizacion = await _unitOfWork.Wpry251Repository.GetByCotizacionRenglonPropuestaVariableParteValor(filter.Cotizacion, 1, 1, itemvalores.IdVariable, 0, itemvalores.Valor);
                                     if (especificacionesParteCotizacion != null)
                                     {
                                         itemAppValoresVariablesEspecificacionesGeneralGetDto.ValorReal = especificacionesParteCotizacion.Valor;
@@ -272,12 +275,16 @@ namespace AppService.Core.Services
                                     {
                                         itemAppValoresVariablesEspecificacionesGeneralGetDto.ValorReal = "";
                                     }
-                                    itemAppValoresVariablesEspecificacionesGeneralGetDto.Cheked = true;
-                                    if (itemAppValoresVariablesEspecificacionesGeneralGetDto.Valor != itemAppValoresVariablesEspecificacionesGeneralGetDto.ValorReal)
+
+                                    if (itemAppValoresVariablesEspecificacionesGeneralGetDto.ValorReal.Length > 0)
                                     {
-                                        itemAppValoresVariablesEspecificacionesGeneralGetDto.ValorReal = "";
+                                        itemAppValoresVariablesEspecificacionesGeneralGetDto.Cheked = true;
+                                    }
+                                    else
+                                    {
                                         itemAppValoresVariablesEspecificacionesGeneralGetDto.Cheked = false;
                                     }
+
 
 
                                     listAppValoresVariablesEspecificacionesGeneralGetDto.Add(itemAppValoresVariablesEspecificacionesGeneralGetDto);
@@ -287,8 +294,15 @@ namespace AppService.Core.Services
                             appVariablesEspecificacionesGeneralGetDto.Add(itemAppVariablesEspecificacionesGeneralGetDto);
 
                         }
-
                     }
+
+
+                    var wpry229 = await _unitOfWork.Wpry229Repository.GetByCotizacionRenglonPropuesta(filter.Cotizacion, filter.Renglon, filter.Propuesta);
+                    if (wpry229 != null)
+                    {
+                        resultDto.IdTipoOrden = (short)wpry229.TipoOrden;
+                    }
+
                     resultDto.AppVariablesEspecificacionesGeneralGetDto = appVariablesEspecificacionesGeneralGetDto;
 
                     resultDto.ListTintasValidasGetDto = listTintasValidasGetDto;
@@ -339,6 +353,23 @@ namespace AppService.Core.Services
             ApiResponse<EspecificacionesGetDto> response = new ApiResponse<EspecificacionesGetDto>(resultDto);
             try
             {
+                var wpry229 = await _unitOfWork.Wpry229Repository.GetByCotizacionRenglonPropuesta(dto.PartesFilter.Cotizacion, dto.PartesFilter.Renglon, dto.PartesFilter.Propuesta);
+                if (wpry229 != null)
+                {
+                    if (wpry229.OrdenAnterior > 0 && dto.IdTipoOrden == 3)
+                    {
+                        metadata.IsValid = false;
+                        metadata.Message = "Cotizacion contiene una orden anterior(" + wpry229.OrdenAnterior.ToString() + ")" + " No puede seleccionar 3 - NUEVA";
+                        response.Data = null;
+                        response.Meta = metadata;
+                        return response;
+                    }
+
+                    wpry229.TipoOrden = dto.IdTipoOrden;
+                    _unitOfWork.Wpry229Repository.Update(wpry229);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
                 //*********ACTUALIZAMOS LAS CARACTERISTICAS GENERALES***********
                 foreach (var item in dto.appVariablesEspecificacionesGeneralGetDto)
                 {
@@ -351,7 +382,9 @@ namespace AppService.Core.Services
                         await _unitOfWork.SaveChangesAsync();
                     }
 
-                    foreach (var itemDetail in item.AppValoresVariablesEspecificacionesGeneralGetDto.Where(x => x.ValorReal.Length > 0).ToList())
+
+                    var especificacionesGeneralesConValores = item.AppValoresVariablesEspecificacionesGeneralGetDto.Where(x => x.ValorReal.Length > 0).ToList();
+                    foreach (var itemDetail in especificacionesGeneralesConValores)
                     {
 
 
@@ -363,7 +396,7 @@ namespace AppService.Core.Services
                         wpry251.IdParte = 0;
                         wpry251.Valor = itemDetail.ValorReal;
                         wpry251.FechaRegistro = DateTime.Now;
-                        _unitOfWork.Wpry251Repository.Add(wpry251);
+                        await _unitOfWork.Wpry251Repository.Add(wpry251);
                         await _unitOfWork.SaveChangesAsync();
 
                     }
@@ -398,7 +431,7 @@ namespace AppService.Core.Services
                             wpry251.IdParte = item.IdParte;
                             wpry251.Valor = itemDetail.ValorReal;
                             wpry251.FechaRegistro = DateTime.Now;
-                            _unitOfWork.Wpry251Repository.Add(wpry251);
+                            await _unitOfWork.Wpry251Repository.Add(wpry251);
                             await _unitOfWork.SaveChangesAsync();
 
                         }
