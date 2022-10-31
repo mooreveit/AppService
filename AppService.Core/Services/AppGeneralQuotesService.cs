@@ -287,7 +287,21 @@ namespace AppService.Core.Services
                     else
                     {
                         itemAppGeneralQuotesGetDto.PorcFlete = await GetFleteByIdDireccionEntrega(item.IdDireccionEntregar);
-                        var municipio = await _unitOfWork.Winy243Repository.GetByEstadoMunicipio(direccionEntregar.Estado, direccionEntregar.Municipio);
+
+                        string idEstado = "";
+                        string idMunicipio = "";
+                        if (direccionEntregar.Estado == null)
+                        {
+                            idEstado = "01";
+                            idMunicipio = "01";
+                        }
+                        else
+                        {
+                            idEstado = direccionEntregar.Estado.Trim();
+                            idMunicipio = direccionEntregar.Municipio.Trim();
+                        }
+
+                        var municipio = await _unitOfWork.Winy243Repository.GetByEstadoMunicipio(idEstado, idMunicipio);
                         if (municipio != null)
                         {
                             itemAppGeneralQuotesGetDto.IdMunicipio = municipio.Recnum;

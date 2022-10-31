@@ -1795,6 +1795,13 @@ namespace AppService.Core.Services
 
         public async Task CopiarDatosOrdenAnterior(long orden, string cotizacion, int renglon, int propuesta, AppDetailQuotes appDetailQuotes)
         {
+            short defaultTipoOrden = 1;
+            var tipoOrden = await _unitOfWork.AppConfigAppRepository.GetByKey("DefaultTipoOrden");
+            if (tipoOrden != null)
+            {
+                defaultTipoOrden = short.Parse(tipoOrden.Valor);
+            }
+
 
             var cpry012 = await _unitOfWork.Cpry012Repository.GetByOrdenAsync(orden);
             if (cpry012 != null)
@@ -1819,7 +1826,8 @@ namespace AppService.Core.Services
                     wpry229New.OrdenAnterior = cpry012.Orden;
                     wpry229New.FlagFiscal = cpry012.Fiscal;
                     wpry229New.FechaEntrega = DateTime.Now;
-                    wpry229New.TipoOrden = 2;
+
+                    wpry229New.TipoOrden = defaultTipoOrden;
 
                     await _unitOfWork.Wpry229Repository.Add(wpry229New);
                     await this._unitOfWork.SaveChangesAsync();

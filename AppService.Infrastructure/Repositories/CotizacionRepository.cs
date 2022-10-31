@@ -18,7 +18,7 @@ namespace AppService.Infrastructure.Repositories
             _context = context;
         }
 
-        public string ProximaCotizacion(string Cod_Vendedor)
+        public string ProximaCotizacionCopia(string Cod_Vendedor)
         {
 
             try
@@ -39,7 +39,79 @@ namespace AppService.Infrastructure.Repositories
                     Proximo = b.Proximo
                 }).FirstOrDefault();
 
+
+
                 var siguiente = result.Proximo + 1;
+                var proximoString = siguiente.ToString();
+                proximoString = proximoString.ToString().PadLeft(3, '0');
+                ProximaCotizacion = ProximaCotizacion + proximoString;
+
+                return ProximaCotizacion;
+            }
+            catch (Exception e)
+            {
+                string ProximaCotizacion = "";
+
+                ProximaCotizacion = e.Message;
+                return ProximaCotizacion;
+
+            }
+
+
+
+        }
+
+        public string ProximaCotizacion(string Cod_Vendedor)
+        {
+
+            DateTime inicio;
+            DateTime fin;
+
+            try
+            {
+                string ProximaCotizacion = "";
+                string vendededor = Cod_Vendedor.ToUpper();
+                string año = DateTime.Now.Year.ToString();
+                string mes = DateTime.Now.Month.ToString().PadLeft(2, '0');
+
+                ProximaCotizacion = $"{vendededor}{año}{mes}";
+                //var query = $"SELECT Max(Proximo) as Proximo From (select isnull(cast(max(substring(cotizacion,11,3))  as integer),0) as Proximo from  wsmy501 where substring(cotizacion,1,10) = '{ProximaCotizacion}' UNION ALL select isnull(cast(max(substring(cotizacion,11,3))  as integer),0) as Proximo from  wsmy501Log where substring(cotizacion,1,10) = '{ProximaCotizacion}') as Detalle";
+
+                ////var query = $"SELECT Max(Proximo) as Proximo From (select isnull(cast(max(substring(cotizacion,11,3))  as integer),0) as Proximo from  AppGeneralQuotes where substring(cotizacion,1,10) = '{ProximaCotizacion}' UNION ALL select isnull(cast(max(substring(cotizacion,11,3))  as integer),0) as Proximo from  AppGeneralQuotes where substring(cotizacion,1,10) = '{ProximaCotizacion}') as Detalle";
+                //inicio = DateTime.Now;
+
+                //var result = _context.Wsmy501.FromSqlRaw(query).Select(b => new
+                //{
+                //    Proximo = b.Proximo
+                //}).FirstOrDefault();
+
+                //fin = DateTime.Now;
+
+
+                inicio = DateTime.Now;
+                var cotizacionesDelMes = _context.Wsmy501.Where(x => x.Cotizacion.Substring(0, 10) == ProximaCotizacion).Select(b => new
+                {
+                    Consecutivos = double.Parse(b.Cotizacion.Substring(10, 3)),
+                    ConsecutivosString = b.Cotizacion.Substring(10, 3)
+
+                }).ToList();
+
+                double siguiente = 0;
+
+                var ultima = cotizacionesDelMes.OrderByDescending(x => x.Consecutivos).FirstOrDefault();
+                fin = DateTime.Now;
+
+                if (ultima != null)
+                {
+                    siguiente = ultima.Consecutivos;
+                }
+                else
+                {
+                    siguiente = 0;
+                }
+
+
+                siguiente = siguiente + 1;
                 var proximoString = siguiente.ToString();
                 proximoString = proximoString.ToString().PadLeft(3, '0');
                 ProximaCotizacion = ProximaCotizacion + proximoString;

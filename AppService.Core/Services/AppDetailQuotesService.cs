@@ -117,6 +117,18 @@ namespace AppService.Core.Services
                     var cantTintas = await _appProductsService.CantidaTintasProducto(item.IdProducto);
                     item.CantidadTintas = cantTintas;
 
+                    item.TieneTintasCargadas = true;
+                    var civy004 = await _unitOfWork.Csmy036Repository.GetCivy004ByCode(appProductsFind.ExternalCode);
+                    if (civy004 == null)
+                    {
+                        var tintas = await _unitOfWork.Wpry241Repository.GetByCotizacion(item.Cotizacion);
+                        if (tintas.Count <= 0)
+                        {
+                            item.TieneTintasCargadas = false;
+                        }
+                    }
+
+
                     appProductsFind = (AppProducts)null;
                 }
 
