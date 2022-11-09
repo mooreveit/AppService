@@ -56,5 +56,8 @@ namespace AppService.Core.Interfaces
         Task<bool> ProductoRecibeEntrada(int appProductId);
 
         Task<AppRecipes> GetRecipesByProductIdCode(int appproductsId, string code);
+
+        Task<AppRecipes> GetOneRecipesByProductIdVariableCode(int idProduct, string code);
+        Task<string> getMedidas(int? idProduct);
     }
 }

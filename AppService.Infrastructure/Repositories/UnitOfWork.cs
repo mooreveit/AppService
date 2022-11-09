@@ -364,7 +364,7 @@ namespace AppService.Infrastructure.Repositories
 
         public IWsmy406Repository Wsmy406Repository => _wsmy406Repository ?? new Wsmy406Repository(_mooreveContext);
 
-        public IWpry240Repository Wpry240Repository => _wpry240Repository ?? new Wpry240Repository(_mooreveContext);
+        public IWpry240Repository Wpry240Repository => _wpry240Repository ?? new Wpry240Repository(_mooreveContext, _materialesContext);
 
         public IWpry241Repository Wpry241Repository => _wpry241Repository ?? new Wpry241Repository(_mooreveContext);
 

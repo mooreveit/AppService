@@ -43,6 +43,40 @@ namespace AppService.Infrastructure.Repositories
 
             return await _context.Wpry241.Where(x => x.Cotizacion == cotizacion && x.Renglon == renglon && x.Propuesta == propuesta && x.IdParte == parte).ToListAsync();
         }
+        public async Task<string> GetTintas(string cotizacion)
+        {
+            string result = string.Empty;
+            var papeles = await _context.Wpry241.Where(x => x.Cotizacion == cotizacion).ToListAsync();
+            if (papeles.Count > 0)
+            {
+                foreach (var item in papeles)
+                {
+                    if (result.Length == 0)
+                    {
+                        result = item.IdTinta;
+                    }
+                    else
+                    {
+                        if (item.IdTinta != "S/IMP")
+                        {
+                            bool exists = result.Contains(item.IdTinta);
+                            if (!exists)
+                            {
+                                result = result + "," + item.IdTinta;
+                            }
+                        }
+
+
+
+                    }
+
+
+                }
+            }
+            return result;
+
+        }
+
 
         public async Task<List<Wpry241>> GetByCotizacion(string cotizacion)
         {

@@ -170,6 +170,19 @@ namespace AppService.Core.Services
                         response.Meta = metadata;
                         return response;
                     }
+                    string stringPapel = appRecipes.Code.Substring(0, 5);
+                    if (stringPapel == "PAPEL")
+                    {
+                        var wimy001 = await _unitOfWork.Wimy001Repository.GettByCode(byId2.Code);
+                        if (wimy001 == null)
+                        {
+                            metadata.IsValid = false;
+                            metadata.Message = "Ingrediente PAPEL no existe!!";
+                            response.Data = (List<AppRecipesGetDto>)null;
+                            response.Meta = metadata;
+                            return response;
+                        }
+                    }
                     if (dto.AfectaCosto)
                     {
                         AppRecipes appRecipes1 = appRecipes;
@@ -305,6 +318,9 @@ namespace AppService.Core.Services
                     response.Meta = metadata;
                     return response;
                 }
+
+
+
                 recipe.AppVariableId = new int?(byId1.Id);
                 recipe.Code = byId1.Code;
                 recipe.Description = byId1.Description;
@@ -318,6 +334,7 @@ namespace AppService.Core.Services
                 recipe.Secuencia = new int?(dto.Secuencia);
                 recipe.DescriptionSearch = dto.DescriptionSearch;
                 recipe.Formula = dto.Formula;
+                recipe.MensajeValidacionFormula = "";
                 if (recipe.Formula.Trim().Length <= 0)
                     recipe.FormulaValue = "";
                 if (!dto.AppIngredientsId.HasValue)
@@ -337,6 +354,19 @@ namespace AppService.Core.Services
                         response.Data = (List<AppRecipesGetDto>)null;
                         response.Meta = metadata;
                         return response;
+                    }
+                    string stringPapel = recipe.Code.Substring(0, 5);
+                    if (stringPapel == "PAPEL")
+                    {
+                        var wimy001 = await _unitOfWork.Wimy001Repository.GettByCode(byId2.Code);
+                        if (wimy001 == null)
+                        {
+                            metadata.IsValid = false;
+                            metadata.Message = "Ingrediente PAPEL no existe!!";
+                            response.Data = (List<AppRecipesGetDto>)null;
+                            response.Meta = metadata;
+                            return response;
+                        }
                     }
                     if (dto.AfectaCosto)
                     {
@@ -652,7 +682,7 @@ namespace AppService.Core.Services
                 return resultDto;
             foreach (AppRecipes recipe in recipesByProductId)
             {
-                if (recipe.Code == "CORRIDA")
+                if (recipe.Code == "PRECIO MAXIMO")
                 {
                     var detener = 1;
                 }

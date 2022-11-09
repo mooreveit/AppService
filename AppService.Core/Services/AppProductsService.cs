@@ -406,11 +406,11 @@ namespace AppService.Core.Services
                 var civy004 = _unitOfWork.Csmy036Repository.GetCivy004ByCode(appProducts.ExternalCode.Trim());
                 if (civy004 != null)
                 {
-                    appProducts.Inventariable = true;
+                    appProducts.Inventariable = false;
                 }
                 else
                 {
-                    appProducts.Inventariable = false;
+                    appProducts.Inventariable = true;
                 }
 
 

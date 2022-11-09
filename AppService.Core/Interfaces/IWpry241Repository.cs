@@ -20,6 +20,6 @@ namespace AppService.Core.Interfaces
         Task DeleteRange(List<Wpry241> entities);
 
         Task<List<Wpry241>> GetByCotizacion(string cotizacion);
-
+        Task<string> GetTintas(string cotizacion);
     }
 }

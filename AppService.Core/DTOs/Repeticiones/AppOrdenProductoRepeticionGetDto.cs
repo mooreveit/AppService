@@ -36,8 +36,8 @@ namespace AppService.Core.DTOs.Repeticiones
         public string NombreProducto { get; set; }
 
         public string NombreForma { get; set; }
-        public int MedidaBase { get; set; }
-        public int MedidaVariable { get; set; }
+        public int? MedidaBase { get; set; }
+        public int? MedidaVariable { get; set; }
         public int PartesFormula { get; set; }
         public int CantTintas { get; set; }
         public string PapelPrimeraParte { get; set; }
@@ -45,10 +45,10 @@ namespace AppService.Core.DTOs.Repeticiones
         public string PapelTerceraParte { get; set; }
         public string PapelCuartaParte { get; set; }
         public string PapelQuintaParte { get; set; }
-        public decimal MedidaBaseDecimal { get; set; }
-        public decimal MedidaVariableDecimal { get; set; }
-        public string BasicaHumano { get; set; }
-        public string OpuestaHumano { get; set; }
+        public decimal? MedidaBaseDecimal { get; set; }
+        public decimal? MedidaVariableDecimal { get; set; }
+        public string? BasicaHumano { get; set; }
+        public string? OpuestaHumano { get; set; }
         public long? CantidadOrdenada { get; set; }
         public decimal? Millares { get; set; }
         public decimal? PrecioUnitarioUsd { get; set; }

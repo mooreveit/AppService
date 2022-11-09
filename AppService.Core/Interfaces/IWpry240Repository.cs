@@ -22,6 +22,9 @@ namespace AppService.Core.Interfaces
         Task<List<Wpry240>> GetByCotizacion(string cotizacion);
 
         Task<List<Wpry240>> GetByCotizacionRenglon(string cotizacion, int renglon);
+        Task<string> GetPapeles(string cotizacion);
+        Task<int> GetCantPartes(string cotizacion);
+        Task<string> GetPapelesTipo(string cotizacion);
 
     }
 }

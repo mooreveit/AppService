@@ -109,6 +109,12 @@ namespace AppService.Infrastructure.Repositories
             return await this._context.AppRecipes.Where<AppRecipes>((Expression<Func<AppRecipes, bool>>)(x => x.AppproductsId == (int?)idProduct && x.Code.Substring(0, code.Length) == code)).ToListAsync<AppRecipes>();
         }
 
+        public async Task<AppRecipes> GetOneRecipesByProductIdVariableCode(int idProduct, string code)
+        {
+
+            return await this._context.AppRecipes.Where(x => x.AppproductsId == (int?)idProduct && x.Code == code).FirstOrDefaultAsync();
+        }
+
         public async Task<AppRecipes> GetRecipesByVariableCode(string code)
         {
 
@@ -163,6 +169,26 @@ namespace AppService.Infrastructure.Repositories
                                    select c.TotalCost).Sum();
 
             return (decimal)totaCostProduct;
+        }
+
+
+
+        public async Task<string> getMedidas(int? idProduct)
+        {
+            string result = string.Empty;
+            string code = "MEDIDABASICA";
+            AppRecipes recipesBasica = await _context.AppRecipes.Where(x => x.AppproductsId == idProduct && x.Code == code).FirstOrDefaultAsync();
+            code = "MEDIDAOPUESTA";
+            AppRecipes recipesOpuesta = await _context.AppRecipes.Where(x => x.AppproductsId == idProduct && x.Code == code).FirstOrDefaultAsync();
+
+            if (recipesBasica != null && recipesOpuesta != null)
+            {
+
+
+                result = recipesBasica.DescriptionSearch + " X " + recipesOpuesta.DescriptionSearch;
+            }
+
+            return result;
         }
 
 

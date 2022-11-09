@@ -1,8 +1,10 @@
 ﻿using AppService.Core.DTOs;
+using AppService.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace AppService.Api.Controllers
 {
@@ -14,14 +16,22 @@ namespace AppService.Api.Controllers
     [ApiController]
     public class AppReportController : ControllerBase
     {
+        private readonly IAppDetailQuotesService _appDetailQuotesService;
+
+
+        public AppReportController(IAppDetailQuotesService appDetailQuotesService)
+        {
+            _appDetailQuotesService = appDetailQuotesService;
+
+        }
 
 
         [HttpGet("[action]/{cotizacion}/{flagTotal}/{flagFormasCaja}/{flagIva}/{observaciones}/{imprimirUsd}/{subcategoria?}")]
         //[HttpPost]
         //[Route("[action]")]
-        public IActionResult GetCotizacion(string cotizacion, bool flagTotal, bool flagFormasCaja, bool flagIva, bool observaciones, bool imprimirUsd, int? subcategoria = null)
+        public async Task<IActionResult> GetCotizacion(string cotizacion, bool flagTotal, bool flagFormasCaja, bool flagIva, bool observaciones, bool imprimirUsd, int? subcategoria = null)
         {
-
+            await _appDetailQuotesService.UpdateDataReport(cotizacion);
 
             ReporteCotizacionDto dto = new ReporteCotizacionDto();
 
@@ -113,9 +123,9 @@ namespace AppService.Api.Controllers
         [HttpGet("[action]/{cotizacion}/{flagTotal}/{flagFormasCaja}/{flagIva}/{observaciones}/{imprimirUsd}/{subcategoria?}")]
         //[HttpPost]
         //[Route("[action]")]
-        public IActionResult GetCotizacionWord(string cotizacion, bool flagTotal, bool flagFormasCaja, bool flagIva, bool observaciones, bool imprimirUsd, int? subcategoria = null)
+        public async Task<IActionResult> GetCotizacionWord(string cotizacion, bool flagTotal, bool flagFormasCaja, bool flagIva, bool observaciones, bool imprimirUsd, int? subcategoria = null)
         {
-
+            await _appDetailQuotesService.UpdateDataReport(cotizacion);
 
             ReporteCotizacionDto dto = new ReporteCotizacionDto();
 
@@ -200,9 +210,9 @@ namespace AppService.Api.Controllers
         [HttpGet("[action]/{cotizacion}/{flagTotal}/{flagFormasCaja}/{flagIva}/{observaciones}/{imprimirUsd}/{subcategoria?}")]
         //[HttpPost]
         //[Route("[action]")]
-        public IActionResult GetCotizacionExcel(string cotizacion, bool flagTotal, bool flagFormasCaja, bool flagIva, bool observaciones, bool imprimirUsd, int? subcategoria = null)
+        public async Task<IActionResult> GetCotizacionExcel(string cotizacion, bool flagTotal, bool flagFormasCaja, bool flagIva, bool observaciones, bool imprimirUsd, int? subcategoria = null)
         {
-
+            await _appDetailQuotesService.UpdateDataReport(cotizacion);
 
             ReporteCotizacionDto dto = new ReporteCotizacionDto();
 

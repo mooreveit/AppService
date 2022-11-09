@@ -1054,11 +1054,21 @@ namespace AppService.Core.Services
                         AppIngredients ingrediente = await ingredientsRepository.GetById(id);
                         nullable = itemReceta.Secuencia;
                         int parte = nullable.Value;
+                        var variableParte = await _unitOfWork.AppConfigAppRepository.GetByKey(itemReceta.Code);
+                        if (variableParte != null)
+                        {
+                            parte = int.Parse(variableParte.Valor);
+                        }
+
                         Wpry240 wpry240 = await this._unitOfWork.Wpry240Repository.GetByCotizacionRenglonPropuestaParte(propuesta.Cotizacion, propuesta.Renglon, propuesta.Propuesta, parte);
                         Decimal? cantidad;
                         if (wpry240 != null)
                         {
+                            wpry240.IdPapel = ingrediente.Code.ToString().Trim();
+                            wpry240.Cantidad = (decimal)propuesta.Cantidad;
 
+                            wpry240.TipoPapel = wpry240.IdPapel.Substring(0, 3);
+                            wpry240.Gramaje = wpry240.IdPapel.Substring(3, 3);
 
                             string medidaString = String.Empty;
                             Fractional.Fractional medidaConvertida = new Fractional.Fractional(Math.Truncate(await this.GetMedida(appDetailQuotes, "MEDIDABASICA") / (Decimal)factorPulgada * 100M) / 100M, false);
@@ -1323,6 +1333,20 @@ namespace AppService.Core.Services
                     propuesta = (Wsmy515)null;
                 }
             }
+
+
+
+            var papeles = await _unitOfWork.Wpry240Repository.GetPapeles(appDetailQuotes.Cotizacion);
+            var detailFind = await _unitOfWork.AppDetailQuotesRepository.GetById(appDetailQuotes.Id);
+            if (detailFind != null)
+            {
+                detailFind.Papeles = papeles;
+                _unitOfWork.AppDetailQuotesRepository.Update(detailFind);
+                await this._unitOfWork.SaveChangesAsync();
+            }
+
+
+
         }
 
         public async Task UpdateWpry241(AppDetailQuotes appDetailQuotes, int renglon)
@@ -1376,6 +1400,16 @@ namespace AppService.Core.Services
                     }
                     propuesta = (Wsmy515)null;
                 }
+            }
+
+
+            var tintas = await _unitOfWork.Wpry241Repository.GetTintas(appDetailQuotes.Cotizacion);
+            var detailFind = await _unitOfWork.AppDetailQuotesRepository.GetById(appDetailQuotes.Id);
+            if (detailFind != null)
+            {
+                detailFind.Tintas = tintas;
+                _unitOfWork.AppDetailQuotesRepository.Update(detailFind);
+                await this._unitOfWork.SaveChangesAsync();
             }
         }
 

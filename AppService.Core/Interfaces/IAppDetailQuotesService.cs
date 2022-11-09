@@ -8,6 +8,7 @@ namespace AppService.Core.Interfaces
 {
     public interface IAppDetailQuotesService
     {
+        Task UpdateDataReport(string cotizacion);
         Task<string> DescripcionProductosCotizadosAppGeneralQuotesId(int appGeneralQuotesId);
         Task<List<AppDetailQuotes>> GetAll();
 

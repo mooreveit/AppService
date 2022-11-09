@@ -27,6 +27,7 @@ namespace AppService.Core.Interfaces
         Task<bool> ProductExistInQuotesDetail(int idProduct);
 
         Task<List<AppDetailQuotes>> GeSimpletByAppGeneralQuotesId(int appGeneralQuotesId);
-
+        Task<List<AppDetailQuotes>> GetByQuotesCotizacion(string cotizacion)
+;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace AppService.Core.EntitiesMateriales
 {
@@ -14,5 +13,7 @@ namespace AppService.Core.EntitiesMateriales
         public DateTime? FechaModifica { get; set; }
         public int? IdPosicion { get; set; }
         public short? IdCategoriaMc { get; set; }
+        public string DESCRIPCION_VENTAS { get; set; }
+
     }
 }

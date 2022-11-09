@@ -74,6 +74,13 @@ namespace AppService.Infrastructure.Repositories
 
         }
 
+        public async Task<List<AppDetailQuotes>> GetByQuotesCotizacion(string cotizacion)
+        {
+            var detail = await _context.AppDetailQuotes.Where(x => x.Cotizacion == cotizacion).ToListAsync();
+
+            return detail;
+
+        }
         public async Task<AppDetailQuotes> GetByQuetesProduct(string cotizacion, int idProduct)
         {
             var detail = await _context.AppDetailQuotes.Where(x => x.Cotizacion == cotizacion && x.IdProducto == idProduct).FirstOrDefaultAsync();
@@ -81,7 +88,6 @@ namespace AppService.Infrastructure.Repositories
             return detail;
 
         }
-
         public async Task<bool> ProductExistInQuotesDetail(int idProduct)
         {
 

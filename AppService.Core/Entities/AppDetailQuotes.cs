@@ -87,6 +87,15 @@ namespace AppService.Core.Entities
 
         public long? OrdenAnterior { get; set; }
 
+        public string Papeles { get; set; } = string.Empty;
+        public string TipoPapeles { get; set; } = string.Empty;
+        public string Tintas { get; set; } = string.Empty;
+        public string Medidas { get; set; } = string.Empty;
+        public int CantPartes { get; set; } = 0;
+        public int CantTintas { get; set; } = 0;
+
+
+
         public virtual AppGeneralQuotes AppGeneralQuotes { get; set; }
 
         public virtual AppStatusQuote IdEstatusNavigation { get; set; }

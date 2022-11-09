@@ -30,5 +30,27 @@ namespace AppService.Infrastructure.Repositories
 
         }
 
+
+        public async Task<Wimy001> GettByCode(string codigo)
+        {
+
+
+
+            var result = await _context.Wimy001s.Where(x => x.Codigo == codigo).FirstOrDefaultAsync();
+
+            return result;
+
+        }
+
+        public async Task<Wimy002> GettByCodeTipo(string tipo)
+        {
+
+
+
+            var result = await _context.Wimy002s.Where(x => x.Tipo == tipo).FirstOrDefaultAsync();
+
+            return result;
+
+        }
     }
 }

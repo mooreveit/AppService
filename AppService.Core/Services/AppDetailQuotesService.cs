@@ -10,6 +10,7 @@ using AutoMapper;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AppService.Core.Services
@@ -380,9 +381,12 @@ namespace AppService.Core.Services
                     return response;
                 }
                 appDetailQuotesInserted.OrdenAnterior = appDetailQuotesDto.OrdenAnterior;
+                appDetailQuotesInserted.Medidas = await getMedidas(appProducts.Id);
                 appDetailQuotesInserted = await this.Insert(appDetailQuotes);
                 await this._unitOfWork.SaveChangesAsync();
                 await this._cotizacionService.IntegrarCotizacion(appDetailQuotesInserted.AppGeneralQuotesId, true);
+
+
                 if (appDetailQuotesInserted != null)
                 {
                     resultDto = this._mapper.Map<AppDetailQuotesGetDto>((object)appDetailQuotesInserted);
@@ -628,6 +632,20 @@ namespace AppService.Core.Services
                 appDetailQuotes.MedidaBasica = new Decimal?(appDetailQuotesUpdateDto.MedidaBasica);
                 appDetailQuotes.MedidaOpuesta = new Decimal?(appDetailQuotesUpdateDto.MedidaOpuesta);
                 appDetailQuotes.SolicitarPrecio = new bool?(appDetailQuotesUpdateDto.SolicitarPrecio);
+
+                appDetailQuotes.Medidas = await getMedidas(appDetailQuotes.IdProducto);
+                appDetailQuotes.Papeles = await _unitOfWork.Wpry240Repository.GetPapeles(appDetailQuotes.Cotizacion);
+                appDetailQuotes.TipoPapeles = await _unitOfWork.Wpry240Repository.GetPapelesTipo(appDetailQuotes.Cotizacion);
+                appDetailQuotes.Tintas = await _unitOfWork.Wpry241Repository.GetTintas(appDetailQuotes.Cotizacion);
+                appDetailQuotes.CantPartes = await _unitOfWork.Wpry240Repository.GetCantPartes(appDetailQuotes.Cotizacion);
+                appDetailQuotes.CantTintas = 0;
+                if (appDetailQuotes.Tintas.Length > 0)
+                {
+                    string[] tintas = appDetailQuotes.Tintas.Split(",");
+                    appDetailQuotes.CantTintas = tintas.Count();
+                }
+
+
                 AppDetailQuotes appDetailQuotesUpdated = await this.Update(appDetailQuotes);
                 if (cambioProducto == true)
                 {
@@ -670,6 +688,45 @@ namespace AppService.Core.Services
                 response.Data = resultDto;
                 return response;
             }
+        }
+
+
+        public async Task UpdateDataReport(string cotizacion)
+        {
+            var appDetailQuotes = await _unitOfWork.AppDetailQuotesRepository.GetByQuotesCotizacion(cotizacion);
+            if (appDetailQuotes.Count > 0)
+            {
+                foreach (var item in appDetailQuotes)
+                {
+                    var appDetailUpdate = await _unitOfWork.AppDetailQuotesRepository.GetById(item.Id);
+
+                    appDetailUpdate.Medidas = await getMedidas(appDetailUpdate.IdProducto);
+                    appDetailUpdate.Papeles = await _unitOfWork.Wpry240Repository.GetPapeles(appDetailUpdate.Cotizacion);
+                    appDetailUpdate.TipoPapeles = await _unitOfWork.Wpry240Repository.GetPapelesTipo(appDetailUpdate.Cotizacion);
+                    appDetailUpdate.Tintas = await _unitOfWork.Wpry241Repository.GetTintas(appDetailUpdate.Cotizacion);
+                    appDetailUpdate.CantPartes = await _unitOfWork.Wpry240Repository.GetCantPartes(appDetailUpdate.Cotizacion);
+
+                    appDetailUpdate.CantTintas = 0;
+                    if (item.Tintas.Length > 0)
+                    {
+
+                        string[] tintas = appDetailUpdate.Tintas.Split(",");
+                        item.CantTintas = tintas.Count();
+                    }
+                    _unitOfWork.AppDetailQuotesRepository.Update(appDetailUpdate);
+                    await _unitOfWork.SaveChangesAsync();
+
+                }
+            }
+
+        }
+
+        public async Task<string> getMedidas(int idProduct)
+        {
+            string result = string.Empty;
+            result = await _unitOfWork.AppRecipesRepository.getMedidas(idProduct);
+
+            return result;
         }
 
         public async Task<ApiResponse<bool>> DeleteDetailQuotes(
