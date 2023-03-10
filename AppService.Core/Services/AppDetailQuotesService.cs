@@ -442,9 +442,7 @@ namespace AppService.Core.Services
         public async Task<ApiResponse<AppDetailQuotesGetDto>> UpdateAppDetailQuotes(
           AppDetailQuotesUpdateDto appDetailQuotesUpdateDto)
         {
-            bool cambioProducto = false;
-            AppProducts productoActual = new();
-            AppProducts productoNuevo = new();
+
             AppDetailQuotesGetDto resultDto = new AppDetailQuotesGetDto();
             Metadata metadata = new Metadata()
             {
@@ -464,10 +462,6 @@ namespace AppService.Core.Services
                     return response;
                 }
 
-                if (appDetailQuotesUpdateDto.IdProducto != appDetailQuotes.IdProducto)
-                {
-                    await _cotizacionService.DeleteCotizacionRenglon(appDetailQuotes);
-                }
 
 
 
@@ -600,12 +594,7 @@ namespace AppService.Core.Services
                     response.Data = resultDto;
                     return response;
                 }
-                if (appDetailQuotes.IdProducto != appDetailQuotesUpdateDto.IdProducto)
-                {
-                    cambioProducto = true;
-                    productoActual = await _unitOfWork.AppProductsRepository.GetById(appDetailQuotes.IdProducto);
-                    productoNuevo = await _unitOfWork.AppProductsRepository.GetById(appDetailQuotesUpdateDto.IdProducto);
-                }
+
                 appDetailQuotes.IdProducto = appDetailQuotesUpdateDto.IdProducto;
 
                 appDetailQuotes.Producto = appProducts.Code;
@@ -639,6 +628,7 @@ namespace AppService.Core.Services
                 appDetailQuotes.Tintas = await _unitOfWork.Wpry241Repository.GetTintas(appDetailQuotes.Cotizacion);
                 appDetailQuotes.CantPartes = await _unitOfWork.Wpry240Repository.GetCantPartes(appDetailQuotes.Cotizacion);
                 appDetailQuotes.CantTintas = 0;
+                appDetailQuotes.CalculoId = appDetailQuotesUpdateDto.CalculoId;
                 if (appDetailQuotes.Tintas.Length > 0)
                 {
                     string[] tintas = appDetailQuotes.Tintas.Split(",");
@@ -647,12 +637,18 @@ namespace AppService.Core.Services
 
 
                 AppDetailQuotes appDetailQuotesUpdated = await this.Update(appDetailQuotes);
-                if (cambioProducto == true)
+
+
+                AppGeneralQuotes general = await this._unitOfWork.AppGeneralQuotesRepository.GetByIdForUpdate(appDetailQuotes.AppGeneralQuotesId);
+                if (general != null)
                 {
+                    general.FechaActualiza = DateTime.Now;
 
-                    await this._cotizacionService.DeleteCotizacionRenglon(appDetailQuotes);
-
+                    this._unitOfWork.AppGeneralQuotesRepository.Update(general);
+                    await this._unitOfWork.SaveChangesAsync();
                 }
+
+
 
                 await this._cotizacionService.IntegrarCotizacion(appDetailQuotesUpdated.AppGeneralQuotesId, true);
                 if (appDetailQuotesUpdated != null)
@@ -854,27 +850,31 @@ namespace AppService.Core.Services
                 response.Data = false;
                 return response;
             }
+
+            //await this._cotizacionService.IntegrarCotizacion(appDetailQuotes.AppGeneralQuotesId, true);
+
+
+            Wsmy502 renglon = await this._unitOfWork.RenglonRepository.GetByCotizacionProducto(appDetailQuotes.Cotizacion, appDetailQuotes.IdProductoNavigation.ExternalCode);
+            if ((await this._aprobacionesServices.CreateAprobacionAprobada(renglon.Cotizacion, renglon.Renglon, 1, appGanarPerderDto.UsuarioConectado)).Meta.IsValid)
+            {
+                ApiResponse<Wsmy647> apiResponse = await this._aprobacionesServices.ActivarWORKFLOW(renglon.Cotizacion, renglon.Renglon, 1, appGanarPerderDto.UsuarioConectado, appDetailQuotes);
+            }
+
+
             appDetailQuotes.IdEstatus = status;
             appDetailQuotes.RazonGanadaPerdida = new int?(appGanarPerderDto.MotivoId);
             appDetailQuotes.Competidor = new int?(appGanarPerderDto.CompetidorId);
             AppDetailQuotes appDetailQuotes1 = await this.Update(appDetailQuotes);
+            await this._unitOfWork.SaveChangesAsync();
             AppGeneralQuotes byId = await this._unitOfWork.AppGeneralQuotesRepository.GetByIdForUpdate(appDetailQuotes.AppGeneralQuotesId);
             if (byId != null)
             {
                 byId.IdEstatus = status;
+                byId.FechaActualiza = DateTime.Now;
                 this._unitOfWork.AppGeneralQuotesRepository.Update(byId);
                 await this._unitOfWork.SaveChangesAsync();
             }
-            if (appDetailQuotes.PrecioUsd >= appDetailQuotes.IdProductoNavigation.UnitPrice)
-            {
-                Wsmy502 renglon = await this._unitOfWork.RenglonRepository.GetByCotizacionProducto(appDetailQuotes.Cotizacion, appDetailQuotes.IdProductoNavigation.ExternalCode);
-                if ((await this._aprobacionesServices.CreateAprobacionAprobada(renglon.Cotizacion, renglon.Renglon, 1, appGanarPerderDto.UsuarioConectado)).Meta.IsValid)
-                {
-                    ApiResponse<Wsmy647> apiResponse = await this._aprobacionesServices.ActivarWORKFLOW(renglon.Cotizacion, renglon.Renglon, 1, appGanarPerderDto.UsuarioConectado, appDetailQuotes);
-                }
-                renglon = (Wsmy502)null;
-            }
-            await this._unitOfWork.SaveChangesAsync();
+
             await this._cotizacionService.IntegrarCotizacion(appDetailQuotes.AppGeneralQuotesId, true);
             metadata.IsValid = true;
             metadata.Message = "Cotizacion Actualizada!!! ";

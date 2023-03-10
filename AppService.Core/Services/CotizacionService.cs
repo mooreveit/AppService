@@ -4,6 +4,7 @@ using AppService.Core.DTOs;
 using AppService.Core.DTOs.Odoo.Clientes.OdooClients;
 using AppService.Core.DTOs.Odoo.Cotizaciones.Enviar;
 using AppService.Core.Entities;
+using AppService.Core.EntitiesClientes;
 using AppService.Core.EntitiesMooreve;
 using AppService.Core.Interfaces;
 using AppService.Core.QueryFilters;
@@ -40,7 +41,7 @@ namespace AppService.Core.Services
         private readonly IAppProductsService _appProductsService;
         private readonly IMtrContactosService _mtrContactosService;
         private readonly IAppRecipesByAppDetailQuotesService _appRecipesByAppDetailQuotesService;
-
+     
 
         public CotizacionService(
           IUnitOfWork unitOfWork,
@@ -53,6 +54,7 @@ namespace AppService.Core.Services
           IAppProductsService appProductsService,
           IMtrContactosService mtrContactosService,
           IAppRecipesByAppDetailQuotesService appRecipesByAppDetailQuotesService
+       
         )
         {
             _unitOfWork = unitOfWork;
@@ -65,6 +67,7 @@ namespace AppService.Core.Services
             _appProductsService = appProductsService;
             _mtrContactosService = mtrContactosService;
             _appRecipesByAppDetailQuotesService = appRecipesByAppDetailQuotesService;
+        
 
         }
 
@@ -571,9 +574,27 @@ namespace AppService.Core.Services
                 renglon = (Wsmy502)null;
             }
         }
+        public async Task<Decimal> GetFleteByIdDireccionEntrega(Decimal id)
+        {
+            MtrDirecciones byId = await this._unitOfWork.MtrDireccionesRepository.GetById(id);
+            Decimal direccionEntrega;
+            if (byId != null)
+            {
+                var byEstadoMunicipio = await this._unitOfWork.Winy243Repository.GetByEstadoMunicipio(byId.Estado, byId.Municipio);
+                direccionEntrega = byEstadoMunicipio == null ? 0M : byEstadoMunicipio.PorcFlete.Value;
+            }
+            else
+                direccionEntrega = 0M;
+            return direccionEntrega;
+        }
 
         public async Task UpdatePropuestaCotizacion(AppDetailQuotes appDetailQuotes, int renglon)
         {
+
+            var appGeneralQuotes = await _unitOfWork.AppGeneralQuotesRepository.GetById(appDetailQuotes.AppGeneralQuotesId);
+
+            var porcFlete = await GetFleteByIdDireccionEntrega(appGeneralQuotes.IdDireccionEntregar);
+
             bool ganandoProducto = false;
             ValoresCotizacionDto valoresCotizacion = await this.ValoresCotizacion(appDetailQuotes);
 
@@ -642,10 +663,12 @@ namespace AppService.Core.Services
 
                 propuesta.CotizacionRenglonPropuesta = propuesta.Cotizacion + propuesta.Renglon.ToString() + propuesta.Propuesta.ToString();
 
-                propuesta.UsdListaCpj = appDetailQuotes.UnitPriceBaseProduction;
-                propuesta.UsdListaCpjminimo = appDetailQuotes.UnitPriceBaseProduction;
-                propuesta.TotalUsdListaCpj = appDetailQuotes.UnitPriceBaseProduction * appDetailQuotes.Cantidad;
-                propuesta.TotalUsdListaCpjminimo = (appDetailQuotes.UnitPriceBaseProduction * appDetailQuotes.Cantidad);
+                var flete = (appDetailQuotes.UnitPriceBaseProduction * porcFlete) /100;
+
+                propuesta.UsdListaCpj = appDetailQuotes.UnitPriceBaseProduction + flete;
+                propuesta.UsdListaCpjminimo = appDetailQuotes.UnitPriceBaseProduction + flete;
+                propuesta.TotalUsdListaCpj = (appDetailQuotes.UnitPriceBaseProduction + flete)* appDetailQuotes.Cantidad;
+                propuesta.TotalUsdListaCpjminimo = ((appDetailQuotes.UnitPriceBaseProduction + flete)* appDetailQuotes.Cantidad);
 
 
                 AppService.Core.EntitiesMC.TPaTasaReferencial tasaByFecha = await this._unitOfWork.TPaTasaReferencialRepository.GetTasaByFecha(DateTime.Now);
@@ -780,10 +803,12 @@ namespace AppService.Core.Services
 
                 propuestaNew.CotizacionRenglonPropuesta = propuestaNew.Cotizacion + propuestaNew.Renglon.ToString() + propuestaNew.Propuesta.ToString();
 
-                propuestaNew.UsdListaCpj = appDetailQuotes.UnitPriceBaseProduction;
-                propuestaNew.UsdListaCpjminimo = appDetailQuotes.UnitPriceBaseProduction;
-                propuestaNew.TotalUsdListaCpj = (appDetailQuotes.UnitPriceBaseProduction * appDetailQuotes.Cantidad);
-                propuestaNew.TotalUsdListaCpjminimo = (appDetailQuotes.UnitPriceBaseProduction * appDetailQuotes.Cantidad);
+                var flete = (appDetailQuotes.UnitPriceBaseProduction * porcFlete) / 100;
+
+                propuestaNew.UsdListaCpj = appDetailQuotes.UnitPriceBaseProduction + flete;
+                propuestaNew.UsdListaCpjminimo = appDetailQuotes.UnitPriceBaseProduction + flete;
+                propuestaNew.TotalUsdListaCpj = ((appDetailQuotes.UnitPriceBaseProduction + flete) * appDetailQuotes.Cantidad);
+                propuestaNew.TotalUsdListaCpjminimo = ((appDetailQuotes.UnitPriceBaseProduction + flete) * appDetailQuotes.Cantidad);
 
                 AppService.Core.EntitiesMC.TPaTasaReferencial tasaByFecha = await this._unitOfWork.TPaTasaReferencialRepository.GetTasaByFecha(DateTime.Now);
                 Wsmy515 wsmy515_3 = propuestaNew;
@@ -1062,7 +1087,7 @@ namespace AppService.Core.Services
 
                         Wpry240 wpry240 = await this._unitOfWork.Wpry240Repository.GetByCotizacionRenglonPropuestaParte(propuesta.Cotizacion, propuesta.Renglon, propuesta.Propuesta, parte);
                         Decimal? cantidad;
-                        if (wpry240 != null)
+                        /*if (wpry240 != null)
                         {
                             wpry240.IdPapel = ingrediente.Code.ToString().Trim();
                             wpry240.Cantidad = (decimal)propuesta.Cantidad;
@@ -1192,7 +1217,7 @@ namespace AppService.Core.Services
                             await this._unitOfWork.SaveChangesAsync();
                             medidaConvertida = new Fractional.Fractional();
                             medidaString = (string)null;
-                        }
+                        }*/
                         if (wpry240 == null)
                         {
                             Wpry240 wpry240new = new Wpry240();
@@ -1526,7 +1551,7 @@ namespace AppService.Core.Services
             }
             else
             {
-                result.CantidadXCaja = appDetailQuotes.CantidadSolicitada;
+                result.CantidadXCaja = 0;
             }
 
             return result;
@@ -1733,6 +1758,7 @@ namespace AppService.Core.Services
                         MtrCliente byId = this._unitOfWork.MtrClienteRepository.GetById(Wsmy501.CodCliente);
                         entity.Oficina = byId.OficinaVenta.Trim();
                     }
+
                     AppService.Core.DataContratosStock.DatosCliente datosCliente2 = entity;
                     int? nullable1 = Wsmy501.IdContacto;
                     Decimal? nullable2 = nullable1.HasValue ? new Decimal?((Decimal)nullable1.GetValueOrDefault()) : new Decimal?();
@@ -1795,6 +1821,14 @@ namespace AppService.Core.Services
                         entity.CotizacionGeneral = cotizacion;
                         entity.Propuesta = new int?(1);
                         entity.Reglon = new int?(renglon.Renglon);
+                        DateTime now = DateTime.Now;
+                        entity.FechaReorden = now.AddDays(30);
+                        entity.Remision = "";
+                        entity.ValListaDol = 0;
+                        entity.TotListDol = 0;
+                        entity.TotVentDol = 0;
+                        entity.PrecDol = 0;
+
                         await this._unitOfWork.DatosProductosRepository.Add(entity);
                         await this._unitOfWork.SaveChangesAsync();
                     }
@@ -2347,6 +2381,74 @@ namespace AppService.Core.Services
 
         }
 
+        public async Task ActualizarClientes()
+        {
+
+            try
+            {
+                var diasAcualizaPresupuesto = 1;
+                var appConfig = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooDiasActualizaClientes");
+                if (appConfig != null)
+                {
+                    diasAcualizaPresupuesto = int.Parse(appConfig.Valor);
+                }
+
+                var clientes = await _unitOfWork.MtrClienteRepository.GetAllDAyUpdate(diasAcualizaPresupuesto);
+                await _mtrContactosService.UpdateClientesToOdoo(clientes);
+            }
+            catch (Exception ex)
+            {
+                var msg=ex.InnerException.Message;
+            }
+          
+
+
+
+        }
+
+        public async Task ReasignaClienteContacto(long idContacto)
+        {
+
+            var contacto = await _unitOfWork.MtrContactosRepository.GetById(idContacto);
+            if (contacto != null)
+            {
+                var contactoEsProspecto = EsProspecto.ClienteEsProspecto(contacto.IdCliente);
+                if (contactoEsProspecto)
+                {
+
+                    var cotizacion = await _unitOfWork.CotizacionRepository.GetByRif(contacto.Rif);
+                    if (cotizacion != null)
+                    {
+                        var clienteCotizacionEsProspecto = EsProspecto.ClienteEsProspecto(cotizacion.CodCliente);
+                        if (!clienteCotizacionEsProspecto)
+                        {
+                            contacto.IdCliente = cotizacion.CodCliente;
+                            _unitOfWork.MtrContactosRepository.Update(contacto);
+                            await _unitOfWork.SaveChangesAsync();
+                            var wsmy265 = await _unitOfWork.Wsmy265Repository.GetById(idContacto);
+                            if (wsmy265 != null)
+                            {
+                                wsmy265.Cliente = Convert.ToDecimal(cotizacion.CodCliente);
+                                _unitOfWork.Wsmy265Repository.Update(wsmy265);
+                                await _unitOfWork.SaveChangesAsync();
+                            }
+                            var appGeneralQuotes = await _unitOfWork.AppGeneralQuotesRepository.GetByCotizacions(cotizacion.Cotizacion);
+                            if (appGeneralQuotes != null)
+                            {
+                                appGeneralQuotes.IdCliente = cotizacion.CodCliente;
+                                _unitOfWork.AppGeneralQuotesRepository.Update(appGeneralQuotes);
+                                await _unitOfWork.SaveChangesAsync();
+                            }
+                        }
+                    }
+
+
+                }
+            }
+
+
+        }
+
         public async Task UpdateCotizacionesToOdoo()
         {
 
@@ -2361,7 +2463,7 @@ namespace AppService.Core.Services
 
             var cotizaciones = await _unitOfWork.CotizacionRepository.GetListCotizaciones(diasAcualizaPresupuesto);
 
-            //cotizaciones = cotizaciones.Where(x => x == "LN01202210002").ToList();
+            //cotizaciones = cotizaciones.Where(x => x == "WI01202211036").ToList();
             //#####ACTUALIZACION DE CLIENTE PROSPECTO
             MtrClienteQueryFilter filter = new MtrClienteQueryFilter();
             filter.Codigo = "000000";
@@ -2377,9 +2479,14 @@ namespace AppService.Core.Services
 
                 try
                 {
+
+
+
+
+
+
+
                     filter.Codigo = await GetClienteCotizacion(item);
-
-
                     filter.Usuario = "RR105841";
 
                     var mtrClientes = await _unitOfWork.MtrClienteRepository.ListCliente(filter);
@@ -2388,7 +2495,7 @@ namespace AppService.Core.Services
                     var cotizacion = await _unitOfWork.CotizacionRepository.GetByCotizacion(item);
                     if (cotizacion != null)
                     {
-
+                        await ReasignaClienteContacto((long)cotizacion.IdContacto);
                         var contacto = await _unitOfWork.MtrContactosRepository.GetById((long)cotizacion.IdContacto);
                         if (contacto != null)
                         {

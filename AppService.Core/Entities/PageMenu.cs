@@ -17,5 +17,7 @@ namespace AppService.Core.Entities
     public string Url { get; set; }
 
     public string Icon { get; set; }
-  }
+
+    public bool Mobil { get; set; }
+    }
 }

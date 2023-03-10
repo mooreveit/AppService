@@ -99,6 +99,8 @@ namespace AppService.Core.Interfaces
         ITEnControlCalculoRepository TEnControlCalculoRepository { get; }
         IAppPriceRepository AppPriceRepository { get; }
 
+        IAppPorcentajeAdicionalM2Repository AppPorcentajeAdicionalM2Repository { get; }
+
         // Nomina
         INmm024Repository Nmm024Repository { get; }
         INmt033Repository Nmt033Repository { get; }

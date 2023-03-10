@@ -136,15 +136,7 @@ namespace AppService.Core.Services
 
                 }
 
-                //if (quotes.IntegrarCotizacion == false)
-                //{
-                //    var actualizar = await _unitOfWork.AppGeneralQuotesRepository.VerificarStatus(appGeneralQuotesGetDto.Id);
-                //    if (actualizar != appGeneralQuotesGetDto.IdEstatus)
-                //    {
-                //        appGeneralQuotesGetDto.IdEstatus = actualizar;
-                //        await _unitOfWork.SaveChangesAsync();
-                //    }
-                //}
+
 
 
 
@@ -193,6 +185,7 @@ namespace AppService.Core.Services
 
             filters.PageNumber = filters.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filters.PageNumber;
             filters.PageSize = filters.PageSize == 0 ? _paginationOptions.DefaultPageSize : filters.PageSize;
+
 
 
             List<AppGeneralQuotes> quotes = await _unitOfWork.AppGeneralQuotesRepository.GetAll(filters);
@@ -695,12 +688,12 @@ namespace AppService.Core.Services
 
 
 
-                    var actualizar = await _unitOfWork.AppGeneralQuotesRepository.VerificarStatus(item.Id);
-                    if (actualizar != item.IdEstatus)
-                    {
-                        item.IdEstatus = actualizar;
-                        await _unitOfWork.SaveChangesAsync();
-                    }
+                    /*  var actualizar = await _unitOfWork.AppGeneralQuotesRepository.VerificarStatus(item.Id);
+                     if (actualizar != item.IdEstatus)
+                     {
+                         item.IdEstatus = actualizar;
+                         await _unitOfWork.SaveChangesAsync();
+                     } */
 
 
                     AppStatusQuote appStatusQuote = await _unitOfWork.AppStatusQuoteRepository.GetById(item.IdEstatus);
@@ -1428,40 +1421,46 @@ namespace AppService.Core.Services
                     return response;
                 }
 
-                appGeneralQuotes.IdEstatus = 2;
-                var res = await this.Update(appGeneralQuotes);
+
 
                 ApiResponse<List<AppDetailQuotesGetDto>> appGeneralQuotesId = await this._appDetailQuotesService.GetListAppDetailQuoteByAppGeneralQuotesId(dto.Id);
                 if (appGeneralQuotesId.Data.Count > 0)
                 {
                     foreach (AppDetailQuotesGetDto detailQuotesGetDto in appGeneralQuotesId.Data)
                     {
-                        var entity = await this._appDetailQuotesService.GetById(detailQuotesGetDto.Id);
-                        if (entity != null)
+                        try
                         {
-                            Decimal precioUsd = entity.PrecioUsd;
-                            Decimal? unitPriceConverted = entity.UnitPriceConverted;
-                            Decimal valueOrDefault = unitPriceConverted.GetValueOrDefault();
-                            //if (precioUsd < valueOrDefault & unitPriceConverted.HasValue)
-                            //{
-                            //    metadata.IsValid = false;
-                            //    metadata.Message = "Precio de Venta es menor a la Lista..Enviar a Aprobacion!!! ";
-                            //    response.Meta = metadata;
-                            //    response.Data = resultDto;
-                            //    return response;
-                            //}
+                            var entity = await this._appDetailQuotesService.GetById(detailQuotesGetDto.Id);
+                            if (entity != null)
+                            {
 
-                            entity.IdEstatus = 2;
-                            this._unitOfWork.AppDetailQuotesRepository.Update(entity);
-                            await this._unitOfWork.SaveChangesAsync();
+
+                                entity.IdEstatus = 2;
+                                this._unitOfWork.AppDetailQuotesRepository.Update(entity);
+                                await this._unitOfWork.SaveChangesAsync();
 
 
 
+                            }
                         }
+                        catch (System.Exception ex)
+                        {
+
+                            metadata.IsValid = false;
+                            metadata.Message = ex.InnerException.Message;
+                            response.Meta = metadata;
+                            response.Data = resultDto;
+                            return response;
+                        }
+
+
+
+
                     }
 
 
-
+                    appGeneralQuotes.IdEstatus = 2;
+                    var res = await this.Update(appGeneralQuotes);
 
                     await this._cotizacionService.IntegrarCotizacion(appGeneralQuotes.Id, true);
                     AppStatusQuote byId1 = await this._unitOfWork.AppStatusQuoteRepository.GetById(appGeneralQuotes.IdEstatus);
@@ -1476,6 +1475,10 @@ namespace AppService.Core.Services
                     response.Data = resultDto;
                     return response;
                 }
+
+
+
+
                 metadata.IsValid = false;
                 metadata.Message = "Cotizacion No tiene Productos cargados!!! ";
                 response.Meta = metadata;

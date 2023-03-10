@@ -152,6 +152,9 @@ namespace AppService.Core.Services
                 appRecipes.Secuencia = new int?(dto.Secuencia);
                 appRecipes.EsVariableDeEntrada = dto.EsVariableDeEntrada;
                 appRecipes.DescriptionSearch = dto.DescriptionSearch;
+                appRecipes.RetornarElMayor = dto.RetornarElMayor;
+                appRecipes.RetornarElMenor = dto.RetornarElMenor;
+
                 int? nullable1 = dto.AppIngredientsId;
                 if (!nullable1.HasValue)
                     dto.AppIngredientsId = new int?(39);
@@ -170,7 +173,13 @@ namespace AppService.Core.Services
                         response.Meta = metadata;
                         return response;
                     }
-                    string stringPapel = appRecipes.Code.Substring(0, 5);
+
+                    string stringPapel = "";
+                    if (appRecipes.Code.Length >= 5)
+                    {
+                        stringPapel = appRecipes.Code.Substring(0, 5);
+                    }
+
                     if (stringPapel == "PAPEL")
                     {
                         var wimy001 = await _unitOfWork.Wimy001Repository.GettByCode(byId2.Code);
@@ -245,7 +254,7 @@ namespace AppService.Core.Services
           AppRecipesUpdateDto dto)
         {
 
-            //await CalculateAllProduct();
+          
 
             AppConfigApp appConfigApp = await _unitOfWork.AppConfigAppRepository.GetByKey("RecalcularTodosLosProductos");
             if (appConfigApp != null && appConfigApp.Valor == "1")
@@ -319,12 +328,21 @@ namespace AppService.Core.Services
                     return response;
                 }
 
+               
+                  
 
 
                 recipe.AppVariableId = new int?(byId1.Id);
                 recipe.Code = byId1.Code;
                 recipe.Description = byId1.Description;
-                recipe.Quantity = dto.Quantity;
+                if (dto.Formula.Length <= 0)
+                {
+
+                    recipe.Quantity = dto.Quantity;
+                }
+
+
+
                 recipe.SumValue = new bool?(dto.SumValue);
                 recipe.OrderCalculate = dto.OrderCalculate;
                 recipe.IncludeInSearch = new bool?(dto.IncludeInSearch);
@@ -335,6 +353,8 @@ namespace AppService.Core.Services
                 recipe.DescriptionSearch = dto.DescriptionSearch;
                 recipe.Formula = dto.Formula;
                 recipe.MensajeValidacionFormula = "";
+                recipe.RetornarElMayor = dto.RetornarElMayor;
+                recipe.RetornarElMenor = dto.RetornarElMenor;
                 if (recipe.Formula.Trim().Length <= 0)
                     recipe.FormulaValue = "";
                 if (!dto.AppIngredientsId.HasValue)
@@ -355,7 +375,12 @@ namespace AppService.Core.Services
                         response.Meta = metadata;
                         return response;
                     }
-                    string stringPapel = recipe.Code.Substring(0, 5);
+                     string stringPapel = "";
+                    if (recipe.Code.Length >= 5)
+                    {
+                        stringPapel = recipe.Code.Substring(0, 5);
+                    }
+
                     if (stringPapel == "PAPEL")
                     {
                         var wimy001 = await _unitOfWork.Wimy001Repository.GettByCode(byId2.Code);
@@ -393,8 +418,15 @@ namespace AppService.Core.Services
                     recipe.Formula = dto.Formula;
                     recipe.FormulaValue = "";
                 }
-                //await ValidaFormula(recipe);
-                await UpdateVariableSearchByProduct((int)dto.AppproductsId);
+                await this.Update(recipe);
+
+                
+                 if( dto.IncludeInSearch == true){
+                    
+                    await UpdateVariableSearchByProduct((int)dto.AppproductsId);
+
+                }
+              
                 List<AppRecipesGetDto> appRecipesGetDtoList = await CalulateRecipeByProduct((int)dto.AppproductsId);
                 metadata.IsValid = true;
                 metadata.Message = "Receta actualizada!";
@@ -541,24 +573,61 @@ namespace AppService.Core.Services
         }
 
 
-        public async Task<Decimal> CalculateFormula(AppRecipes recipe)
+        public async Task<Decimal> CalculateFormula(int recipeId)
         {
             try
             {
+
+                var recipe = await _unitOfWork.AppRecipesRepository.GetById(recipeId);
+
                 Decimal result = 0M;
                 if (recipe == null)
                 {
                     result = 0M;
                     return result;
                 }
+
+                if (recipe.RetornarElMayor == null) recipe.RetornarElMayor = false;
+                if (recipe.RetornarElMenor == null) recipe.RetornarElMenor = false;
+
                 string valueFormula = await this.GetValueFormula(recipe.Formula, recipe.Appproducts.Code, recipe.Code);
                 recipe.FormulaValue = valueFormula;
                 var mensaje = await ValidaFormula(recipe);
                 if (mensaje.IsNullOrEmpty())
                 {
-                    object obj = new DataTable().Compute(valueFormula, "");
-                    obj.ToString();
-                    result = Convert.ToDecimal(obj.ToString());
+                    if (recipe.RetornarElMenor == false && recipe.RetornarElMayor == false)
+                    {
+                        object obj = new DataTable().Compute(valueFormula, "");
+                        obj.ToString();
+                        result = Convert.ToDecimal(obj.ToString());
+                    }
+
+
+                    if (recipe.RetornarElMayor == true)
+                    {
+                        string[] valores = valueFormula.Split(",");
+                        List<decimal> valoresDecimal = new List<decimal>();
+                        for (int i = 0; i < valores.Length; i++)
+
+                        {
+                            var decimalVal = System.Convert.ToDecimal(valores[i]);
+                            valoresDecimal.Add(decimalVal);
+                        }
+                        result = valoresDecimal.OrderByDescending(x => x).FirstOrDefault();
+                    }
+                    if (recipe.RetornarElMenor == true)
+                    {
+                        string[] valores = valueFormula.Split(",");
+                        List<decimal> valoresDecimal = new List<decimal>();
+                        for (int i = 0; i < valores.Length; i++)
+
+                        {
+                            var decimalVal = System.Convert.ToDecimal(valores[i]);
+                            valoresDecimal.Add(decimalVal);
+                        }
+                        result = valoresDecimal.OrderBy(x => x).FirstOrDefault();
+                    }
+
                     if (recipe.AfectaCosto.Value)
                     {
                         recipe.TotalCost = new Decimal?(result);
@@ -566,10 +635,21 @@ namespace AppService.Core.Services
                     else
                     {
                         bool? truncarEntero = recipe.TruncarEntero;
-                        bool flag = true;
-                        recipe.Quantity = !(truncarEntero.GetValueOrDefault() == flag & truncarEntero.HasValue) ? new Decimal?(result) : new Decimal?(Decimal.Truncate(result));
+
+                        if (truncarEntero == true)
+                        {
+                            recipe.Quantity = Decimal.Truncate(result);
+                        }
+                        else
+                        {
+                            recipe.Quantity = result;
+                        }
+                        //recipe.Quantity = !(truncarEntero.GetValueOrDefault() == flag & truncarEntero.HasValue) ? new Decimal?(result) : new Decimal?(Decimal.Truncate(result));
                     }
-                    AppRecipes appRecipes = await this.Update(recipe);
+
+                    await this.Update(recipe);
+
+                    //AppRecipes appRecipes = await this.Update(recipe);
                 }
                 else
                 {
@@ -611,7 +691,9 @@ namespace AppService.Core.Services
                     else
                     {
                         Decimal? quantity = codeVariableCode.FirstOrDefault<AppRecipes>().Quantity;
-                        newFormula = newFormula.Replace("[" + item + "]", quantity.ToString());
+                        string quantityString = quantity.ToString();
+                        quantityString = quantityString.Replace(",", ".");
+                        newFormula = newFormula.Replace("[" + item + "]", quantityString);
                     }
                 }
                 else
@@ -682,11 +764,8 @@ namespace AppService.Core.Services
                 return resultDto;
             foreach (AppRecipes recipe in recipesByProductId)
             {
-                if (recipe.Code == "PRECIO MAXIMO")
-                {
-                    var detener = 1;
-                }
-                Decimal formula = await this.CalculateFormula(recipe);
+
+                Decimal formula = await this.CalculateFormula(recipe.Id);
             }
             await this.UpdatePriceByProduct(productId);
             resultDto = await this.GetRecipesGetDtoByProductId(filter);

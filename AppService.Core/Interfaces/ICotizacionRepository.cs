@@ -24,6 +24,6 @@ namespace AppService.Core.Interfaces
 
         Task<List<string>> GetListCotizaciones(int diasAcualizaPresupuesto);
         Task<Wsmy501> GetByCotizacionAsNoTracking(string cotizacion);
-
+        Task<Wsmy501> GetByRif(string rif);
     }
 }

@@ -48,6 +48,10 @@ namespace AppService.Core.Entities
         public string DescriptionSearch { get; set; }
 
         public string MensajeValidacionFormula { get; set; }
+        public bool? RetornarElMayor { get; set; }
+        public bool? RetornarElMenor { get; set; }
+
+
 
         public virtual AppIngredients AppIngredients { get; set; }
 

@@ -150,7 +150,7 @@ namespace AppService.Infrastructure.Repositories
 
                 fechaDesde = DateTime.Now.AddDays(-diasAcualizaPresupuesto);
 
-                result = await _context.Wsmy501.Where(x => x.FechaActualiza >= fechaDesde).OrderByDescending(x => x.FechaActualiza).Select(p => p.Cotizacion).ToListAsync();
+                result = await _context.Wsmy501.Where(x => x.Estatus > 1 && x.FechaActualiza >= fechaDesde).OrderByDescending(x => x.FechaActualiza).Select(p => p.Cotizacion).ToListAsync();
                 //var COTIZACION = "AS37202210088";
                 //result = await _context.Wsmy501.Where(x => x.Cotizacion == COTIZACION).OrderByDescending(x => x.FechaActualiza).Select(p => p.Cotizacion).ToListAsync();
 
@@ -180,7 +180,10 @@ namespace AppService.Infrastructure.Repositories
             return await _context.Wsmy501.FindAsync(id);
         }
 
-
+        public async Task<Wsmy501> GetByRif(string rif)
+        {
+            return await _context.Wsmy501.Where(x => x.Rif == rif).OrderByDescending(x => x.FechaActualiza).FirstOrDefaultAsync();
+        }
 
         public async Task<Wsmy501> GetByCotizacionAsNoTracking(string cotizacion)
         {

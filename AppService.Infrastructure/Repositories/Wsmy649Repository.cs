@@ -50,7 +50,16 @@ namespace AppService.Infrastructure.Repositories
 
 
                 var result = await _context.Wsmy646.FromSqlRaw<Wsmy646>("exec PaBuscarAprobadorNew @IdSubCategoria,@IdOficina,@IdRuta", IdSubCategoriaParam, IdOficinaParam, idRutaParam).ToListAsync();
-                idStacion = result.FirstOrDefault().IdEstacion;
+                if (result.Count > 0)
+                {
+                    idStacion = result.FirstOrDefault().IdEstacion;
+                }
+                else
+                {
+                    idStacion = 0;
+                }
+
+
                 return idStacion;
             }
             catch (Exception ex)

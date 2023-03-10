@@ -36,7 +36,7 @@ namespace AppService.Core.DTOs
 
         public Decimal MedidaOpuesta { get; set; }
 
-
+        public int CalculoId { get; set; }
         public AppConversionUnitGenericCreateDto? AppConversionUnitGenericCreateDto { get; set; }
 
     }

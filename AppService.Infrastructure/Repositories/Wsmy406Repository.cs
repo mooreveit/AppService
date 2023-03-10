@@ -40,6 +40,12 @@ namespace AppService.Infrastructure.Repositories
             return await _context.Wsmy406.Where(x => x.IdProducto == producto).FirstOrDefaultAsync();
         }
 
+        public async Task<Wsmy406> GetByCodAplicacion(int codAplicacion)
+        {
+
+            return await _context.Wsmy406.Where(x => x.CodAplicacion == codAplicacion).FirstOrDefaultAsync();
+        }
+
         public async Task Add(Wsmy406 entity)
         {
             await _context.Wsmy406.AddAsync(entity);

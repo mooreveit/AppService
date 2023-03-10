@@ -78,6 +78,8 @@ namespace AppService.Core.Entities
 
         public int TipoCalculo { get; set; }
 
+        public int CodAplicacion { get; set; }
+
         public virtual AppSubCategory AppSubCategory { get; set; }
 
         public virtual AppUnits AppUnits { get; set; }

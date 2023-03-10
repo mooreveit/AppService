@@ -49,14 +49,36 @@ namespace AppService.Core.Services
 
             try
             {
+                //Actualizar codAplicacion en productos
+                var productos = await _unitOfWork.AppProductsRepository.GetAll();
+                var listProduct = productos.Where(x => x.CodAplicacion == 0).ToList();
+                foreach (var item in listProduct)
+                {
+                    var aplicacion = await this._unitOfWork.Wsmy406Repository.GetByProduct(item.ExternalCode.Trim());
+                    if (aplicacion != null)
+                    {
+                        item.CodAplicacion = aplicacion.CodAplicacion;
+                        this._unitOfWork.AppProductsRepository.Update(item);
+                        this._unitOfWork.SaveChanges();
+                    }
+
+
+                }
+
 
                 AppDetailQuotes appDetailQuotes = await _unitOfWork.AppDetailQuotesRepository.GetById(filter.IdAppDetailQuote);
 
                 List<Wpry240> wpry240 = await _unitOfWork.Wpry240Repository.GetByCotizacion(filter.Cotizacion);
 
                 var appProducts = await _unitOfWork.AppProductsRepository.GetById(appDetailQuotes.IdProducto);
+                //Wsmy406 aplicacionProducto = await this._unitOfWork.Wsmy406Repository.GetByProduct(appProducts.ExternalCode.Trim());
 
-                Wsmy406 aplicacionProducto = await this._unitOfWork.Wsmy406Repository.GetByProduct(appProducts.ExternalCode.Trim());
+
+                Wsmy406 aplicacionProducto = await this._unitOfWork.Wsmy406Repository.GetByCodAplicacion(appProducts.CodAplicacion);
+
+
+               
+
 
                 if (wpry240 != null && appDetailQuotes != null)
                 {
@@ -443,7 +465,7 @@ namespace AppService.Core.Services
                     if (parte != null)
                     {
 
-                        parte.IdPapel = item.IdPapel;
+                        parte.IdPapel = item.IdPapelNew;
                         parte.FrasesMarginales = item.FrasesMarginales;
                         _unitOfWork.Wpry240Repository.Update(parte);
                         await _unitOfWork.SaveChangesAsync();
@@ -479,7 +501,7 @@ namespace AppService.Core.Services
                         if (!item.TintasRespaldoNew.IsNullOrEmpty())
                         {
 
-                            var lisTintasRespaldo = item.TintasFrenteNew.Split(';').ToList();
+                            var lisTintasRespaldo = item.TintasRespaldoNew.Split(';').ToList();
                             foreach (var itemTintaRespaldo in lisTintasRespaldo)
                             {
                                 Wpry241 wpry241Insert = new Wpry241();

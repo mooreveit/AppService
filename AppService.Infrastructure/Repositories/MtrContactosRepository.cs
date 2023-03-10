@@ -32,7 +32,7 @@ namespace AppService.Infrastructure.Repositories
         }
         public async Task<List<MtrContactos>> GetByIdCliente(string idCliente)
         {
-            return await _context.MtrContactos.Where(x => x.IdCliente == idCliente).ToListAsync();
+            return await _context.MtrContactos.Where(x => x.IdCliente == idCliente && x.Inactivo == false).ToListAsync();
         }
 
         public async Task Add(MtrContactos entity)
@@ -95,6 +95,8 @@ namespace AppService.Infrastructure.Repositories
 
             }
 
+
+            var result = contactos.Where(x => x.Inactivo == false).ToList();
             //List<MtrContactos> result = new List<MtrContactos>();
 
 
@@ -111,7 +113,7 @@ namespace AppService.Infrastructure.Repositories
 
             //}
 
-            return contactos;
+            return result;
         }
 
 

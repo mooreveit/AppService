@@ -12,10 +12,11 @@ using AppService.Infrastructure.Interfaces;
 using AutoMapper;
 using DinkToPdf;
 using DinkToPdf.Contracts;
+using SelectPdf;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using SelectPdf;
+
 using System;
 using System.Collections.Generic;
 using System.IO;

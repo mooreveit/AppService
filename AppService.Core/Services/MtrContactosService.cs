@@ -1628,8 +1628,11 @@ namespace AppService.Core.Services
         public async Task UpdateClientesToOdoo(List<MtrCliente> mtrClientes)
         {
 
-            foreach (var item in mtrClientes)
-            {
+                //foreach (var item in mtrClientes.Where(x=>x.Codigo.Trim()== "744455"))
+                foreach (var item in mtrClientes)
+                {
+               
+
                 var odooProduct = await GetOdooCliente(item);
                 try
                 {

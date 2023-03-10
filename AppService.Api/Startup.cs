@@ -239,6 +239,8 @@ namespace AppService.Api
             services.AddTransient<INmm024Service, Nmm024Service>();
             services.AddTransient<INmt033Service, Nmt033Service>();
 
+            services.AddTransient<IAppDocumentosFiscalesService, AppDocumentosFiscalesService>();
+            
 
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -288,7 +290,9 @@ namespace AppService.Api
 
             services.AddCors(o => o.AddPolicy("charppolicy", builder =>
             {
-                builder.AllowAnyOrigin()
+                builder
+
+                        .AllowAnyOrigin()
                        .AllowAnyMethod()
                        .AllowAnyHeader();
             }));

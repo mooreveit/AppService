@@ -50,7 +50,7 @@ namespace AppService.Api.Controllers
         ///  
         /// 
         /// </summary>
-        /// <param name="filter">Filtros a aplicar PartesFilter, si en el objeto incluye Cotizacion, se realizara el filtro de los datos</param>
+        /// <param name="dto">Filtros a aplicar PartesFilter, si en el objeto incluye Cotizacion, se realizara el filtro de los datos</param>
         /// <returns></returns>
         [HttpPost]
         [Route("[action]")]

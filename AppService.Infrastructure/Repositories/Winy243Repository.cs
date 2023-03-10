@@ -40,7 +40,7 @@ namespace AppService.Infrastructure.Repositories
         {
 
             List<Winy243> result = new List<Winy243>();
-            var pageSize = 20;
+            var pageSize = 1000;
 
             if (filter.SearchText.Trim().Length == 0)
             {
@@ -49,7 +49,7 @@ namespace AppService.Infrastructure.Repositories
             }
             else
             {
-                result = await _context.Winy243.Where(x => x.NombreEstado.Trim().ToLower().Contains(filter.SearchText.Trim().ToLower()) || x.DescMunicipio.Trim().ToLower().Contains(filter.SearchText.Trim().ToLower())).Take(pageSize).ToListAsync();
+                result = await _context.Winy243.Where(x => x.NombreEstado.Trim().ToLower().Contains(filter.SearchText.Trim().ToLower()) || x.DescMunicipio.Trim().ToLower().Contains(filter.SearchText.Trim().ToLower()) || x.CapitalMcpo.Trim().ToLower().Contains(filter.SearchText.Trim().ToLower())).Take(pageSize).ToListAsync();
             }
 
 

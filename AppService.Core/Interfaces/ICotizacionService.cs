@@ -54,6 +54,7 @@ namespace AppService.Core.Interfaces
         Task<Wsmy501> GetByCotizacionAsNoTracking(string cotizacion);
         Task DeleteCotizacionesDetailToOdoo(List<int> mooreIds);
         Task DeleteCotizacionesToOdoo(List<string> cotizaciones);
+        Task ActualizarClientes();
 
     }
 }

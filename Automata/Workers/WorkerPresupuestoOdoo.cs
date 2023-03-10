@@ -18,10 +18,12 @@ namespace Automata.Workers
             {
 
                 Console.WriteLine("Ejecutando worker cada 1 minuto");
+                Console.WriteLine("Iniciando envio de clientes a Odoo");
+                await _cotizacionService.ActualizarClientes();
                 Console.WriteLine("Iniciando envio de cotizaciones a Odoo");
                 await _cotizacionService.UpdateCotizacionesToOdoo();
                 Console.WriteLine("Culminado envio de cotizaciones a Odoo");
-                await Task.Delay(60000);
+                await Task.Delay(600000);
 
 
 

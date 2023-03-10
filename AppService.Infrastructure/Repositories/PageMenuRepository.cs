@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AppService.Infrastructure.Repositories
 {
-    public class PageMenuRepository: IPageMenuRepository
+    public class PageMenuRepository : IPageMenuRepository
     {
 
         private readonly RRDContext _context;
@@ -23,7 +23,7 @@ namespace AppService.Infrastructure.Repositories
 
         public async Task<List<PageMenu>> GetMenuByRole(int role)
         {
-            return await _context.PageMenu.Where(x => x.Role==role).ToListAsync();
+            return await _context.PageMenu.Where(x => x.Role == role).ToListAsync();
         }
     }
 }

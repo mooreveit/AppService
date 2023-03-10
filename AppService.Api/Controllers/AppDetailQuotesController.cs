@@ -135,6 +135,45 @@ namespace AppService.Api.Controllers
             {
 
 
+                var appDetailQuotes = await _appDetailQuotesService.GetById(appDetailQuotesUpdateDto.Id);
+                if (appDetailQuotes != null)
+                {
+                    // SI CAMBIA EL PRODUCTO DEL ITEM SE PROCEDE A ELIMININAR  Y CREAR CON EL NUEVO PRODUCTO
+                    if (appDetailQuotes.IdProducto != appDetailQuotesUpdateDto.IdProducto)
+                    {
+                        AppDetailQuotesDeleteDto appDetailQuotesDeleteDto = new AppDetailQuotesDeleteDto();
+                        appDetailQuotesDeleteDto.Id = appDetailQuotesUpdateDto.Id;
+                        appDetailQuotesDeleteDto.Cotizacion = appDetailQuotes.Cotizacion;
+                        var detailQuotesDeleted = await _appDetailQuotesService.DeleteDetailQuotes(appDetailQuotesDeleteDto);
+
+
+                        var appDetailQuotesCreateDto = MapUpdataDtoToCreateDto(appDetailQuotesUpdateDto, appDetailQuotes.AppGeneralQuotesId, appDetailQuotes.Cotizacion);
+                        var detailQuotesInserted = await _appDetailQuotesService.InsertAppDetailQuotes(appDetailQuotesCreateDto);
+                        if (detailQuotesInserted.Meta.IsValid)
+                        {
+                            AppGeneralQuotesQueryFilter filterGeneral = new AppGeneralQuotesQueryFilter
+                            {
+                                Cotizacion = detailQuotesInserted.Data.Cotizacion
+                            };
+                            PagedList<AppGeneralQuotesGetDto> generalQuotes = await _appGeneralQuotesService.GetAllAppGeneralQuotes(filterGeneral);
+                            foreach (AppGeneralQuotesGetDto item in generalQuotes)
+                            {
+                                item.AppDetailQuotesInsertedGetDto = detailQuotesInserted.Data;
+                            }
+
+
+                            ApiResponse<List<AppGeneralQuotesGetDto>> response = new ApiResponse<List<AppGeneralQuotesGetDto>>(generalQuotes)
+                            {
+                                Meta = detailQuotesInserted.Meta
+                            };
+                            return Ok(response);
+
+                        }
+
+
+                    }
+                }
+
                 Core.Responses.ApiResponse<AppDetailQuotesGetDto> detailQuotes = await _appDetailQuotesService.UpdateAppDetailQuotes(appDetailQuotesUpdateDto);
 
                 if (detailQuotes.Meta.IsValid)
@@ -341,5 +380,46 @@ namespace AppService.Api.Controllers
 
         }
 
+
+        public AppDetailQuotesCreateDto MapUpdataDtoToCreateDto(AppDetailQuotesUpdateDto dto, int appGeneralQuotedId, string cotizacion)
+        {
+
+
+
+
+            AppDetailQuotesCreateDto appDetailQuotesCreateDto = new AppDetailQuotesCreateDto();
+            appDetailQuotesCreateDto.AppGeneralQuotesId = appGeneralQuotedId;
+
+            appDetailQuotesCreateDto.Cotizacion = cotizacion;
+            appDetailQuotesCreateDto.IdProducto = dto.IdProducto;
+            appDetailQuotesCreateDto.NombreComercialProducto = dto.NombreComercialProducto;
+            appDetailQuotesCreateDto.IdEstatus = dto.IdEstatus;
+            appDetailQuotesCreateDto.Cantidad = dto.Cantidad;
+            appDetailQuotesCreateDto.CantidadSolicitada = dto.CantidadSolicitada;
+            appDetailQuotesCreateDto.Precio = dto.Precio;
+            appDetailQuotesCreateDto.Total = dto.Total;
+            appDetailQuotesCreateDto.PrecioUsd = dto.PrecioUsd;
+            appDetailQuotesCreateDto.TotalUsd = dto.TotalUsd;
+            appDetailQuotesCreateDto.IdUnidad = dto.IdUnidad;
+            appDetailQuotesCreateDto.Observaciones = dto.Observaciones;
+            appDetailQuotesCreateDto.DiasEntrega = dto.DiasEntrega;
+            appDetailQuotesCreateDto.PrecioLista = dto.PrecioLista;
+            appDetailQuotesCreateDto.SolicitarPrecio = dto.SolicitarPrecio;
+            appDetailQuotesCreateDto.ObsSolicitud = dto.ObsSolicitud;
+            if (dto.ValorConvertido == null) dto.ValorConvertido = 0;
+            appDetailQuotesCreateDto.ValorConvertido = (decimal)dto.ValorConvertido;
+            if (dto.UnitPriceBaseProduction == null) dto.UnitPriceBaseProduction = 0;
+            appDetailQuotesCreateDto.UnitPriceBaseProduction = (decimal)dto.UnitPriceBaseProduction;
+            if (dto.UnitPriceConverted == null) dto.UnitPriceConverted = 0;
+            appDetailQuotesCreateDto.UnitPriceConverted = (decimal)dto.UnitPriceConverted;
+            if (dto.CantidadPorUnidadProduccion == null) dto.CantidadPorUnidadProduccion = 0;
+            appDetailQuotesCreateDto.CantidadPorUnidadProduccion = (decimal)dto.CantidadPorUnidadProduccion;
+            appDetailQuotesCreateDto.QuantityPerPackage = dto.QuantityPerPackage;
+            appDetailQuotesCreateDto.OrdenAnterior = dto.OrdenAnterior;
+            appDetailQuotesCreateDto.MedidaBasica = dto.MedidaBasica;
+            appDetailQuotesCreateDto.MedidaOpuesta = dto.MedidaOpuesta;
+
+            return appDetailQuotesCreateDto;
+        }
     }
 }

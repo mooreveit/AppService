@@ -10,6 +10,7 @@ namespace AppService.Core.DTOs
     {
 
         public decimal IdMunicipio { get; set; }
+
         public int AppProuctId { get; set; }
 
         public int Cantidad { get; set; }

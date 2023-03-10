@@ -31,7 +31,9 @@ namespace AppService.Api.Controllers
             List<string> listaOriginal = new List<string>();
 
             //Paso I Lee archivo de texto y agrega a una lista en memoria
-            foreach (string item in System.IO.File.ReadLines(@"C:\Temp\Origen\origen.txt"))
+            string patch = "/Users/freveron/Documents/temp/origen/origen.txt";
+            //foreach (string item in System.IO.File.ReadLines(@"C:\Temp\Origen\origen.txt"))
+            foreach (string item in System.IO.File.ReadLines(patch))
             {
 
                 listaOriginal.Add(item);
@@ -69,7 +71,9 @@ namespace AppService.Api.Controllers
             }
 
             //Crea archivo destino 
-            StreamWriter sw = new StreamWriter(@"C:\Temp\Destino\destino.txt", true, System.Text.Encoding.ASCII);
+            patch = "/Users/freveron/Documents/temp/destino/destino.txt";
+            StreamWriter sw = new StreamWriter(patch, true, System.Text.Encoding.ASCII);
+            //  StreamWriter sw = new StreamWriter(@"C:\Temp\Destino\destino.txt", true, System.Text.Encoding.ASCII);
             foreach (var item in nuevaLista)
             {
                 sw.WriteLine(item);

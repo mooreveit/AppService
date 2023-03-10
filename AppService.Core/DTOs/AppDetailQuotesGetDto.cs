@@ -40,6 +40,7 @@ namespace AppService.Core.DTOs
         public decimal CantidadTintas { get; set; }
         public bool TieneTintasCargadas { get; set; }
 
+
         public AppProductConversionGetDto AppProductConversionGetDto { get; set; }
 
         public AppProductsGetDto AppProductsGetDto { get; set; }

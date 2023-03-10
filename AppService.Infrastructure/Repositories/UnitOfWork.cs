@@ -216,7 +216,8 @@ namespace AppService.Infrastructure.Repositories
         public readonly IAppVariablesEspecificacionesPartesRepository _appVariablesEspecificacionesPartesRepository;
         public readonly IAppValoresVariablesEspecificacionesPartesRepository _appValoresVariablesEspecificacionesPartesRepository;
 
-
+        public readonly IAppPorcentajeAdicionalM2Repository _appPorcentajeAdicionalM2Repository;
+        
 
         public UnitOfWork(RRDContext context, MooreveContext mooreveContext, MCContext mcContext, IMaestrosContext maestrosContext, SapContext sapContext, ClientesContext clientesContext, FacturacionContext facturacionContext, ContratosStockContext contratosStockContext, DWContext dWContext, NominaContext nominaContext, SpiContext spiContext, PlantaContext plantaContext, MaterialesContext materialesContext)
         {
@@ -328,8 +329,9 @@ namespace AppService.Infrastructure.Repositories
         public IAppDetailQuotesConversionUnitRepository AppDetailQuotesConversionUnitRepository => _appDetailQuotesConversionUnitRepository ?? new AppDetailQuotesConversionUnitRepository(_context);
 
         public IAppPriceRepository AppPriceRepository => this._appPriceRepository ?? (IAppPriceRepository)new AppService.Infrastructure.Repositories.AppPriceRepository(this._context);
+        public IAppPorcentajeAdicionalM2Repository AppPorcentajeAdicionalM2Repository => this._appPorcentajeAdicionalM2Repository ?? (IAppPorcentajeAdicionalM2Repository)new AppService.Infrastructure.Repositories.AppPorcentajeAdicionalM2Repository(this._context);
 
-
+        
 
         //MC
         public ITPaTasaBancoCentralRepository TPaTasaBancoCentralRepository => _tPaTasaBancoCentralRepository ?? new TPaTasaBancoCentralRepository(_mcContext);

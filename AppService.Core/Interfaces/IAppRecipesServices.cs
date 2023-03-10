@@ -27,7 +27,7 @@ namespace AppService.Core.Interfaces
 
         Task<AppRecipes> GetRecipesByProductIdVariableId(int productId, int variableId);
 
-        Task<Decimal> CalculateFormula(AppRecipes recipe);
+        Task<Decimal> CalculateFormula(int recipe);
 
         Task<string> GetValueFormula(string formula, string codeProduct, string codeRecipe);
 

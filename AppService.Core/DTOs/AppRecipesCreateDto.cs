@@ -20,7 +20,8 @@
         public bool TruncarEntero { get; set; }
         public bool? EsVariableDeEntrada { get; set; }
         public string DescriptionSearch { get; set; }
-
+        public bool? RetornarElMayor { get; set; }
+        public bool? RetornarElMenor { get; set; }
 
     }
 }

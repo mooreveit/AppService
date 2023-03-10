@@ -47,5 +47,8 @@ namespace AppService.Core.Entities
     public bool? TruncarEntero { get; set; }
 
     public bool? EsVariableDeEntrada { get; set; }
+     public bool? RetornarElMayor { get; set; }
+        public bool? RetornarElMenor { get; set; }
+
   }
 }

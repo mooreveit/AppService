@@ -20,6 +20,7 @@ namespace AppService.Core.Interfaces
         void Update(Wsmy406 entity);
 
         Task Delete(short id);
+        Task<Wsmy406> GetByCodAplicacion(int codAplicacion);
 
 
     }

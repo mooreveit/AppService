@@ -188,7 +188,7 @@ namespace AppService.Api.Controllers
             }
             catch (Exception e)
             {
-
+  
                 metadata.IsValid = false;
                 metadata.Message = e.InnerException.Message;
                 var responseError = new ApiResponse<IEnumerable<CobAdjuntosCobranzaDto>>(result)
@@ -196,7 +196,7 @@ namespace AppService.Api.Controllers
                     Meta = metadata
                 };
 
-                _logger.LogError("Return  Get all Adjuntos del Documento:" + filters.Documento.ToString() + "Error:" + e.InnerException.Message);
+             
                 return Ok(responseError);
             }
 

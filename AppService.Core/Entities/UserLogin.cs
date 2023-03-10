@@ -11,5 +11,8 @@ namespace AppService.Core.Entities
     public string User { get; set; }
 
     public string Password { get; set; }
-  }
+
+    public bool Mobil { get; set; } = true;
+
+    }
 }

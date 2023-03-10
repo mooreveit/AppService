@@ -19,5 +19,6 @@ namespace AppService.Core.Interfaces
         Task<List<MtrCliente>> GetAllByRegion(string region);
 
         MtrCliente Update(MtrCliente mtrCliente);
+        Task<List<MtrCliente>> GetAllDAyUpdate(int days);
     }
 }

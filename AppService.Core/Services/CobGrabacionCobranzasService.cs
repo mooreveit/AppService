@@ -72,7 +72,12 @@ namespace AppService.Core.Services
                 cobGrabacionCobranzas.EjercicioDocumentoSap = "";
 
             }
-           
+            if (cobGrabacionCobranzas.Monto == null)
+            {
+                cobGrabacionCobranzas.Monto = 0;
+
+            }
+
             await _unitOfWork.CobGrabacionCobranzasRepository.Add(cobGrabacionCobranzas);
             await _unitOfWork.SaveChangesAsync();
 

@@ -25,6 +25,13 @@ namespace AppService.Infrastructure.Repositories
 
         public async Task<List<AppGeneralQuotes>> GetAll(AppGeneralQuotesQueryFilter filter)
         {
+
+            var query = "exec AppReparaStatusEnEsperaCliente";
+
+
+            var result1 = _context.AppGeneralQuotes.FromSqlRaw(query);
+
+
             DateTime fechaDesde;
             DateTime fechaHasta;
 
@@ -229,6 +236,13 @@ namespace AppService.Infrastructure.Repositories
         public async Task<List<string>> GetListCotizaciones()
         {
 
+
+
+            var query = "exec AppReparaStatusEnEsperaCliente";
+
+
+            var result1 = _context.AppGeneralQuotes.FromSqlRaw(query);
+
             List<string> result = new List<string>();
             try
             {
@@ -261,6 +275,10 @@ namespace AppService.Infrastructure.Repositories
         public async Task<List<AppGeneralQuotes>> GetListCotizacionesUltimoMes()
         {
 
+            var query = "exec AppReparaStatusEnEsperaCliente";
+
+
+            var result1 = _context.AppGeneralQuotes.FromSqlRaw(query);
             List<AppGeneralQuotes> result = new List<AppGeneralQuotes>();
             try
             {

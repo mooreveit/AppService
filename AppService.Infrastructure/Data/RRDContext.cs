@@ -62,6 +62,9 @@ namespace AppService.Infrastructure.Data
 
         public virtual DbSet<AppService.Core.Entities.AppRecipesByAppDetailQuotesHistory> AppRecipesByAppDetailQuotesHistory { get; set; }
 
+        public virtual DbSet<AppService.Core.Entities.AppPorcentajeAdicionalM2> AppPorcentajeAdicionalM2 { get; set; }
+
+        
         public virtual DbSet<AppService.Core.Entities.AppPrice> AppPrice { get; set; }
 
         public virtual DbSet<AppService.Core.Entities.AppStatusQuote> AppStatusQuote { get; set; }
@@ -885,7 +888,7 @@ namespace AppService.Infrastructure.Data
                 entity.Property<string>((Expression<Func<AppService.Core.Entities.AppRecipes, string>>)(e => e.Code)).HasMaxLength(100);
                 entity.Property<string>((Expression<Func<AppService.Core.Entities.AppRecipes, string>>)(e => e.Description)).HasMaxLength(100);
                 entity.Property<bool?>((Expression<Func<AppService.Core.Entities.AppRecipes, bool?>>)(e => e.IncludeInSearch)).HasDefaultValueSql<bool?>("((0))");
-                entity.Property<Decimal?>((Expression<Func<AppService.Core.Entities.AppRecipes, Decimal?>>)(e => e.Quantity)).HasColumnType<Decimal?>("numeric(18, 2)");
+                entity.Property<Decimal?>((Expression<Func<AppService.Core.Entities.AppRecipes, Decimal?>>)(e => e.Quantity)).HasColumnType<Decimal?>("numeric(18, 6)");
                 entity.Property<int?>((Expression<Func<AppService.Core.Entities.AppRecipes, int?>>)(e => e.Secuencia)).HasDefaultValueSql<int?>("((0))");
                 entity.Property<Decimal?>((Expression<Func<AppService.Core.Entities.AppRecipes, Decimal?>>)(e => e.TotalCost)).HasColumnType<Decimal?>("numeric(18, 4)");
                 entity.HasOne<AppService.Core.Entities.AppIngredients>((Expression<Func<AppService.Core.Entities.AppRecipes, AppService.Core.Entities.AppIngredients>>)(d => d.AppIngredients)).WithMany((Expression<Func<AppService.Core.Entities.AppIngredients, IEnumerable<AppService.Core.Entities.AppRecipes>>>)(p => p.AppRecipes)).HasForeignKey((Expression<Func<AppService.Core.Entities.AppRecipes, object>>)(d => (object)d.AppIngredientsId)).HasConstraintName<AppService.Core.Entities.AppIngredients, AppService.Core.Entities.AppRecipes>("FK_AppRecipes_AppIngredients");
@@ -915,12 +918,20 @@ namespace AppService.Infrastructure.Data
                 entity.HasOne<AppService.Core.Entities.AppVariables>((Expression<Func<AppService.Core.Entities.AppRecipesByAppDetailQuotes, AppService.Core.Entities.AppVariables>>)(d => d.AppVariable)).WithMany((Expression<Func<AppService.Core.Entities.AppVariables, IEnumerable<AppService.Core.Entities.AppRecipesByAppDetailQuotes>>>)(p => p.AppRecipesByAppDetailQuotes)).HasForeignKey((Expression<Func<AppService.Core.Entities.AppRecipesByAppDetailQuotes, object>>)(d => (object)d.AppVariableId)).HasConstraintName<AppService.Core.Entities.AppVariables, AppService.Core.Entities.AppRecipesByAppDetailQuotes>("FK_AppRecipesByAppDetailQuotes_AppVariables");
                 entity.HasOne<AppService.Core.Entities.AppProducts>((Expression<Func<AppService.Core.Entities.AppRecipesByAppDetailQuotes, AppService.Core.Entities.AppProducts>>)(d => d.Appproducts)).WithMany((Expression<Func<AppService.Core.Entities.AppProducts, IEnumerable<AppService.Core.Entities.AppRecipesByAppDetailQuotes>>>)(p => p.AppRecipesByAppDetailQuotes)).HasForeignKey((Expression<Func<AppService.Core.Entities.AppRecipesByAppDetailQuotes, object>>)(d => (object)d.AppproductsId)).HasConstraintName<AppService.Core.Entities.AppProducts, AppService.Core.Entities.AppRecipesByAppDetailQuotes>("FK_AppRecipesByAppDetailQuotes_AppProducts");
             }));
+             
             modelBuilder.Entity<AppService.Core.Entities.AppPrice>((Action<EntityTypeBuilder<AppService.Core.Entities.AppPrice>>)(entity =>
             {
                 entity.Property<Decimal>((Expression<Func<AppService.Core.Entities.AppPrice, Decimal>>)(e => e.Desde)).HasColumnType<Decimal>("numeric(18, 2)");
                 entity.Property<Decimal>((Expression<Func<AppService.Core.Entities.AppPrice, Decimal>>)(e => e.Hasta)).HasColumnType<Decimal>("numeric(18, 2)");
                 entity.Property<Decimal>((Expression<Func<AppService.Core.Entities.AppPrice, Decimal>>)(e => e.Precio)).HasColumnType<Decimal>("numeric(18, 4)");
                 entity.HasOne<AppService.Core.Entities.AppProducts>((Expression<Func<AppService.Core.Entities.AppPrice, AppService.Core.Entities.AppProducts>>)(d => d.Appproducts)).WithMany((Expression<Func<AppService.Core.Entities.AppProducts, IEnumerable<AppService.Core.Entities.AppPrice>>>)(p => p.AppPrices)).HasForeignKey((Expression<Func<AppService.Core.Entities.AppPrice, object>>)(d => (object)d.AppproductsId));
+            }));
+
+            modelBuilder.Entity<AppService.Core.Entities.AppPorcentajeAdicionalM2>((Action<EntityTypeBuilder<AppService.Core.Entities.AppPorcentajeAdicionalM2>>)(entity =>
+            {
+                entity.Property<Decimal>((Expression<Func<AppService.Core.Entities.AppPorcentajeAdicionalM2, Decimal>>)(e => e.M2Desde)).HasColumnType<Decimal>("numeric(18, 2)");
+                entity.Property<Decimal>((Expression<Func<AppService.Core.Entities.AppPorcentajeAdicionalM2, Decimal>>)(e => e.M2Hasta)).HasColumnType<Decimal>("numeric(18, 2)");
+                entity.Property<Decimal>((Expression<Func<AppService.Core.Entities.AppPorcentajeAdicionalM2, Decimal>>)(e => e.Porcentaje)).HasColumnType<Decimal>("numeric(18, 4)");
             }));
             modelBuilder.Entity<AppService.Core.Entities.AppProductConversion>((Action<EntityTypeBuilder<AppService.Core.Entities.AppProductConversion>>)(entity =>
             {

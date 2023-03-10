@@ -2,5 +2,9 @@
 https://abarrenechea.net/articles/building-aworker-service
 Publish the application
 dotnet publish -r win-x64 -c Release --no-self-contained -o c:\Publish\win-service /p:PublishSingleFile=true /p:DebugType=None
+
+dotnet publish -r win-x64 -c Release --no-self-contained -o /Users/freveron/Documents/Publish/win-service /p:PublishSingleFile=true /p:DebugType=None
+
+"/Users/freveron/Documents/Publish/win-service"
 Run the Worker Service as a Windows Service
 sc create MyWindowsService start=delayed-auto binPath=c:\Publish\win-service\WorkerService.exe

@@ -3,6 +3,7 @@ using AppService.Core.Interfaces;
 using AppService.Core.QueryFilters;
 using AppService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,6 +34,15 @@ namespace AppService.Infrastructure.Repositories
             return await _context.MtrCliente.Where(x => x.CodigoRegion == region).ToListAsync();
 
         }
+
+        public async Task<List<MtrCliente>> GetAllDAyUpdate(int days)
+        {
+
+            DateTime localDate = DateTime.Now.AddDays(-days);
+            return await _context.MtrCliente.Where(x => x.FModificacion >= localDate).ToListAsync();
+
+        }
+
 
         public async Task<List<MtrCliente>> GetAllByRegion(string region)
         {
