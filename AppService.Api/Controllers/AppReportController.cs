@@ -62,8 +62,12 @@ namespace AppService.Api.Controllers
             //URL Base de mi servidor de reporte con la peticion de parametro en la url
             //string urlBase = "https://myrshost/ReportServer?/myreport&PARAMETRO=";
             string myreport = "";
+            if (subcategoria > 2)
+            {
+                myreport = "Ventas/Cotizador Plus/CotizacionPlusFormas";
+            }
 
-            if (subcategoria == 1)
+            if (subcategoria == 1 || subcategoria == 10)
             {
                 myreport = "Ventas/Cotizador Plus/AppCotizacionPlusFormas";
 
@@ -72,10 +76,7 @@ namespace AppService.Api.Controllers
             {
                 myreport = "Ventas/Cotizador Plus/CotizacionPlusStock";
             }
-            if (subcategoria > 2)
-            {
-                myreport = "Ventas/Cotizador Plus/CotizacionPlusFormas";
-            }
+         
 
 
             // string myreport = "Ventas/Cotizador Plus/CotizacionFormasVentas";

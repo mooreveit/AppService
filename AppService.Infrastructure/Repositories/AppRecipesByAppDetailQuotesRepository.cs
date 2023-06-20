@@ -56,12 +56,25 @@ namespace AppService.Infrastructure.Repositories
       return byAppDetailQuotes != null ? byAppDetailQuotes.CalculoId + 1 : 1;
     }
 
-    public async Task<List<AppRecipesByAppDetailQuotes>> GetListRecipesByProductCodeVariableCode(
-      int calculoId,
-      string codeProduct,
-      string code)
+    public async Task<List<AppRecipesByAppDetailQuotes>> GetListRecipesByProductCodeVariableCode(int calculoId,string codeProduct,string code)
     {
-      return await this._context.AppRecipesByAppDetailQuotes.Where<AppRecipesByAppDetailQuotes>((Expression<Func<AppRecipesByAppDetailQuotes, bool>>) (x => x.CalculoId == calculoId && x.Code == code)).ToListAsync<AppRecipesByAppDetailQuotes>();
+            var result=  await this._context.AppRecipesByAppDetailQuotes.Where<AppRecipesByAppDetailQuotes>((Expression<Func<AppRecipesByAppDetailQuotes, bool>>) (x => x.CalculoId == calculoId && x.Code.Trim() == code.Trim())).ToListAsync<AppRecipesByAppDetailQuotes>();
+            return result;
+     }
+
+    public async Task<List<AppRecipesByAppDetailQuotesHistory>> GetListRecipesByProductCodeVariableCodeHistorico(int calculoId, string codeProduct, string code)
+    {
+            try
+            {
+                var result = await this._context.AppRecipesByAppDetailQuotesHistory.Where(x => x.CalculoId == calculoId && x.Code.Trim() == code.Trim()).ToListAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+                return null;
+            }
+    
     }
-  }
+    }
 }

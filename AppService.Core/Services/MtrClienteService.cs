@@ -21,12 +21,14 @@ namespace AppService.Core.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly PaginationOptions _paginationOptions;
         private readonly IMapper _mapper;
+        private readonly ICotizacionService _cotizacionService;
 
-        public MtrClienteService(IUnitOfWork unitOfWork, IOptions<PaginationOptions> options, IMapper mapper)
+        public MtrClienteService(IUnitOfWork unitOfWork, IOptions<PaginationOptions> options, IMapper mapper,ICotizacionService  cotizacionService)
         {
             _unitOfWork = unitOfWork;
             _paginationOptions = options.Value;
             _mapper = mapper;
+            _cotizacionService = cotizacionService;
         }
 
 
@@ -40,12 +42,22 @@ namespace AppService.Core.Services
 
 
 
-
-
-
             return clientes;
 
         }
+
+        public async Task OdooActualizarClientes( )
+        {
+
+            //await _cotizacionService.UpdateCotizacionesToOdoo();
+
+            await _cotizacionService.ActualizarClientes();
+
+
+
+        }
+
+
 
 
         public async Task<MtrCliente> GetByIdAsync(string id)

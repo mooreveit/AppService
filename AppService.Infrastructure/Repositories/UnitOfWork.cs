@@ -3,6 +3,7 @@ using AppService.Infrastructure.Data;
 using AppService.Infrastructure.DataClientes;
 using AppService.Infrastructure.DataContratosStock;
 using AppService.Infrastructure.DataDW;
+using AppService.Infrastructure.DataEstadisticas;
 using AppService.Infrastructure.DataFacturacion;
 using AppService.Infrastructure.DataMaestros;
 using AppService.Infrastructure.DataMateriales;
@@ -32,8 +33,10 @@ namespace AppService.Infrastructure.Repositories
         private readonly NominaContext _nominaContext;
         private readonly SpiContext _spiContext;
         private readonly MaterialesContext _materialesContext;
+        private readonly EstadisticasContext _estadisticasContext;
 
 
+        
 
         //new
 
@@ -51,6 +54,8 @@ namespace AppService.Infrastructure.Repositories
         public readonly ICobTipoTransaccionRepository _cobTipoTransaccionRepository;
 
         public readonly IOfdTipoDocumentoRepository _ofdTipoDocumentoRepository;
+
+        public readonly IOfdAdjuntoCriterioRepository _ofdAdjuntoCriterioRepository;
 
         public readonly IMtrOficinaRepository _mtrOficinaRepository;
 
@@ -70,6 +75,8 @@ namespace AppService.Infrastructure.Repositories
         public readonly ICobEstadoDeCuentaRepository _cobEstadoDeCuentaRepository;
 
         public readonly IOfdCotizacionRepository _ofdCotizacionRepository;
+
+        public readonly IOfdAdjuntoRepository _ofdAdjuntoRepository;
 
         public readonly ICobPagosRetencionesRepository _cobPagosRetencionesRepository;
 
@@ -217,9 +224,12 @@ namespace AppService.Infrastructure.Repositories
         public readonly IAppValoresVariablesEspecificacionesPartesRepository _appValoresVariablesEspecificacionesPartesRepository;
 
         public readonly IAppPorcentajeAdicionalM2Repository _appPorcentajeAdicionalM2Repository;
+
+        public readonly IVentasRepository _ventasRepostory;
+        public readonly IAppDesarrolloEtiquetasPrimeRepository _appDesarrolloEtiquetasPrimeRepository;
         
 
-        public UnitOfWork(RRDContext context, MooreveContext mooreveContext, MCContext mcContext, IMaestrosContext maestrosContext, SapContext sapContext, ClientesContext clientesContext, FacturacionContext facturacionContext, ContratosStockContext contratosStockContext, DWContext dWContext, NominaContext nominaContext, SpiContext spiContext, PlantaContext plantaContext, MaterialesContext materialesContext)
+        public UnitOfWork(RRDContext context, MooreveContext mooreveContext, MCContext mcContext, IMaestrosContext maestrosContext, SapContext sapContext, ClientesContext clientesContext, FacturacionContext facturacionContext, ContratosStockContext contratosStockContext, DWContext dWContext, NominaContext nominaContext, SpiContext spiContext, PlantaContext plantaContext, MaterialesContext materialesContext,EstadisticasContext estadisticasContext)
         {
             _context = context;
             _mooreveContext = mooreveContext;
@@ -234,6 +244,7 @@ namespace AppService.Infrastructure.Repositories
             _spiContext = spiContext;
             _plantaContext = plantaContext;
             _materialesContext = materialesContext;
+            _estadisticasContext = estadisticasContext;
         }
 
 
@@ -252,8 +263,10 @@ namespace AppService.Infrastructure.Repositories
         public ICobTipoTransaccionRepository CobTipoTransaccionRepository => _cobTipoTransaccionRepository ?? new CobTipoTransaccionRepository(_context);
 
         public IOfdTipoDocumentoRepository OfdTipoDocumentoRepository => _ofdTipoDocumentoRepository ?? new OfdTipoDocumentoRepository(_context);
+        public IOfdAdjuntoRepository OfdAdjuntoRepository => _ofdAdjuntoRepository ?? new OfdAdjuntoRepository(_context); 
+        public IOfdAdjuntoCriterioRepository OfdAdjuntoCriterioRepository => _ofdAdjuntoCriterioRepository ?? new OfdAdjuntoCriterioRepository(_context);
 
-
+        
         public IMtrOficinaRepository MtrOficinaRepository => _mtrOficinaRepository ?? new MtrOficinaRepository(_context);
 
         public IMtrVendedorRepository MtrVendedorRepository => _mtrVendedorRepository ?? new MtrVendedorRepository(_context);
@@ -331,6 +344,7 @@ namespace AppService.Infrastructure.Repositories
         public IAppPriceRepository AppPriceRepository => this._appPriceRepository ?? (IAppPriceRepository)new AppService.Infrastructure.Repositories.AppPriceRepository(this._context);
         public IAppPorcentajeAdicionalM2Repository AppPorcentajeAdicionalM2Repository => this._appPorcentajeAdicionalM2Repository ?? (IAppPorcentajeAdicionalM2Repository)new AppService.Infrastructure.Repositories.AppPorcentajeAdicionalM2Repository(this._context);
 
+        public IAppDesarrolloEtiquetasPrimeRepository AppDesarrolloEtiquetasPrimeRepository => this._appDesarrolloEtiquetasPrimeRepository ?? (IAppDesarrolloEtiquetasPrimeRepository)new AppService.Infrastructure.Repositories.AppDesarrolloEtiquetasPrimeRepository(this._context);
         
 
         //MC
@@ -444,6 +458,10 @@ namespace AppService.Infrastructure.Repositories
         public IWimy001Repository Wimy001Repository => _wimy001Repository ?? new Wimy001Repository(_materialesContext);
 
 
+        //Estadisticas
+        public IVentasRepository VentasRepository => _ventasRepostory ?? new VentasRepository(_estadisticasContext);
+
+      
 
 
         public void Dispose()
@@ -496,6 +514,10 @@ namespace AppService.Infrastructure.Repositories
             {
                 _materialesContext.Dispose();
             }
+            if (_estadisticasContext == null)
+            {
+                _estadisticasContext.Dispose();
+            }
 
 
         }
@@ -517,6 +539,7 @@ namespace AppService.Infrastructure.Repositories
                 _nominaContext.SaveChanges();
                 _plantaContext.SaveChanges();
                 _materialesContext.SaveChanges();
+                _estadisticasContext.SaveChanges();
                 return true;
             }
             catch (System.Exception e)
@@ -545,12 +568,13 @@ namespace AppService.Infrastructure.Repositories
                 await _nominaContext.SaveChangesAsync();
                 await _plantaContext.SaveChangesAsync();
                 await _materialesContext.SaveChangesAsync();
+                await _estadisticasContext.SaveChangesAsync();
                 return true;
             }
             catch (System.Exception e)
             {
 
-                // var msg = e.InnerException.Message;
+                var msg = e.InnerException.Message;
                 return false;
 
             }

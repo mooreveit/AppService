@@ -15,5 +15,7 @@ namespace AppService.Core.DTOs
     public Decimal Hasta { get; set; }
 
     public Decimal Precio { get; set; }
-  }
+
+    public Decimal PrecioMaximo { get; set; }
+    }
 }

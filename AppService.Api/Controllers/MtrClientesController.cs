@@ -46,6 +46,7 @@ namespace AppService.Api.Controllers
         /// <param name="filters">Filtros a aplicar</param>
         /// <returns></returns>
         [HttpGet]
+        [Route("[action]")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<MtrClienteDto>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetMtrClientes([FromQuery] MtrClienteQueryFilter filters)
@@ -64,6 +65,27 @@ namespace AppService.Api.Controllers
 
 
             return Ok(response);
+
+        }
+
+
+        /// <summary>
+        /// Retorna Lista de Clientes
+        /// </summary>
+        /// <param name="filters">Filtros a aplicar</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("[action]")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<MtrClienteDto>>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> OdooActualizarClientes([FromQuery] MtrClienteQueryFilter filters)
+        {
+
+
+           await _mtrClienteService.OdooActualizarClientes();
+
+
+            return Ok();
 
         }
 

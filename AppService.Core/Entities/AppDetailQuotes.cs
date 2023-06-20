@@ -95,6 +95,10 @@ namespace AppService.Core.Entities
         public int CantTintas { get; set; } = 0;
 
 
+        public Decimal? UnitPriceBaseProductionMaximo { get; set; } = 0;
+        
+
+
 
         public virtual AppGeneralQuotes AppGeneralQuotes { get; set; }
 

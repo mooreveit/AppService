@@ -38,8 +38,11 @@ namespace AppService.Core.Interfaces
 
         IOfdCotizacionRepository OfdCotizacionRepository { get; }
 
+        IOfdAdjuntoRepository OfdAdjuntoRepository { get; }
 
-        ICobPagosRetencionesRepository CobPagosRetencionesRepository { get; }
+        IOfdAdjuntoCriterioRepository OfdAdjuntoCriterioRepository { get; }
+
+         ICobPagosRetencionesRepository CobPagosRetencionesRepository { get; }
 
         ICobSysfileRepository CobSysfileRepository { get; }
 
@@ -149,7 +152,7 @@ namespace AppService.Core.Interfaces
 
         IAppValoresVariablesEspecificacionesPartesRepository AppValoresVariablesEspecificacionesPartesRepository { get; }
         IAppVariablesEspecificacionesPartesRepository AppVariablesEspecificacionesPartesRepository { get; }
-
+        IAppDesarrolloEtiquetasPrimeRepository AppDesarrolloEtiquetasPrimeRepository { get; }
 
         //Maestros
 
@@ -194,6 +197,9 @@ namespace AppService.Core.Interfaces
 
         //Materiales
         IWimy001Repository Wimy001Repository { get; }
+
+        //Estadisticas
+        IVentasRepository VentasRepository { get; }
 
 
         bool SaveChanges();

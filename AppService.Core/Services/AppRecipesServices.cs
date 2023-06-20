@@ -328,8 +328,9 @@ namespace AppService.Core.Services
                     return response;
                 }
 
-               
-                  
+                if (recipe.RetornarElMenor == null) dto.RetornarElMenor = false;
+                if (recipe.RetornarElMayor == null) dto.RetornarElMayor = false;
+
 
 
                 recipe.AppVariableId = new int?(byId1.Id);
@@ -593,6 +594,8 @@ namespace AppService.Core.Services
                 string valueFormula = await this.GetValueFormula(recipe.Formula, recipe.Appproducts.Code, recipe.Code);
                 recipe.FormulaValue = valueFormula;
                 var mensaje = await ValidaFormula(recipe);
+                if (recipe.RetornarElMenor == null) recipe.RetornarElMenor = false;
+                if (recipe.RetornarElMayor == null) recipe.RetornarElMayor = false;
                 if (mensaje.IsNullOrEmpty())
                 {
                     if (recipe.RetornarElMenor == false && recipe.RetornarElMayor == false)
@@ -764,7 +767,10 @@ namespace AppService.Core.Services
                 return resultDto;
             foreach (AppRecipes recipe in recipesByProductId)
             {
-
+                if (recipe.Code== "UTILIDADFORMAS")
+                {
+                    var me = "";
+                }
                 Decimal formula = await this.CalculateFormula(recipe.Id);
             }
             await this.UpdatePriceByProduct(productId);
@@ -918,6 +924,473 @@ namespace AppService.Core.Services
             }
         }
 
+        public async Task CreaVariables()
+        {
+            //await  CreaVariablesEtiquetasDigitales();
+            //await CreaVariablesShortRun();
+            //await CreaVariablesEtiquetasConvencionales();
+            //await CreaVariablesFormasContinuas();
+            //await CreaVariablesHojaLaser();
+            //await CreaVariablesSSET();
+            //await CreaVariablesCashRoll();
+            await CreaVariablesShortRunContingencia();
+        }
+
+        public async Task CreaVariablesEtiquetasDigitales()
+        {
+
+            var productos = await _unitOfWork.AppProductsRepository.GetAll();
+            foreach (var item in productos.Where(x=>x.AppSubCategoryId==1 && x.Id != 2).ToList())
+            {
+                var appRecipesGetDtoList = await GetRecipesByProductId(2);
+
+                appRecipesGetDtoList = appRecipesGetDtoList.Where(x => x.Code == "UTILIDAD PRECIO MAXIMO" || x.Code == "PRECIO MAXIMO" || x.Code == "PRECIOUNITARIOMAXIMO").ToList();
+                if (appRecipesGetDtoList.Count > 0)
+                {
+                    foreach (var itemVariable in appRecipesGetDtoList)
+                    {
+                        var existe = await _unitOfWork.AppRecipesRepository.GetOneRecipesByProductIdVariableCode(item.Id, itemVariable.Code);
+                        if (existe == null)
+                        {
+                            AppRecipes newRecipe = new AppRecipes();
+                            newRecipe.AppproductsId = item.Id;
+                            newRecipe.AppVariableId = itemVariable.AppVariableId;
+                            newRecipe.Description = itemVariable.Description;
+                            newRecipe.AppIngredientsId = itemVariable.AppIngredientsId;
+                            newRecipe.OrderCalculate = itemVariable.OrderCalculate;
+                            newRecipe.Quantity = itemVariable.Quantity;
+                            newRecipe.TotalCost = itemVariable.TotalCost;
+                            newRecipe.Formula = itemVariable.Formula;
+                            newRecipe.FormulaValue = itemVariable.FormulaValue;
+                            newRecipe.SumValue = itemVariable.SumValue;
+                            newRecipe.Code = itemVariable.Code;
+                            newRecipe.IncludeInSearch = itemVariable.IncludeInSearch;
+                            newRecipe.Secuencia = itemVariable.Secuencia;
+                            newRecipe.AfectaCosto = itemVariable.AfectaCosto;
+                            newRecipe.TruncarEntero = itemVariable.TruncarEntero;
+                            newRecipe.VariablesSearchText = itemVariable.VariablesSearchText;
+                            newRecipe.EsVariableDeEntrada = itemVariable.EsVariableDeEntrada;
+                            newRecipe.DescriptionSearch = itemVariable.DescriptionSearch;
+                            newRecipe.MensajeValidacionFormula = itemVariable.MensajeValidacionFormula;
+                            newRecipe.RetornarElMayor = itemVariable.RetornarElMayor;
+                            newRecipe.RetornarElMenor = itemVariable.RetornarElMenor;
+
+
+
+                            await Insert(newRecipe); 
+                           
+                        }
+                       
+
+                    }
+                  
+                }
+
+             
+            }
+
+           
+           
+        }
+
+        public async Task CreaVariablesShortRun()
+        {
+
+            var productos = await _unitOfWork.AppProductsRepository.GetAll();
+            foreach (var item in productos.Where(x => x.AppSubCategoryId == 3 && x.Id != 100).ToList())
+            {
+                var appRecipesGetDtoList = await GetRecipesByProductId(100);
+
+                appRecipesGetDtoList = appRecipesGetDtoList.Where(x => x.Code == "UTILIDAD PRECIO MAXIMO" || x.Code == "PRECIO MAXIMO" || x.Code == "PRECIOUNITARIOMAXIMO").ToList();
+                if (appRecipesGetDtoList.Count > 0)
+                {
+                    foreach (var itemVariable in appRecipesGetDtoList)
+                    {
+                        var existe = await _unitOfWork.AppRecipesRepository.GetOneRecipesByProductIdVariableCode(item.Id, itemVariable.Code);
+                        if (existe == null)
+                        {
+                            AppRecipes newRecipe = new AppRecipes();
+                            newRecipe.AppproductsId = item.Id;
+                            newRecipe.AppVariableId = itemVariable.AppVariableId;
+                            newRecipe.Description = itemVariable.Description;
+                            newRecipe.AppIngredientsId = itemVariable.AppIngredientsId;
+                            newRecipe.OrderCalculate = itemVariable.OrderCalculate;
+                            newRecipe.Quantity = itemVariable.Quantity;
+                            newRecipe.TotalCost = itemVariable.TotalCost;
+                            newRecipe.Formula = itemVariable.Formula;
+                            newRecipe.FormulaValue = itemVariable.FormulaValue;
+                            newRecipe.SumValue = itemVariable.SumValue;
+                            newRecipe.Code = itemVariable.Code;
+                            newRecipe.IncludeInSearch = itemVariable.IncludeInSearch;
+                            newRecipe.Secuencia = itemVariable.Secuencia;
+                            newRecipe.AfectaCosto = itemVariable.AfectaCosto;
+                            newRecipe.TruncarEntero = itemVariable.TruncarEntero;
+                            newRecipe.VariablesSearchText = itemVariable.VariablesSearchText;
+                            newRecipe.EsVariableDeEntrada = itemVariable.EsVariableDeEntrada;
+                            newRecipe.DescriptionSearch = itemVariable.DescriptionSearch;
+                            newRecipe.MensajeValidacionFormula = itemVariable.MensajeValidacionFormula;
+                            newRecipe.RetornarElMayor = itemVariable.RetornarElMayor;
+                            newRecipe.RetornarElMenor = itemVariable.RetornarElMenor;
+
+
+
+                            await Insert(newRecipe);
+
+                        }
+
+
+                    }
+
+                }
+
+
+            }
+
+
+
+        }
+
+        public async Task CreaVariablesEtiquetasConvencionales()
+        {
+
+            var productos = await _unitOfWork.AppProductsRepository.GetAll();
+            foreach (var item in productos.Where(x => x.AppSubCategoryId == 4 && x.Id != 456).ToList())
+            {
+                var appRecipesGetDtoList = await GetRecipesByProductId(456);
+
+                appRecipesGetDtoList = appRecipesGetDtoList.Where(x => x.Code == "UTILIDAD PRECIO MAXIMO" || x.Code == "PRECIO MAXIMO" || x.Code == "PRECIOUNITARIOMAXIMO").ToList();
+                if (appRecipesGetDtoList.Count > 0)
+                {
+                    foreach (var itemVariable in appRecipesGetDtoList)
+                    {
+                        var existe = await _unitOfWork.AppRecipesRepository.GetOneRecipesByProductIdVariableCode(item.Id, itemVariable.Code);
+                        if (existe == null)
+                        {
+                            AppRecipes newRecipe = new AppRecipes();
+                            newRecipe.AppproductsId = item.Id;
+                            newRecipe.AppVariableId = itemVariable.AppVariableId;
+                            newRecipe.Description = itemVariable.Description;
+                            newRecipe.AppIngredientsId = itemVariable.AppIngredientsId;
+                            newRecipe.OrderCalculate = itemVariable.OrderCalculate;
+                            newRecipe.Quantity = itemVariable.Quantity;
+                            newRecipe.TotalCost = itemVariable.TotalCost;
+                            newRecipe.Formula = itemVariable.Formula;
+                            newRecipe.FormulaValue = itemVariable.FormulaValue;
+                            newRecipe.SumValue = itemVariable.SumValue;
+                            newRecipe.Code = itemVariable.Code;
+                            newRecipe.IncludeInSearch = itemVariable.IncludeInSearch;
+                            newRecipe.Secuencia = itemVariable.Secuencia;
+                            newRecipe.AfectaCosto = itemVariable.AfectaCosto;
+                            newRecipe.TruncarEntero = itemVariable.TruncarEntero;
+                            newRecipe.VariablesSearchText = itemVariable.VariablesSearchText;
+                            newRecipe.EsVariableDeEntrada = itemVariable.EsVariableDeEntrada;
+                            newRecipe.DescriptionSearch = itemVariable.DescriptionSearch;
+                            newRecipe.MensajeValidacionFormula = itemVariable.MensajeValidacionFormula;
+                            newRecipe.RetornarElMayor = itemVariable.RetornarElMayor;
+                            newRecipe.RetornarElMenor = itemVariable.RetornarElMenor;
+
+
+
+                            await Insert(newRecipe);
+
+                        }
+
+
+                    }
+
+                }
+
+
+            }
+
+
+
+        }
+        public async Task CreaVariablesFormasContinuas()
+        {
+
+            var productos = await _unitOfWork.AppProductsRepository.GetAll();
+            foreach (var item in productos.Where(x => x.AppSubCategoryId == 5 && x.Id != 156).ToList())
+            {
+                var appRecipesGetDtoList = await GetRecipesByProductId(156);
+
+                appRecipesGetDtoList = appRecipesGetDtoList.Where(x => x.Code == "UTILIDAD PRECIO MAXIMO" || x.Code == "PRECIO MAXIMO" || x.Code == "PRECIOUNITARIOMAXIMO").ToList();
+                if (appRecipesGetDtoList.Count > 0)
+                {
+                    foreach (var itemVariable in appRecipesGetDtoList)
+                    {
+                        var existe = await _unitOfWork.AppRecipesRepository.GetOneRecipesByProductIdVariableCode(item.Id, itemVariable.Code);
+                        if (existe == null)
+                        {
+                            AppRecipes newRecipe = new AppRecipes();
+                            newRecipe.AppproductsId = item.Id;
+                            newRecipe.AppVariableId = itemVariable.AppVariableId;
+                            newRecipe.Description = itemVariable.Description;
+                            newRecipe.AppIngredientsId = itemVariable.AppIngredientsId;
+                            newRecipe.OrderCalculate = itemVariable.OrderCalculate;
+                            newRecipe.Quantity = itemVariable.Quantity;
+                            newRecipe.TotalCost = itemVariable.TotalCost;
+                            newRecipe.Formula = itemVariable.Formula;
+                            newRecipe.FormulaValue = itemVariable.FormulaValue;
+                            newRecipe.SumValue = itemVariable.SumValue;
+                            newRecipe.Code = itemVariable.Code;
+                            newRecipe.IncludeInSearch = itemVariable.IncludeInSearch;
+                            newRecipe.Secuencia = itemVariable.Secuencia;
+                            newRecipe.AfectaCosto = itemVariable.AfectaCosto;
+                            newRecipe.TruncarEntero = itemVariable.TruncarEntero;
+                            newRecipe.VariablesSearchText = itemVariable.VariablesSearchText;
+                            newRecipe.EsVariableDeEntrada = itemVariable.EsVariableDeEntrada;
+                            newRecipe.DescriptionSearch = itemVariable.DescriptionSearch;
+                            newRecipe.MensajeValidacionFormula = itemVariable.MensajeValidacionFormula;
+                            newRecipe.RetornarElMayor = itemVariable.RetornarElMayor;
+                            newRecipe.RetornarElMenor = itemVariable.RetornarElMenor;
+
+
+
+                            await Insert(newRecipe);
+
+                        }
+
+
+                    }
+
+                }
+
+
+            }
+
+
+
+        }
+
+        public async Task CreaVariablesHojaLaser()
+        {
+
+            var productos = await _unitOfWork.AppProductsRepository.GetAll();
+            foreach (var item in productos.Where(x => x.AppSubCategoryId == 6 && x.Id != 304).ToList())
+            {
+                var appRecipesGetDtoList = await GetRecipesByProductId(304);
+
+                appRecipesGetDtoList = appRecipesGetDtoList.Where(x => x.Code == "UTILIDAD PRECIO MAXIMO" || x.Code == "PRECIO MAXIMO" || x.Code == "PRECIOUNITARIOMAXIMO").ToList();
+                if (appRecipesGetDtoList.Count > 0)
+                {
+                    foreach (var itemVariable in appRecipesGetDtoList)
+                    {
+                        var existe = await _unitOfWork.AppRecipesRepository.GetOneRecipesByProductIdVariableCode(item.Id, itemVariable.Code);
+                        if (existe == null)
+                        {
+                            AppRecipes newRecipe = new AppRecipes();
+                            newRecipe.AppproductsId = item.Id;
+                            newRecipe.AppVariableId = itemVariable.AppVariableId;
+                            newRecipe.Description = itemVariable.Description;
+                            newRecipe.AppIngredientsId = itemVariable.AppIngredientsId;
+                            newRecipe.OrderCalculate = itemVariable.OrderCalculate;
+                            newRecipe.Quantity = itemVariable.Quantity;
+                            newRecipe.TotalCost = itemVariable.TotalCost;
+                            newRecipe.Formula = itemVariable.Formula;
+                            newRecipe.FormulaValue = itemVariable.FormulaValue;
+                            newRecipe.SumValue = itemVariable.SumValue;
+                            newRecipe.Code = itemVariable.Code;
+                            newRecipe.IncludeInSearch = itemVariable.IncludeInSearch;
+                            newRecipe.Secuencia = itemVariable.Secuencia;
+                            newRecipe.AfectaCosto = itemVariable.AfectaCosto;
+                            newRecipe.TruncarEntero = itemVariable.TruncarEntero;
+                            newRecipe.VariablesSearchText = itemVariable.VariablesSearchText;
+                            newRecipe.EsVariableDeEntrada = itemVariable.EsVariableDeEntrada;
+                            newRecipe.DescriptionSearch = itemVariable.DescriptionSearch;
+                            newRecipe.MensajeValidacionFormula = itemVariable.MensajeValidacionFormula;
+                            newRecipe.RetornarElMayor = itemVariable.RetornarElMayor;
+                            newRecipe.RetornarElMenor = itemVariable.RetornarElMenor;
+
+
+
+                            await Insert(newRecipe);
+
+                        }
+
+
+                    }
+
+                }
+
+
+            }
+
+
+
+        }
+
+        public async Task CreaVariablesSSET()
+        {
+
+            var productos = await _unitOfWork.AppProductsRepository.GetAll();
+            foreach (var item in productos.Where(x => x.AppSubCategoryId == 7 && x.Id != 306).ToList())
+            {
+                var appRecipesGetDtoList = await GetRecipesByProductId(306);
+
+                appRecipesGetDtoList = appRecipesGetDtoList.Where(x => x.Code == "UTILIDAD PRECIO MAXIMO" || x.Code == "PRECIO MAXIMO" || x.Code == "PRECIOUNITARIOMAXIMO").ToList();
+                if (appRecipesGetDtoList.Count > 0)
+                {
+                    foreach (var itemVariable in appRecipesGetDtoList)
+                    {
+                        var existe = await _unitOfWork.AppRecipesRepository.GetOneRecipesByProductIdVariableCode(item.Id, itemVariable.Code);
+                        if (existe == null)
+                        {
+                            AppRecipes newRecipe = new AppRecipes();
+                            newRecipe.AppproductsId = item.Id;
+                            newRecipe.AppVariableId = itemVariable.AppVariableId;
+                            newRecipe.Description = itemVariable.Description;
+                            newRecipe.AppIngredientsId = itemVariable.AppIngredientsId;
+                            newRecipe.OrderCalculate = itemVariable.OrderCalculate;
+                            newRecipe.Quantity = itemVariable.Quantity;
+                            newRecipe.TotalCost = itemVariable.TotalCost;
+                            newRecipe.Formula = itemVariable.Formula;
+                            newRecipe.FormulaValue = itemVariable.FormulaValue;
+                            newRecipe.SumValue = itemVariable.SumValue;
+                            newRecipe.Code = itemVariable.Code;
+                            newRecipe.IncludeInSearch = itemVariable.IncludeInSearch;
+                            newRecipe.Secuencia = itemVariable.Secuencia;
+                            newRecipe.AfectaCosto = itemVariable.AfectaCosto;
+                            newRecipe.TruncarEntero = itemVariable.TruncarEntero;
+                            newRecipe.VariablesSearchText = itemVariable.VariablesSearchText;
+                            newRecipe.EsVariableDeEntrada = itemVariable.EsVariableDeEntrada;
+                            newRecipe.DescriptionSearch = itemVariable.DescriptionSearch;
+                            newRecipe.MensajeValidacionFormula = itemVariable.MensajeValidacionFormula;
+                            newRecipe.RetornarElMayor = itemVariable.RetornarElMayor;
+                            newRecipe.RetornarElMenor = itemVariable.RetornarElMenor;
+
+
+
+                            await Insert(newRecipe);
+
+                        }
+
+
+                    }
+
+                }
+
+
+            }
+
+
+
+        }
+
+        public async Task CreaVariablesCashRoll()
+        {
+
+            var productos = await _unitOfWork.AppProductsRepository.GetAll();
+            foreach (var item in productos.Where(x => x.AppSubCategoryId == 10 && x.Id != 92598).ToList())
+            {
+                var appRecipesGetDtoList = await GetRecipesByProductId(92598);
+
+                appRecipesGetDtoList = appRecipesGetDtoList.Where(x => x.Code == "UTILIDAD PRECIO MAXIMO" || x.Code == "PRECIO MAXIMO" || x.Code == "PRECIOUNITARIOMAXIMO").ToList();
+                if (appRecipesGetDtoList.Count > 0)
+                {
+                    foreach (var itemVariable in appRecipesGetDtoList)
+                    {
+                        var existe = await _unitOfWork.AppRecipesRepository.GetOneRecipesByProductIdVariableCode(item.Id, itemVariable.Code);
+                        if (existe == null)
+                        {
+                            AppRecipes newRecipe = new AppRecipes();
+                            newRecipe.AppproductsId = item.Id;
+                            newRecipe.AppVariableId = itemVariable.AppVariableId;
+                            newRecipe.Description = itemVariable.Description;
+                            newRecipe.AppIngredientsId = itemVariable.AppIngredientsId;
+                            newRecipe.OrderCalculate = itemVariable.OrderCalculate;
+                            newRecipe.Quantity = itemVariable.Quantity;
+                            newRecipe.TotalCost = itemVariable.TotalCost;
+                            newRecipe.Formula = itemVariable.Formula;
+                            newRecipe.FormulaValue = itemVariable.FormulaValue;
+                            newRecipe.SumValue = itemVariable.SumValue;
+                            newRecipe.Code = itemVariable.Code;
+                            newRecipe.IncludeInSearch = itemVariable.IncludeInSearch;
+                            newRecipe.Secuencia = itemVariable.Secuencia;
+                            newRecipe.AfectaCosto = itemVariable.AfectaCosto;
+                            newRecipe.TruncarEntero = itemVariable.TruncarEntero;
+                            newRecipe.VariablesSearchText = itemVariable.VariablesSearchText;
+                            newRecipe.EsVariableDeEntrada = itemVariable.EsVariableDeEntrada;
+                            newRecipe.DescriptionSearch = itemVariable.DescriptionSearch;
+                            newRecipe.MensajeValidacionFormula = itemVariable.MensajeValidacionFormula;
+                            newRecipe.RetornarElMayor = itemVariable.RetornarElMayor;
+                            newRecipe.RetornarElMenor = itemVariable.RetornarElMenor;
+
+
+
+                            await Insert(newRecipe);
+
+                        }
+
+
+                    }
+
+                }
+
+
+            }
+
+
+
+        }
+
+        public async Task CreaVariablesShortRunContingencia()
+        {
+
+            var productos = await _unitOfWork.AppProductsRepository.GetAll();
+            foreach (var item in productos.Where(x => x.AppSubCategoryId == 11 && x.Id != 138732).ToList())
+            {
+                var appRecipesGetDtoList = await GetRecipesByProductId(138732);
+
+                appRecipesGetDtoList = appRecipesGetDtoList.Where(x => x.Code == "UTILIDAD PRECIO MAXIMO" || x.Code == "PRECIO MAXIMO" || x.Code == "PRECIOUNITARIOMAXIMO").ToList();
+                if (appRecipesGetDtoList.Count > 0)
+                {
+                    foreach (var itemVariable in appRecipesGetDtoList)
+                    {
+                        var existe = await _unitOfWork.AppRecipesRepository.GetOneRecipesByProductIdVariableCode(item.Id, itemVariable.Code);
+                        if (existe == null)
+                        {
+                            AppRecipes newRecipe = new AppRecipes();
+                            newRecipe.AppproductsId = item.Id;
+                            newRecipe.AppVariableId = itemVariable.AppVariableId;
+                            newRecipe.Description = itemVariable.Description;
+                            newRecipe.AppIngredientsId = itemVariable.AppIngredientsId;
+                            newRecipe.OrderCalculate = itemVariable.OrderCalculate;
+                            newRecipe.Quantity = itemVariable.Quantity;
+                            newRecipe.TotalCost = itemVariable.TotalCost;
+                            newRecipe.Formula = itemVariable.Formula;
+                            newRecipe.FormulaValue = itemVariable.FormulaValue;
+                            newRecipe.SumValue = itemVariable.SumValue;
+                            newRecipe.Code = itemVariable.Code;
+                            newRecipe.IncludeInSearch = itemVariable.IncludeInSearch;
+                            newRecipe.Secuencia = itemVariable.Secuencia;
+                            newRecipe.AfectaCosto = itemVariable.AfectaCosto;
+                            newRecipe.TruncarEntero = itemVariable.TruncarEntero;
+                            newRecipe.VariablesSearchText = itemVariable.VariablesSearchText;
+                            newRecipe.EsVariableDeEntrada = itemVariable.EsVariableDeEntrada;
+                            newRecipe.DescriptionSearch = itemVariable.DescriptionSearch;
+                            newRecipe.MensajeValidacionFormula = itemVariable.MensajeValidacionFormula;
+                            newRecipe.RetornarElMayor = itemVariable.RetornarElMayor;
+                            newRecipe.RetornarElMenor = itemVariable.RetornarElMenor;
+
+
+
+                            await Insert(newRecipe);
+
+                        }
+
+
+                    }
+
+                }
+
+
+            }
+
+
+
+        }
+
         public async Task<ApiResponse<List<AppRecipesGetDto>>> CopyRecipes(
           AppCopyRecipesDto appCopyRecipesDto)
         {
@@ -1006,4 +1479,5 @@ namespace AppService.Core.Services
             }
         }
     }
+
 }

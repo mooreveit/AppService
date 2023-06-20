@@ -19,7 +19,7 @@ namespace AppService.Core.Interfaces
 
         Task Add(Wsmy502 entity);
 
-        void Update(Wsmy502 entity);
+        Task Update(Wsmy502 entity);
 
         Task Delete(string cotizacion, int renglon);
 

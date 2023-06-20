@@ -34,5 +34,6 @@ namespace AppService.Core.Interfaces
         void DeleteRange(List<AppRecipesByAppDetailQuotes> entity);
 
         Task AddRangeHistory(List<AppRecipesByAppDetailQuotesHistory> entity);
+        Task<List<AppRecipesByAppDetailQuotesHistory>> GetListRecipesByProductCodeVariableCodeHistorico(int calculoId, string codeProduct, string code);
     }
 }

@@ -96,7 +96,7 @@ namespace AppService.Infrastructure.Repositories
             }
 
 
-            var result = contactos.Where(x => x.Inactivo == false).ToList();
+            var result = contactos.Where(x => x.Inactivo == false && x.IdContactoOdoo>0 && x.IdClienteOdoo>0).ToList();
             //List<MtrContactos> result = new List<MtrContactos>();
 
 

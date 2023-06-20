@@ -39,5 +39,7 @@ namespace AppService.Core.DTOs
         public Decimal? CantidadMinima { get; set; }
 
         public int TipoCalculo { get; set; }
+
+        public bool RequiereEstimacion { get; set; }
     }
 }

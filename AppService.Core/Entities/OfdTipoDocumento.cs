@@ -31,6 +31,8 @@ namespace AppService.Core.Entities
 
     public DateTime FechaModificacion { get; set; }
 
+    //public string TipoDocumentoSap { get; set; }
+
     public virtual OfdGrupoTipoDocumento IdGrupoTipoDocumentoNavigation { get; set; }
 
     public virtual ICollection<AppService.Core.Entities.OfdRolTipoDocumento> OfdRolTipoDocumento { get; set; }

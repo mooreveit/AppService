@@ -22,4 +22,10 @@
     <ProjectReference Include="..\AppService.Core\AppService.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="DataEstadisticas\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataEstadisticas\" />
+  </ItemGroup>
 </Project>

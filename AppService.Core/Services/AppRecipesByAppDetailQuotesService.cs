@@ -119,6 +119,7 @@ namespace AppService.Core.Services
                 {
                     var precioProductoCantidad = await GetPrecioProductoCantidad(filter.AppProuctId, filter.Cantidad);
                     precioProductoCantidad.Precio = Utility.TruncateDec.TruncateDecimal(precioProductoCantidad.Precio, 2);
+                    precioProductoCantidad.PrecioMaximo = Utility.TruncateDec.TruncateDecimal(precioProductoCantidad.PrecioMaximo, 2);
                     precioProductoCantidad.Flete = (precioProductoCantidad.Precio * porcFlete) / 100;
 
                     precioProductoCantidad.Flete = Utility.TruncateDec.TruncateDecimal(precioProductoCantidad.Flete, 2);
@@ -133,7 +134,26 @@ namespace AppService.Core.Services
 
                 }
 
+                if (appProducts.TipoCalculo == (int)TipoCalculoEnum.PrecioPorRollo)
+                {
+                    var precioProductoCantidad = await GetPrecioProductoCantidadRollo(filter.AppProuctId, filter.Cantidad);
+                    precioProductoCantidad.Precio = Utility.TruncateDec.TruncateDecimal(precioProductoCantidad.Precio, 2);
+                    precioProductoCantidad.PrecioMaximo = Utility.TruncateDec.TruncateDecimal(precioProductoCantidad.PrecioMaximo, 2);
+                    precioProductoCantidad.Flete = (precioProductoCantidad.Precio * porcFlete) / 100;
 
+                    precioProductoCantidad.Flete = Utility.TruncateDec.TruncateDecimal(precioProductoCantidad.Flete, 2);
+                    precioProductoCantidad.PrecioMasFlete = precioProductoCantidad.Precio + precioProductoCantidad.Flete;
+
+                    precioProductoCantidad.Tasa = (decimal)tasa.Tasa;
+
+                    result.Data = precioProductoCantidad;
+                    metadata.IsValid = true;
+                    metadata.Message = "Precio Generado Satisfactoriamente";
+                    result.Meta = metadata;
+
+                }
+
+                
 
 
 
@@ -175,6 +195,7 @@ namespace AppService.Core.Services
 
 
                 }
+
                 if (appProducts.TipoCalculo == (int)TipoCalculoEnum.RequiereEntradaLargoAncho)
                 {
 
@@ -208,6 +229,7 @@ namespace AppService.Core.Services
                     resultPrice.Desde = filter.Cantidad;
                     resultPrice.Hasta = filter.Cantidad;
                     resultPrice.Precio = Utility.TruncateDec.TruncateDecimal(price.Precio, 2);
+              
                     resultPrice.Flete = (resultPrice.Precio * porcFlete) / 100;
                     resultPrice.Flete = Utility.TruncateDec.TruncateDecimal(resultPrice.Flete, 2);
                     resultPrice.PrecioMasFlete = resultPrice.Precio + resultPrice.Flete;
@@ -219,6 +241,7 @@ namespace AppService.Core.Services
                     result.Meta.IsValid = true;
 
                 }
+
                 if (appProducts.TipoCalculo == (int)TipoCalculoEnum.PrecioPorMontaje){
 
                      if (filter.Largo == null || filter.Largo <= 0)
@@ -241,6 +264,7 @@ namespace AppService.Core.Services
                         return result;
 
                     }
+
                      var resultConversion = await CalculaConversion(filter.Cantidad, (decimal)filter.Largo, (decimal)filter.Ancho);
                      var price = await this.GetPrecioProductoCantidadMedidaBasicaCmMedidaOpuestam(filter.AppProuctId,filter.Cantidad, (decimal)filter.Largo, (decimal)filter.Ancho);
                     AppPriceGetDto resultPrice = new AppPriceGetDto();
@@ -249,11 +273,14 @@ namespace AppService.Core.Services
                     resultPrice.Desde = filter.Cantidad;
                     resultPrice.Hasta = filter.Cantidad;
                     resultPrice.Precio = Utility.TruncateDec.TruncateDecimal(price.Precio, 2);
+                    resultPrice.PrecioMaximo = Utility.TruncateDec.TruncateDecimal(price.PrecioMaximo, 2);
                     resultPrice.Flete = (resultPrice.Precio * porcFlete) / 100;
                     resultPrice.Flete = Utility.TruncateDec.TruncateDecimal(resultPrice.Flete, 2);
                     resultPrice.PrecioMasFlete = resultPrice.Precio + resultPrice.Flete;
                     resultPrice.Tasa = (decimal)tasa.Tasa;
                     resultPrice.CantidadConvertida = Utility.TruncateDec.TruncateDecimal((decimal)price.CantidadConvertida, 3);
+                    resultPrice.PrecioPorUnidad= Utility.TruncateDec.TruncateDecimal((decimal)price.PrecioPorUnidad, 3);
+                    resultPrice.CantidadPorUnidad= Utility.TruncateDec.TruncateDecimal((decimal)price.CantidadPorUnidad, 3);
                     //resultPrice.CantidadConvertida = Utility.TruncateDec.TruncateDecimal(resultConversion.resulCantidad, 3);
                     result.Data = resultPrice;
                     metadata.Message = "Precio Generado Satisfactoriamente";
@@ -261,8 +288,54 @@ namespace AppService.Core.Services
                     result.Meta.IsValid = true;
 
                 }
-                
 
+                if (appProducts.TipoCalculo == (int)TipoCalculoEnum.PrecioPorDesarrolloPrime)
+                {
+
+                    if (filter.Largo == null || filter.Largo <= 0)
+                    {
+
+                        result.Data = null;
+                        metadata.IsValid = false;
+                        metadata.Message = "Medida largo Invalida";
+                        result.Meta = metadata;
+                        return result;
+
+                    }
+                    if (filter.Ancho == null || filter.Ancho <= 0)
+                    {
+
+                        result.Data = null;
+                        metadata.IsValid = false;
+                        metadata.Message = "Medida ancho Invalida";
+                        result.Meta = metadata;
+                        return result;
+
+                    }
+
+                    var resultConversion = await CalculaConversion(filter.Cantidad, (decimal)filter.Largo, (decimal)filter.Ancho);
+                    var price = await this.GetPrecioEtiquetasPrime(filter.AppProuctId, filter.Cantidad, (decimal)filter.Largo, (decimal)filter.Ancho);
+                    AppPriceGetDto resultPrice = new AppPriceGetDto();
+                    resultPrice.AppproductsId = filter.AppProuctId;
+                    resultPrice.CalculoId = price.CalculoId;
+                    resultPrice.Desde = filter.Cantidad;
+                    resultPrice.Hasta = filter.Cantidad;
+                    resultPrice.Precio = Utility.TruncateDec.TruncateDecimal(price.Precio, 2);
+                    resultPrice.PrecioMaximo = Utility.TruncateDec.TruncateDecimal(price.PrecioMaximo, 2);
+                    resultPrice.Flete = (resultPrice.Precio * porcFlete) / 100;
+                    resultPrice.Flete = Utility.TruncateDec.TruncateDecimal(resultPrice.Flete, 2);
+                    resultPrice.PrecioMasFlete = resultPrice.Precio + resultPrice.Flete;
+                    resultPrice.Tasa = (decimal)tasa.Tasa;
+                    resultPrice.CantidadConvertida = Utility.TruncateDec.TruncateDecimal((decimal)price.CantidadConvertida, 3);
+                    resultPrice.PrecioPorUnidad = Utility.TruncateDec.TruncateDecimal((decimal)price.PrecioPorUnidad, 3);
+                    resultPrice.CantidadPorUnidad = Utility.TruncateDec.TruncateDecimal((decimal)price.CantidadPorUnidad, 3);
+                    //resultPrice.CantidadConvertida = Utility.TruncateDec.TruncateDecimal(resultConversion.resulCantidad, 3);
+                    result.Data = resultPrice;
+                    metadata.Message = "Precio Generado Satisfactoriamente";
+                    result.Meta = metadata;
+                    result.Meta.IsValid = true;
+
+                }
             }
             else
             {
@@ -371,6 +444,7 @@ namespace AppService.Core.Services
 
             return result;
         }
+
         public async Task<AppPriceGetDto> GetPrecioProductoCantidad(
           int productId,
           Decimal cantidad)
@@ -397,13 +471,74 @@ namespace AppService.Core.Services
                 await this._unitOfWork.SaveChangesAsync();
                 await this.DeleteRange(calculoList);
             }
+            var precioMaximo = calculoList.Where(x => x.Code == "PRECIOUNITARIOMAXIMO").FirstOrDefault();
+            result.PrecioMaximo = result.Precio;
+            if (precioMaximo != null)
+            {
+                result.PrecioMaximo = (decimal)precioMaximo.TotalCost;
+            }
+
+            var formasRollo = calculoList.Where(x => x.Code == "CANTFORMAS").FirstOrDefault();
+            if (formasRollo!=null)
+            {
+                result.CantidadConvertida = formasRollo.Quantity;
+
+            }
             AppPriceGetDto productoCantidad = result;
             result = (AppPriceGetDto)null;
             calculoList = (List<AppRecipesByAppDetailQuotes>)null;
             return productoCantidad;
        
         }
-          public async Task<AppPriceGetDto> GetPrecioProductoCantidadMedidaBasicaCmMedidaOpuestam(
+
+        public async Task<AppPriceGetDto> GetPrecioProductoCantidadRollo( int productId,Decimal cantidad)
+        {
+            AppPriceGetDto result = new AppPriceGetDto();
+            int calculoId = await this.GenerarCalculoPorProductoCantidad(productId, cantidad);
+            await this.CalulateRecipeByCalculoId(calculoId);
+            Decimal precio = this._unitOfWork.AppRecipesByAppDetailQuotesRepository.TotalCost(calculoId);
+            result.AppproductsId = productId;
+            result.CalculoId = new int?(calculoId);
+            result.Desde = cantidad;
+            result.Hasta = cantidad;
+            precio = Utility.TruncateDec.TruncateDecimal(precio, 2);
+            result.Precio = precio;
+          
+
+            List<AppRecipesByAppDetailQuotes> calculoList = await this.GetListByCalculoId(calculoId);
+            if (calculoList.Count > 0)
+            {
+                await this._unitOfWork.AppRecipesByAppDetailQuotesRepository.AddRangeHistory(this.CrearListaHistoricoCalculo(calculoList));
+                await this._unitOfWork.SaveChangesAsync();
+                await this.DeleteRange(calculoList);
+            }
+            var precioMaximo = calculoList.Where(x => x.Code == "PRECIOUNITARIOMAXIMO").FirstOrDefault();
+            result.PrecioMaximo = result.Precio;
+            if (precioMaximo != null)
+            {
+                result.PrecioMaximo = (decimal)precioMaximo.TotalCost;
+            }
+
+            /*var formasRollo = calculoList.Where(x => x.Code == "CANTFORMAS").FirstOrDefault();
+            if (formasRollo != null)
+            {
+                result.CantidadPorUnidad = formasRollo.Quantity;
+
+            }*/
+            result.CantidadConvertida = cantidad;
+
+            result.CantidadPorUnidad = 0; // cantidad / result.CantidadConvertida;
+            result.PrecioPorUnidad = 0; //result.Precio / result.CantidadPorUnidad;
+            AppPriceGetDto productoCantidad = result;
+            result = (AppPriceGetDto)null;
+            calculoList = (List<AppRecipesByAppDetailQuotes>)null;
+            return productoCantidad;
+
+        }
+
+
+
+        public async Task<AppPriceGetDto> GetPrecioProductoCantidadMedidaBasicaCmMedidaOpuestam(
           int productId,
           Decimal cantidad,
           Decimal medidaBasicaCm,
@@ -432,6 +567,8 @@ namespace AppService.Core.Services
                 await this.DeleteRange(calculoList);
             }
 
+            var LiteralM2Teoricos = "AREATEORICATOTALM2";
+
             var LiteralPrecioM2 = "COSTOM2";
             var LiteralPrecioM22x65= "CostoM2(2x6.5)";
             var LiteralPrecioM285= "CostoM2(8.5)";
@@ -441,6 +578,258 @@ namespace AppService.Core.Services
             var M2CONSUMIDOS = "M2CONSUMIDOS";
             var M2consumidos2x65 = "M2consumidos2x6.5)";
             var M2consumidos85 = "M2consumidos8.5";
+
+            var  ETQPORM22X65= "ETQPORM2(2X6.5)";
+            var  ETQPORM285= "ETQPORM2(8.5)";
+            var  ETIQUETASPORM2 = "ETIQUETASPORM2";
+
+            var AREATEORICATOTALM2= calculoList.Where(x => x.Code == LiteralM2Teoricos).FirstOrDefault();
+
+            var PrecioM2 = calculoList.Where(x => x.Code == LiteralPrecioM2).FirstOrDefault();
+            var M2Consumido1 = calculoList.Where(x => x.Code == M2CONSUMIDOS).FirstOrDefault();
+
+            var PrecioM22x65 = calculoList.Where(x => x.Code == LiteralPrecioM22x65).FirstOrDefault();
+            var M2Consumido2 = calculoList.Where(x => x.Code == M2consumidos2x65).FirstOrDefault();
+
+            var PrecioM285 = calculoList.Where(x => x.Code == LiteralPrecioM285).FirstOrDefault();
+            var M2Consumido3 = calculoList.Where(x => x.Code == M2consumidos85).FirstOrDefault();
+
+
+            var ETQPORM22X65Obj = calculoList.Where(x => x.Code == ETQPORM22X65).FirstOrDefault();
+            var ETQPORM285obj = calculoList.Where(x => x.Code == ETQPORM285).FirstOrDefault();
+            var ETIQUETASPORM2obj = calculoList.Where(x => x.Code == ETIQUETASPORM2).FirstOrDefault();
+
+            List<AppVariablesMontaje> listResultMontajes = new List<AppVariablesMontaje>();
+
+            AppVariablesMontaje resultMontajes1 = new AppVariablesMontaje();
+            resultMontajes1.Id = 1;
+            resultMontajes1.Precio = (decimal)PrecioM2.TotalCost;
+            resultMontajes1.M2 = (decimal)M2Consumido1.Quantity;
+            listResultMontajes.Add(resultMontajes1);
+
+            AppVariablesMontaje resultMontajes2 = new AppVariablesMontaje();
+            resultMontajes2.Id = 2;
+            resultMontajes2.Precio = (decimal)PrecioM22x65.TotalCost;
+            resultMontajes2.M2 = (decimal)M2Consumido2.Quantity;
+            listResultMontajes.Add(resultMontajes2);
+
+            AppVariablesMontaje resultMontajes3 = new AppVariablesMontaje();
+            resultMontajes3.Id = 3;
+            resultMontajes3.Precio = (decimal)PrecioM285.TotalCost;
+            resultMontajes3.M2 = (decimal)M2Consumido3.Quantity;
+            listResultMontajes.Add(resultMontajes3);
+
+
+            result.Precio = (decimal)PrecioM2.TotalCost;
+            result.CantidadConvertida = (decimal)M2Consumido1.Quantity;
+            result.CantidadPorUnidad = ETIQUETASPORM2obj.Quantity;
+
+            var precioMaximo = calculoList.Where(x => x.Code == "PRECIOUNITARIOMAXIMO").FirstOrDefault();
+            result.PrecioMaximo = result.Precio;
+            if (precioMaximo!= null)
+            {
+                result.PrecioMaximo = (decimal)precioMaximo.TotalCost;
+            }
+
+
+            /*if (AREATEORICATOTALM2.Quantity < 40)
+            {
+
+
+                if (medidaOpuestaCm > 7)
+                {
+                    result.Precio = (decimal)PrecioM285.TotalCost;
+                    result.CantidadConvertida = (decimal)M2Consumido3.Quantity;
+                    result.CantidadPorUnidad = ETQPORM285obj.Quantity;
+
+
+                }
+                else
+                {
+                    result.Precio = (decimal)PrecioM22x65.TotalCost;
+                    result.CantidadConvertida = (decimal)M2Consumido2.Quantity;
+                    result.CantidadPorUnidad = ETQPORM22X65Obj.Quantity;
+                }
+
+            }
+            else
+            {
+
+                result.Precio = (decimal)PrecioM2.TotalCost;
+                result.CantidadConvertida = (decimal)M2Consumido1.Quantity;
+                result.CantidadPorUnidad = ETIQUETASPORM2obj.Quantity;
+
+            }*/
+
+
+            /*
+            var montajeMayor40 = listResultMontajes.Where(x => x.M2 > 40).FirstOrDefault();
+            if (montajeMayor40 == null)
+            {
+                if (medidaOpuestaCm > 7)
+                {
+                    result.Precio = (decimal)PrecioM285.TotalCost;
+                    result.CantidadConvertida = (decimal)M2Consumido3.Quantity;
+                    result.CantidadPorUnidad = ETQPORM285obj.Quantity;
+
+
+                }
+                else
+                {
+                    result.Precio = (decimal)PrecioM22x65.TotalCost;
+                    result.CantidadConvertida = (decimal)M2Consumido2.Quantity;
+                    result.CantidadPorUnidad = ETQPORM22X65Obj.Quantity;
+                }
+            }
+            else
+            {
+                result.Precio = (decimal)PrecioM2.TotalCost;
+                result.CantidadConvertida = (decimal)M2Consumido1.Quantity;
+                result.CantidadPorUnidad = ETIQUETASPORM2obj.Quantity;
+
+            }
+            */
+
+
+
+            /* var sumarAdicionalPorVolumen = await _unitOfWork.AppPorcentajeAdicionalM2Repository.AplicarValorBase((decimal)result.CantidadConvertida);
+             if (sumarAdicionalPorVolumen)
+             {
+                 var porcentajesM2 = await _unitOfWork.AppPorcentajeAdicionalM2Repository.GetDesdeHasta((decimal)result.CantidadConvertida);
+                 if(porcentajesM2 != null)
+                 {
+
+                     var adicional = (result.Precio * porcentajesM2.Porcentaje)/100;
+                     result.Precio = result.Precio + adicional;
+
+                 }
+
+             }*/
+
+            var porcentajesM2 = await _unitOfWork.AppPorcentajeAdicionalM2Repository.GetDesdeHasta((decimal)AREATEORICATOTALM2.Quantity);
+            if (porcentajesM2 != null)
+            {
+
+                var adicional = (result.Precio * porcentajesM2.Porcentaje) / 100;
+                result.Precio = result.Precio - adicional;
+
+            }
+
+            //result.CantidadPorUnidad = cantidad/result.CantidadConvertida;
+            result.PrecioPorUnidad = result.Precio/ result.CantidadPorUnidad;
+
+            AppPriceGetDto productoCantidad = result;
+            result = (AppPriceGetDto)null;
+            calculoList = (List<AppRecipesByAppDetailQuotes>)null;
+            return productoCantidad;
+        }
+
+
+        public async Task<AppPriceGetDto> GetPrecioEtiquetasPrime(
+         int productId,
+         Decimal cantidad,
+         Decimal medidaBasicaCm,
+         Decimal medidaOpuestaCm)
+        {
+            AppPriceGetDto result = new AppPriceGetDto();
+            int calculoId = await this.GenerarCalculoPorProductoCantidadMedidasCm(productId, cantidad, medidaBasicaCm, medidaOpuestaCm);
+            await this.CalulateRecipeByCalculoId(calculoId);
+            // Decimal precio = this._unitOfWork.AppRecipesByAppDetailQuotesRepository.TotalCost(calculoId);
+            result.AppproductsId = productId;
+            result.CalculoId = new int?(calculoId);
+            result.Desde = cantidad;
+            result.Hasta = cantidad;
+            //precio = Utility.TruncateDec.TruncateDecimal(precio, 2);
+            result.Precio = 0;
+
+            var defaultConversion = await GetDefaultConversionByProduct(productId);
+            Conversion conversion = new Conversion((decimal)defaultConversion.XNumerador, (decimal)defaultConversion.YDenominador, cantidad);
+            result.CantidadConvertida = conversion.getCantidadAlternativa();
+
+            List<AppRecipesByAppDetailQuotes> calculoList = await this.GetListByCalculoId(calculoId);
+            if (calculoList.Count > 0)
+            {
+                await this._unitOfWork.AppRecipesByAppDetailQuotesRepository.AddRangeHistory(this.CrearListaHistoricoCalculo(calculoList));
+                await this._unitOfWork.SaveChangesAsync();
+                await this.DeleteRange(calculoList);
+            }
+
+            var precioVenta = calculoList.Where(x => x.Code == "PRECIOMILLAR").FirstOrDefault();  
+            if (precioVenta != null)
+            {
+                result.Precio = (decimal)precioVenta.TotalCost;
+            }
+
+            var precioMaximo = calculoList.Where(x => x.Code == "PRECIOUNITARIOMAXIMO").FirstOrDefault();
+            result.PrecioMaximo = result.Precio;
+            if (precioMaximo != null)
+            {
+                result.PrecioMaximo = (decimal)precioMaximo.TotalCost;
+            }   
+
+            var  millares = calculoList.Where(x => x.Code == "CANT_MILLAR").FirstOrDefault();
+          
+            if (millares != null)
+            {
+                result.CantidadConvertida = (decimal)millares.Quantity;
+            }
+
+            result.CantidadPorUnidad = conversion.y_denominador;
+
+            //result.CantidadPorUnidad = cantidad/result.CantidadConvertida;
+            result.PrecioPorUnidad = result.Precio / result.CantidadPorUnidad;
+
+            AppPriceGetDto productoCantidad = result;
+            result = (AppPriceGetDto)null;
+            calculoList = (List<AppRecipesByAppDetailQuotes>)null;
+            return productoCantidad;
+        }
+
+
+
+
+        public async Task<AppPriceGetDto> GetPrecioProductoCantidadMedidaBasicaCmMedidaOpuestamCopia(
+        int productId,
+        Decimal cantidad,
+        Decimal medidaBasicaCm,
+        Decimal medidaOpuestaCm)
+        {
+            AppPriceGetDto result = new AppPriceGetDto();
+            int calculoId = await this.GenerarCalculoPorProductoCantidadMedidasCm(productId, cantidad, medidaBasicaCm, medidaOpuestaCm);
+            await this.CalulateRecipeByCalculoId(calculoId);
+            // Decimal precio = this._unitOfWork.AppRecipesByAppDetailQuotesRepository.TotalCost(calculoId);
+            result.AppproductsId = productId;
+            result.CalculoId = new int?(calculoId);
+            result.Desde = cantidad;
+            result.Hasta = cantidad;
+            //precio = Utility.TruncateDec.TruncateDecimal(precio, 2);
+            result.Precio = 0;
+
+            var defaultConversion = await GetDefaultConversionByProduct(productId);
+            Conversion conversion = new Conversion((decimal)defaultConversion.XNumerador, (decimal)defaultConversion.YDenominador, cantidad);
+            result.CantidadConvertida = conversion.getCantidadAlternativa();
+
+            List<AppRecipesByAppDetailQuotes> calculoList = await this.GetListByCalculoId(calculoId);
+            if (calculoList.Count > 0)
+            {
+                await this._unitOfWork.AppRecipesByAppDetailQuotesRepository.AddRangeHistory(this.CrearListaHistoricoCalculo(calculoList));
+                await this._unitOfWork.SaveChangesAsync();
+                await this.DeleteRange(calculoList);
+            }
+
+            var LiteralPrecioM2 = "COSTOM2";
+            var LiteralPrecioM22x65 = "CostoM2(2x6.5)";
+            var LiteralPrecioM285 = "CostoM2(8.5)";
+
+
+
+            var M2CONSUMIDOS = "M2CONSUMIDOS";
+            var M2consumidos2x65 = "M2consumidos2x6.5)";
+            var M2consumidos85 = "M2consumidos8.5";
+
+            var ETQPORM22X65 = "ETQPORM2(2X6.5)";
+            var ETQPORM285 = "ETQPORM2(8.5)";
+            var ETIQUETASPORM2 = "ETIQUETASPORM2";
 
 
 
@@ -453,23 +842,30 @@ namespace AppService.Core.Services
             var PrecioM285 = calculoList.Where(x => x.Code == LiteralPrecioM285).FirstOrDefault();
             var M2Consumido3 = calculoList.Where(x => x.Code == M2consumidos85).FirstOrDefault();
 
+
+            var ETQPORM22X65Obj = calculoList.Where(x => x.Code == ETQPORM22X65).FirstOrDefault();
+            var ETQPORM285obj = calculoList.Where(x => x.Code == ETQPORM285).FirstOrDefault();
+            var ETIQUETASPORM2obj = calculoList.Where(x => x.Code == ETIQUETASPORM2).FirstOrDefault();
+
             List<AppVariablesMontaje> listResultMontajes = new List<AppVariablesMontaje>();
 
-            AppVariablesMontaje resultMontajes = new AppVariablesMontaje();
-            resultMontajes.Id = 1;
-            resultMontajes.Precio = (decimal)PrecioM2.TotalCost;
-            resultMontajes.M2 = (decimal)M2Consumido1.Quantity;
-            listResultMontajes.Add(resultMontajes);
+            AppVariablesMontaje resultMontajes1 = new AppVariablesMontaje();
+            resultMontajes1.Id = 1;
+            resultMontajes1.Precio = (decimal)PrecioM2.TotalCost;
+            resultMontajes1.M2 = (decimal)M2Consumido1.Quantity;
+            listResultMontajes.Add(resultMontajes1);
 
-            resultMontajes.Id = 2;
-            resultMontajes.Precio = (decimal)PrecioM22x65.TotalCost;
-            resultMontajes.M2 = (decimal)M2Consumido2.Quantity;
-            listResultMontajes.Add(resultMontajes);
+            AppVariablesMontaje resultMontajes2 = new AppVariablesMontaje();
+            resultMontajes2.Id = 2;
+            resultMontajes2.Precio = (decimal)PrecioM22x65.TotalCost;
+            resultMontajes2.M2 = (decimal)M2Consumido2.Quantity;
+            listResultMontajes.Add(resultMontajes2);
 
-            resultMontajes.Id = 3;
-            resultMontajes.Precio = (decimal)PrecioM285.TotalCost;
-            resultMontajes.M2 = (decimal)M2Consumido3.Quantity;
-            listResultMontajes.Add(resultMontajes);
+            AppVariablesMontaje resultMontajes3 = new AppVariablesMontaje();
+            resultMontajes3.Id = 3;
+            resultMontajes3.Precio = (decimal)PrecioM285.TotalCost;
+            resultMontajes3.M2 = (decimal)M2Consumido3.Quantity;
+            listResultMontajes.Add(resultMontajes3);
 
             var montajeMayor40 = listResultMontajes.Where(x => x.M2 > 40).FirstOrDefault();
             if (montajeMayor40 == null)
@@ -478,41 +874,50 @@ namespace AppService.Core.Services
                 {
                     result.Precio = (decimal)PrecioM285.TotalCost;
                     result.CantidadConvertida = (decimal)M2Consumido3.Quantity;
-                   
+                    result.CantidadPorUnidad = ETQPORM285obj.Quantity;
+
+
                 }
                 else
                 {
                     result.Precio = (decimal)PrecioM22x65.TotalCost;
                     result.CantidadConvertida = (decimal)M2Consumido2.Quantity;
+                    result.CantidadPorUnidad = ETQPORM22X65Obj.Quantity;
                 }
             }
             else
             {
                 result.Precio = (decimal)PrecioM2.TotalCost;
                 result.CantidadConvertida = (decimal)M2Consumido1.Quantity;
+                result.CantidadPorUnidad = ETIQUETASPORM2obj.Quantity;
 
             }
 
-           
+
 
             var sumarAdicionalPorVolumen = await _unitOfWork.AppPorcentajeAdicionalM2Repository.AplicarValorBase((decimal)result.CantidadConvertida);
             if (sumarAdicionalPorVolumen)
             {
                 var porcentajesM2 = await _unitOfWork.AppPorcentajeAdicionalM2Repository.GetDesdeHasta((decimal)result.CantidadConvertida);
-                if(porcentajesM2!= null)
+                if (porcentajesM2 != null)
                 {
-                    var adicional = (result.Precio * porcentajesM2.Porcentaje)/100;
+
+                    var adicional = (result.Precio * porcentajesM2.Porcentaje) / 100;
                     result.Precio = result.Precio + adicional;
 
                 }
-             
+
             }
+
+            //result.CantidadPorUnidad = cantidad/result.CantidadConvertida;
+            result.PrecioPorUnidad = result.Precio / result.CantidadPorUnidad;
 
             AppPriceGetDto productoCantidad = result;
             result = (AppPriceGetDto)null;
             calculoList = (List<AppRecipesByAppDetailQuotes>)null;
             return productoCantidad;
         }
+
 
 
         public List<AppRecipesByAppDetailQuotesHistory> CrearListaHistoricoCalculo(
@@ -638,8 +1043,30 @@ namespace AppService.Core.Services
                         if (appVariableId.GetValueOrDefault() == num & appVariableId.HasValue)
                             entity.Quantity = new Decimal?(cantidad);*/
                         if (appRecipes.Code == "CANTIDAD") entity.Quantity = new Decimal?(cantidad);
-                        if (appRecipes.Code=="MedidaBasicaCM")  entity.Quantity = new Decimal?(medidaBasicaCm);
-                        if(appRecipes.Code=="MedidaOpuestaCM")  entity.Quantity = new Decimal?(medidaOpuestaCm);
+                        if (appRecipes.Code== "MEDIDABASICA")  entity.Quantity = new Decimal?(medidaBasicaCm);
+                        if(appRecipes.Code== "MEDIDAOPUESTA")  entity.Quantity = new Decimal?(medidaOpuestaCm);
+                        if (appRecipes.Code == "MedidaBasicaCM") entity.Quantity = new Decimal?(medidaBasicaCm);
+                        if (appRecipes.Code == "MedidaOpuestaCM") entity.Quantity = new Decimal?(medidaOpuestaCm);
+                        if (appRecipes.Code == "DESARROLLO")
+                        {
+                           
+                            var desaarrolloObj = await _unitOfWork.AppDesarrolloEtiquetasPrimeRepository.GetByMedidaBasica(medidaBasicaCm);
+                            if (desaarrolloObj != null)
+                            {
+                            
+                                entity.Quantity = desaarrolloObj.Desarrollo;
+                            }
+                            else
+                            {
+                                entity.Quantity = 0;
+
+                            }
+                          
+                        }
+
+                         
+
+                        
 
                         await this._unitOfWork.AppRecipesByAppDetailQuotesRepository.Add(entity);
                         await this._unitOfWork.SaveChangesAsync();

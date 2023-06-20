@@ -8,3 +8,55 @@ dotnet publish -r win-x64 -c Release --no-self-contained -o /Users/freveron/Docu
 "/Users/freveron/Documents/Publish/win-service"
 Run the Worker Service as a Windows Service
 sc create MyWindowsService start=delayed-auto binPath=c:\Publish\win-service\WorkerService.exe
+
+Itext7
+https://www.youtube.com/watch?v=Ecoey3jh0B8&list=PL9VntEIxiRgfsqdYUbNRUZS2mg7yXSidv&index=1
+
+https://www.youtube.com/watch?v=JrfB_33Do_8&list=PLU3UD_RM_1Abkcw8jjCl4o179jfyD47mj&index=2
+
+Clean Architecture
+
+Github repo: https://github.com/jebmole/SocialMedia
+
+Curso completo
+Part 1 - Summary : https://youtu.be/9kYGe5OzrV4
+Part 2 - Clean Architecture : https://youtu.be/D48O5NJsQi0
+Part 3 - Dependency Injection & EF Core : https://youtu.be/2yyc6LnJTRI
+Scaffold-DbContext "Server=.;Database=RRDDev;Integrated Security = true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DataTmp
+
+Scaffold-DbContext "Server=.;Database=MC;Integrated Security = true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DataMC
+Scaffold-DbContext "Server=172.28.107.19;Database=RRD;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DataTmp
+Scaffold-DbContext "Server=172.28.107.19;Database=RRD;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DataTmp
+Scaffold-DbContext "Server=172.28.107.19\\FSVEMCYN03D;Database=Mooreve;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DataTmp
+Scaffold-DbContext "Server=172.28.107.19\\FSVEMCYN03D;Database=Clientes;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DataClientes
+Scaffold-DbContext "Server=.;Database=Sap;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DataSap
+Scaffold-DbContext "Server=.;Database=Clientes;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DataClientes
+Scaffold-DbContext "Server=172.28.107.19\\FSVEMCYN03D;Database=Nomina;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DataNomina
+Scaffold-DbContext "Server=172.28.107.19\\FSVEMCYN03D;Database=Estadisticas;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DataEstadisticas
+dotnet ef dbcontext scaffold "Server=172.28.107.19\\FSVEMCYN03D;Database=Estadisticas;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DataEstadisticas
+
+Part 4 - Fluent API in EF Core : https://youtu.be/swLZW434wVE
+Part 5 - HTTP Basics & REST : https://youtu.be/28nideHfyKY
+Part 6 - DTOs & Automapper : https://youtu.be/DEOBWo2YodI
+Part 7 - Configuration & Fluent Validations: https://youtu.be/cUZ3bAckesQ
+Part 8 - Crud Operations with EF Core : https://youtu.be/2InQG-cSr9U
+Part 9 - Business Logic and Repository Pattern : https://youtu.be/tfgSkC5hASA
+Part 10 - Generic Repository and Unit of Work : https://youtu.be/1z1nPoZrNtw
+Part 11 - Custom Exceptions : https://youtu.be/rARDZDyH_yY
+Part 12 - Filtering Data and Return Types : https://youtu.be/2ZwUFzdUBbE
+Part 13 - Implementing Pagination : https://youtu.be/F7bjl37e-h0
+Part 14 - Configuration Settings : https://youtu.be/jbaXvt46FpY
+Part 15 - Documenting API with Swagger : https://youtu.be/A_8b8s9qafw
+
+Documentacion 
+https://www.openapis.org/
+https://swagger.io/
+http://editor.swagger.io/	
+Part 16 - Securing API with JWT : https://youtu.be/6EXZZh__XH8
+https://jwt.io
+
+Part 17 - Deploying API in Azure and IIS : https://youtu.be/76BD-8AvYDc
+
+
+
+git  remote add origin https://github.com/reveronfranklin/AppService.git

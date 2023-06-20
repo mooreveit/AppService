@@ -85,6 +85,13 @@ namespace AppService.Core.Services
                         {
                             item.PrecioPorRango = true;
                             item.AppPriceDto = this._mapper.Map<List<AppPriceDto>>((object)allByAppProduct);
+                            var porcentajePrecioMaximo = await _unitOfWork.AppConfigAppRepository.GetByKey("UTILIDADOPMAX");
+                            foreach (var itemPrecio in item.AppPriceDto)
+                            {
+                                decimal porcentaje = decimal.Parse(porcentajePrecioMaximo.Valor);
+                                var adicional = (itemPrecio.Precio * porcentaje) /100;
+                                itemPrecio.PrecioMaximo = itemPrecio.Precio + adicional;
+                            }
                         }
                         else
                             item.PrecioPorRango = false;
@@ -343,6 +350,7 @@ namespace AppService.Core.Services
                 }
 
                 appProducts.ExternalCode = appProducts.ExternalCode.Trim();
+                appProducts.RequiereEstimacion = appProductsCreateDto.RequiereEstimacion;
                 appProducts.CreatedAt = DateTime.Now;
                 appProducts.UserCreate = appProductsCreateDto.UsuarioConectado;
                 appProducts.UserUpdate = appProductsCreateDto.UsuarioConectado;
@@ -539,6 +547,7 @@ namespace AppService.Core.Services
                     }
 
                 }
+                appProductsFind.RequiereEstimacion = appProductsUpdateDto.RequiereEstimacion;
                 appProductsFind.ProductionUnitId = appProductsUpdateDto.ProductionUnitId;
                 appProductsFind.AppUnitsId = appProductsUpdateDto.AppUnitsId;
                 appProductsFind.AppSubCategoryId = appProductsUpdateDto.AppSubCategoryId;
@@ -551,7 +560,7 @@ namespace AppService.Core.Services
                 appProductsFind.Code = appProductsUpdateDto.Code;
                 appProductsFind.UserUpdate = appProductsUpdateDto.UsuarioConectado;
                 appProductsFind.UpdatedAt = new DateTime?(DateTime.Now);
-
+                appProductsFind.CantidadMinima = appProductsUpdateDto.CantidadMinima;
                 var civy004 = _unitOfWork.Csmy036Repository.GetCivy004ByCode(appProductsFind.ExternalCode.Trim());
                 if (civy004 != null)
                 {

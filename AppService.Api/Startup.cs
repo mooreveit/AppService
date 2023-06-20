@@ -6,6 +6,7 @@ using AppService.Infrastructure.DataClientes;
 using AppService.Infrastructure.DataContratosStock;
 using AppService.Infrastructure.DataCXC;
 using AppService.Infrastructure.DataDW;
+using AppService.Infrastructure.DataEstadisticas;
 using AppService.Infrastructure.DataFacturacion;
 using AppService.Infrastructure.DataMaestros;
 using AppService.Infrastructure.DataMateriales;
@@ -95,11 +96,14 @@ namespace AppService.Api
 
                 );
 
-            services.AddDbContext<MooreveContext>(options =>
+            /*services.AddDbContext<MooreveContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("mooreveConecction"));
+                options.UseSqlServer(Configuration.GetConnectionString("mooreveConecction")); 
 
-            });
+            });*/
+
+
+             services.AddDbContext<MooreveContext>(x => x.UseSqlServer(Configuration.GetConnectionString("mooreveConecction")), ServiceLifetime.Transient);
 
             services.AddDbContext<MaterialesContext>(options =>
 
@@ -160,12 +164,16 @@ namespace AppService.Api
 
                options.UseSqlServer(Configuration.GetConnectionString("nominaConecction"))
           );
+            services.AddDbContext<EstadisticasContext>(options =>
+
+           options.UseSqlServer(Configuration.GetConnectionString("estadisticasConecction"))
+            );
 
             services.AddDbContext<SpiContext>(options =>
                       options.UseOracle(Configuration.GetConnectionString("spiConnection"), b => b.UseOracleSQLCompatibility("11")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
             );
 
-
+            
 
             services.AddTransient<IAppOrdenProductoRepeticionServices, AppOrdenProductoRepeticionServices>();
             services.AddTransient<ICobAdjuntosCobranzaService, CobAdjuntosCobranzaService>();

@@ -44,7 +44,17 @@ namespace AppService.Core.Services
 
         public async Task<OfdTipoDocumento> GetById(short id)
         {
-            return await _unitOfWork.OfdTipoDocumentoRepository.GetById(id);
+            try
+            {
+                var result = await _unitOfWork.OfdTipoDocumentoRepository.GetById(id);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+                return null;
+            }
+             
         }
 
         public async Task<OfdTipoDocumento> Insert(OfdTipoDocumento ofdTipoDocumento)

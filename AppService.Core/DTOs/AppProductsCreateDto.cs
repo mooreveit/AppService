@@ -42,5 +42,6 @@ namespace AppService.Core.DTOs
         public bool? AceptaMultiplesItem { get; set; }
 
         public bool? RequiereDatosEntrada { get; set; }
+        public bool RequiereEstimacion { get; set; }
     }
 }

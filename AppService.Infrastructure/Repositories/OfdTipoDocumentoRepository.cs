@@ -2,6 +2,7 @@
 using AppService.Core.Interfaces;
 using AppService.Core.QueryFilters;
 using AppService.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,17 @@ namespace AppService.Infrastructure.Repositories
 
         public async Task<OfdTipoDocumento> GetById(short id)
         {
-            return await _context.OfdTipoDocumento.FindAsync(id);
+            try
+            {
+                var result = await _context.OfdTipoDocumento.Where(x=>x.IdTipoDocumento==id).FirstOrDefaultAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            
         }
 
         public async Task Add(OfdTipoDocumento entity)
@@ -40,6 +51,12 @@ namespace AppService.Infrastructure.Repositories
         }
 
 
+        /*public async Task<OfdTipoDocumento> GetByFileNAme(string fileName)
+        {
+            return await _context.OfdTipoDocumento.Where(x=>x.TipoDocumentoSap==fileName).FirstOrDefaultAsync();
+        }*/
+
+      
 
         public void Update(OfdTipoDocumento entity)
         {

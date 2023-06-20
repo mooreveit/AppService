@@ -39,7 +39,7 @@ namespace AppService.Api.Controllers
         {
             var src = "/Users/freveron/Documents/Moore/Facturacion/enProceso/Factura_2200732866.pdf";
             
-                 var response = _service.ReadLineByLineTextPdf(src);
+            var response = _service.ReadLineByLineTextPdf(src);
             //var response = _service.ReadTextPdf(src);
             return Ok(response);
 

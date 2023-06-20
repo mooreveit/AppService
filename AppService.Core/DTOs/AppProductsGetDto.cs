@@ -54,6 +54,7 @@ namespace AppService.Core.DTOs
         public string VariablesSearchText { get; set; }
 
         public int TipoCalculo { get; set; }
+        public bool RequiereEstimacion { get; set; }
 
         public AppUnitsGetDto AppUnitsGetDto { get; set; }
 

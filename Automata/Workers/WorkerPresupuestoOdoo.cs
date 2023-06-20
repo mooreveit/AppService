@@ -17,13 +17,21 @@ namespace Automata.Workers
             while (!stoppingToken.IsCancellationRequested)
             {
 
-                Console.WriteLine("Ejecutando worker cada 1 minuto");
-                Console.WriteLine("Iniciando envio de clientes a Odoo");
-                await _cotizacionService.ActualizarClientes();
-                Console.WriteLine("Iniciando envio de cotizaciones a Odoo");
+                Console.WriteLine("Ejecutando worker cada 120 minuto");
+                 Console.WriteLine("Iniciando envio de clientes a Odoo");
+                 await _cotizacionService.ActualizarClientes();
+                 Console.WriteLine("Culminado envio de Contactos a Odoo: "  + DateTime.Today.ToLongDateString() + "-" + DateTime.Today.ToLongTimeString()) ;
+                
+
+
+
+
+                /*Console.WriteLine("Iniciando envio de cotizaciones a Odoo");
                 await _cotizacionService.UpdateCotizacionesToOdoo();
-                Console.WriteLine("Culminado envio de cotizaciones a Odoo");
-                await Task.Delay(600000);
+                Console.WriteLine("Culminado envio de cotizaciones a Odoo: " +  DateTime.Today.ToLongDateString() + "-" + DateTime.Today.ToLongTimeString());
+                */
+
+                await Task.Delay(1200000); 
 
 
 

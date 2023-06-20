@@ -1140,6 +1140,8 @@ namespace AppService.Core.Services
                     response.Data = resultDto;
                     return response;
                 }
+
+
                 //else
                 //{
                 //    if (direccionEntregarValidate.Codigo != appGeneralQuotesUpdateDto.IdCliente)
@@ -1152,8 +1154,8 @@ namespace AppService.Core.Services
                 //    }
                 //}
 
-
-                if (await this._unitOfWork.MtrContactosRepository.GetById(appGeneralQuotesUpdateDto.IdContacto) == null)
+                var contacto = await this._unitOfWork.MtrContactosRepository.GetById(appGeneralQuotesUpdateDto.IdContacto);
+                if (contacto== null)
                 {
                     metadata.IsValid = false;
                     metadata.Message = "Contacto No Existe!!! ";
@@ -1161,6 +1163,15 @@ namespace AppService.Core.Services
                     response.Data = resultDto;
                     return response;
                 }
+                if (contacto.IdCliente.Trim() != appGeneralQuotesUpdateDto.IdCliente.Trim())
+                {
+                    metadata.IsValid = false;
+                    metadata.Message = "Contacto No Pertenece a el cliente!!! ";
+                    response.Meta = metadata;
+                    response.Data = resultDto;
+                    return response;
+                }
+
                 if (await this._unitOfWork.MtrCondicionPagoRepository.GetById(appGeneralQuotesUpdateDto.IdCondPago) == null)
                 {
                     metadata.IsValid = false;

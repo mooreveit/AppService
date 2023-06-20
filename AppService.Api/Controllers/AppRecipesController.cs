@@ -372,5 +372,55 @@ namespace AppService.Api.Controllers
 
         }
 
+
+
+        /// <summary>
+        /// Copia receta por Codigo de Producto
+        ///  Retorna Lista de la Receta
+        /// 
+        /// </summary>
+        /// <param name="filters">Filtros a aplicar AppCopyRecipesDto</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("[action]")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<List<AppRecipesGetDto>>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> CreaVariables()
+        {
+
+            Metadata metadata = new Metadata
+            {
+                IsValid = false,
+                Message = "",
+                TotalCount = 0
+            };
+
+
+            try
+            {
+
+                await _appRecipesServices.CreaVariables();
+                return Ok();
+
+
+
+            }
+            catch (Exception e)
+            {
+
+                metadata.IsValid = false;
+                metadata.Message = e.InnerException.Message;
+                var responseError = new ApiResponse<AppDetailQuotesGetDto>(null)
+                {
+                    Meta = metadata
+                };
+
+
+                return Ok(responseError);
+            }
+
+
+        }
+
     }
 }

@@ -8,6 +8,7 @@ using AppService.Infrastructure.DataClientes;
 using AppService.Infrastructure.DataContratosStock;
 using AppService.Infrastructure.DataCXC;
 using AppService.Infrastructure.DataDW;
+using AppService.Infrastructure.DataEstadisticas;
 using AppService.Infrastructure.DataFacturacion;
 using AppService.Infrastructure.DataMaestros;
 using AppService.Infrastructure.DataMateriales;
@@ -56,7 +57,7 @@ internal class Program
         string dwConecction = "Server=172.28.107.19\\FSVEMCYN03D;Database=DW;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
         string nominaConecction = "Server=172.28.107.19\\FSVEMCYN03D;Database=Nomina;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
         string cxcConecction = "Server=172.28.107.19\\FSVEMCYN03D;Database=CXC;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
-
+        string estadisticasConecction = "Server=172.28.107.19\\FSVEMCYN03D;Database=CXC;User Id=userweb;Password=userweb2003;MultipleActiveResultSets=true";
         string spiConnection = "Data Source=172.28.107.20:1521/SPI;User Id=INFOCENT;Password=SPISENIOR;Validate Connection=true;";
 
         serviceCollection.Configure<PaginationOptions>(Configuration.GetSection("Pagination"));
@@ -136,6 +137,10 @@ internal class Program
            options.UseSqlServer(nominaConecction)
       );
 
+        serviceCollection.AddDbContext<EstadisticasContext>(options =>
+
+         options.UseSqlServer(estadisticasConecction)
+    );
 
         serviceCollection.AddDbContext<SpiContext>(options =>
                 options.UseOracle(spiConnection, b => b.UseOracleSQLCompatibility("11")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
@@ -240,6 +245,10 @@ internal class Program
                             .AddDbContext<NominaContext>(options =>
 
                                 options.UseSqlServer(nominaConecction)
+                            )
+                             .AddDbContext<EstadisticasContext>(options =>
+
+                                options.UseSqlServer(estadisticasConecction)
                             )
 
                             .AddDbContext<SpiContext>(options =>

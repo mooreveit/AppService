@@ -19,7 +19,7 @@ namespace AppService.Core.DTOs
 
         public decimal? Ancho { get; set; }
 
-
+        public int? AppDetailQuotesId { get; set; }
 
     }
 }

@@ -1084,6 +1084,7 @@ namespace AppService.Core.Services
                     response.Meta = metadata;
                     return response;
                 }
+
                 decimal poder;
                 Decimal.TryParse(dto.Poder, out poder);
                 SapPoderContacto sapPoderContacto = await _unitOfWork.SapPoderContactoRepository.GetByIdDecimal(poder);
@@ -1582,6 +1583,7 @@ namespace AppService.Core.Services
             AppConfigApp token = new AppConfigApp();
 
             var ambiente = Ambiente.ValorAmbiente();
+            
             if (ambiente == 1)
             {
                 server = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooServerProd");
@@ -1628,15 +1630,15 @@ namespace AppService.Core.Services
         public async Task UpdateClientesToOdoo(List<MtrCliente> mtrClientes)
         {
 
-                //foreach (var item in mtrClientes.Where(x=>x.Codigo.Trim()== "744455"))
+                //foreach (var item in mtrClientes.Where(x=>x.Codigo.Trim()== "744506"))
                 foreach (var item in mtrClientes)
                 {
-               
 
-                var odooProduct = await GetOdooCliente(item);
+                string json1 = "";
+               var odooProduct = await GetOdooCliente(item);
                 try
                 {
-                    string json1 = JsonConvert.SerializeObject(odooProduct);
+                    json1 = JsonConvert.SerializeObject(odooProduct);
                     StringContent data = new StringContent(json1, Encoding.UTF8, "application/json");
 
                     var result = await _odooClient.Post(data);
@@ -1654,8 +1656,11 @@ namespace AppService.Core.Services
                         MtrClienteEnvioOdooLog mtrClienteEnvioOdooLog = new MtrClienteEnvioOdooLog();
                         mtrClienteEnvioOdooLog.IdCliente = item.Codigo;
                         mtrClienteEnvioOdooLog.Mensaje = result.Message;
+                        mtrClienteEnvioOdooLog.JsonSend = json1;
+
                         mtrClienteEnvioOdooLog.Fecha = DateTime.Now;
                         await _unitOfWork.MtrClienteRepository.AddMtrClienteEnvioOdooLog(mtrClienteEnvioOdooLog);
+                        await _unitOfWork.SaveChangesAsync();
                     }
                     //else
                     //{
@@ -1674,6 +1679,7 @@ namespace AppService.Core.Services
                     MtrClienteEnvioOdooLog mtrClienteEnvioOdooLog = new MtrClienteEnvioOdooLog();
                     mtrClienteEnvioOdooLog.IdCliente = item.Codigo;
                     mtrClienteEnvioOdooLog.Mensaje = ex.Message;
+                    mtrClienteEnvioOdooLog.JsonSend = json1;
                     mtrClienteEnvioOdooLog.Fecha = DateTime.Now;
                     await _unitOfWork.MtrClienteRepository.AddMtrClienteEnvioOdooLog(mtrClienteEnvioOdooLog);
                 }

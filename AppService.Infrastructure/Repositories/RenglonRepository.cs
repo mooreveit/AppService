@@ -46,7 +46,19 @@ namespace AppService.Infrastructure.Repositories
 
         public async Task<Wsmy502> GetByCotizacionProducto(string cotizacion, string producto)
         {
-            return await _context.Wsmy502.Where(x => x.Cotizacion == cotizacion && x.CodProducto == producto).FirstOrDefaultAsync();
+            try
+            {
+                var wsmy502 = await _context.Wsmy502.Where(x => x.Cotizacion == cotizacion && x.CodProducto == producto).FirstOrDefaultAsync();
+
+                return wsmy502;
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message;
+                return null;
+            }
+
+
         }
 
         public async Task Add(Wsmy502 entity)
@@ -68,9 +80,10 @@ namespace AppService.Infrastructure.Repositories
 
 
 
-        public void Update(Wsmy502 entity)
+        public async Task Update(Wsmy502 entity)
         {
-            _context.Wsmy502.Update(entity).Property(x => x.Id).IsModified = false;
+           _context.Wsmy502.Update(entity).Property(x => x.Id).IsModified = false;
+           await  _context.SaveChangesAsync();
 
         }
 

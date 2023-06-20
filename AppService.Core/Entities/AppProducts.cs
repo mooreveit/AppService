@@ -80,6 +80,8 @@ namespace AppService.Core.Entities
 
         public int CodAplicacion { get; set; }
 
+        public bool RequiereEstimacion { get; set; }
+
         public virtual AppSubCategory AppSubCategory { get; set; }
 
         public virtual AppUnits AppUnits { get; set; }

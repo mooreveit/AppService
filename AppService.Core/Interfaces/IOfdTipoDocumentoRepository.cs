@@ -15,6 +15,7 @@ namespace AppService.Core.Interfaces
         void Update(OfdTipoDocumento entity);
 
         Task Delete(short id);
+        //Task<OfdTipoDocumento> GetByFileNAme(string fileName);
 
 
     }

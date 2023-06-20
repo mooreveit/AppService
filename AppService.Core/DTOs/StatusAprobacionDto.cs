@@ -11,7 +11,8 @@ namespace AppService.Core.DTOs
         public bool? FlagCerrado { get; set; }
         public decimal? ValorVentaAprobar { get; set; }
         public decimal? ValorVentaAprobarUsd { get; set; }
-
+        public decimal? precioEstimacion { get; set; }
+      
 
         public bool Aprobado { get; set; }
         public string Color { get; set; }

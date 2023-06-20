@@ -37,9 +37,10 @@ namespace AppService.Infrastructure.Repositories
 
         public async Task<List<MtrCliente>> GetAllDAyUpdate(int days)
         {
-
+            
             DateTime localDate = DateTime.Now.AddDays(-days);
             return await _context.MtrCliente.Where(x => x.FModificacion >= localDate).ToListAsync();
+        
 
         }
 

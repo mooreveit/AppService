@@ -143,6 +143,14 @@ namespace AppService.Infrastructure.Repositories
 
         public async Task Add(AppRecipes entity)
         {
+
+            if (entity.RetornarElMayor==null) {
+                entity.RetornarElMayor = false;
+            }
+            if (entity.RetornarElMenor == null)
+            {
+                entity.RetornarElMenor = false;
+            }
             await _context.AppRecipes.AddAsync(entity);
 
 
@@ -150,6 +158,14 @@ namespace AppService.Infrastructure.Repositories
 
         public void Update(AppRecipes entity)
         {
+            if (entity.RetornarElMayor == null)
+            {
+                entity.RetornarElMayor = false;
+            }
+            if (entity.RetornarElMenor == null)
+            {
+                entity.RetornarElMenor = false;
+            }
             _context.AppRecipes.Update(entity);
 
         }

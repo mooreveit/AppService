@@ -35,6 +35,9 @@ namespace AppService.Core.DTOs
         public Decimal PrecioMasFleteBs { get; set; }
         public Decimal SubTotalBs { get; set; }
 
+        public Decimal PrecioMaximo { get; set; }
+
+
         public Decimal SubTotal
         {
             get
@@ -49,6 +52,9 @@ namespace AppService.Core.DTOs
 
 
         public Decimal? CantidadConvertida { get; set; } = 0;
+
+        public Decimal? CantidadPorUnidad { get; set; } = 0;
+        public Decimal? PrecioPorUnidad { get; set; } = 0;
 
         public AppProductsGetDto AppProduct { get; set; }
 

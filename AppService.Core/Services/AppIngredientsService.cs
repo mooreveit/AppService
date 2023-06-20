@@ -1,6 +1,7 @@
 ﻿using AppService.Core.CustomEntities;
 using AppService.Core.DTOs;
 using AppService.Core.Entities;
+using AppService.Core.EntitiesMaestros;
 using AppService.Core.Interfaces;
 using AppService.Core.QueryFilters;
 using AppService.Core.Responses;
@@ -535,6 +536,7 @@ namespace AppService.Core.Services
                 foreach (var item in newResult)
                 {
 
+                    await _appRecipesServices.UpdateIngredientsCostRecipeByProduct(item.AppproductsId);
 
                     await _appRecipesServices.CalulateRecipeByProduct(item.AppproductsId);
 

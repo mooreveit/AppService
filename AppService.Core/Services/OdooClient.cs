@@ -24,14 +24,14 @@ namespace AppService.Core.Services
 
             //Prod
             //httpClient.BaseAddress = new Uri("https://mooreveit-moore-qa1-5818605.dev.odoo.com/jsonrpc/");
-
+         
             if (ambiente == 1)
             {
                 httpClient.BaseAddress = new Uri(" https://mooreveit-moore.odoo.com/jsonrpc/");
             }
             else
             {
-                httpClient.BaseAddress = new Uri("https://mooreveit-moore-qa1-5818605.dev.odoo.com/jsonrpc/");
+                httpClient.BaseAddress = new Uri("https://mooreveit-moore-qa-7272646.dev.odoo.com/jsonrpc/");
             }
 
 

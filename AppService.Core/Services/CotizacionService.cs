@@ -300,16 +300,42 @@ namespace AppService.Core.Services
                             if (item.SolicitarPrecio.Value)
                             {
                                 Wsmy502 renglon = await this._unitOfWork.RenglonRepository.GetByCotizacionProducto(item.Cotizacion, prod.ExternalCode.Trim());
-                                if (await this._aprobacionesServices.GetByCotizacionRenglonPrpopuesta(renglon.Cotizacion, renglon.Renglon, 1) == null)
+
+                                if (renglon != null)
                                 {
-                                    ApiResponse<Wsmy639> aprobacion = await this._aprobacionesServices.CreateAprobacion(item.Cotizacion, renglon.Renglon, 1, item.UserUpdate);
-                                    if (aprobacion.Data != null)
+                                    var solicitudAprobacion = await this._aprobacionesServices.GetByCotizacionRenglonPrpopuesta(renglon.Cotizacion, renglon.Renglon, 1);
+                                    if (solicitudAprobacion == null)
                                     {
-                                        await this.UpdateSolicitudPropuesta(renglon.Cotizacion, renglon.Renglon, 1, (int)aprobacion.Data.IdSolicitud);
-                                        ApiResponse<Wsmy647> apiResponse = await this._aprobacionesServices.ActivarWORKFLOW(item.Cotizacion, renglon.Renglon, 1, item.UserUpdate, item);
+                                        ApiResponse<Wsmy639> aprobacion = await this._aprobacionesServices.CreateAprobacion(item.Cotizacion, renglon.Renglon, 1, item.UserUpdate);
+                                        if (aprobacion.Data != null)
+                                        {
+                                            await this.UpdateSolicitudPropuesta(renglon.Cotizacion, renglon.Renglon, 1, (int)aprobacion.Data.IdSolicitud);
+                                            ApiResponse<Wsmy647> apiResponse = await this._aprobacionesServices.ActivarWORKFLOW(item.Cotizacion, renglon.Renglon, 1, item.UserUpdate, item);
+                                        }
                                     }
+                                    else
+                                    {
+                                        if (solicitudAprobacion.IdEstatus=="RECH")
+                                        {
+                                            var aprobaciones =await _unitOfWork.AprobacionesRepository.GetByCotizacionRenglonPropuesta(item.Cotizacion, renglon.Renglon,1);
+
+                                            if (aprobaciones != null)
+                                            {
+                                                await _unitOfWork.AprobacionesRepository.Delete(aprobaciones.Id);
+                                                await _unitOfWork.SaveChangesAsync();
+                                            }
+                                            ApiResponse<Wsmy639> aprobacion = await this._aprobacionesServices.CreateAprobacion(item.Cotizacion, renglon.Renglon, 1, item.UserUpdate);
+                                            if (aprobacion.Data != null)
+                                            {
+                                                await this.UpdateSolicitudPropuesta(renglon.Cotizacion, renglon.Renglon, 1, (int)aprobacion.Data.IdSolicitud);
+                                                ApiResponse<Wsmy647> apiResponse = await this._aprobacionesServices.ActivarWORKFLOW(item.Cotizacion, renglon.Renglon, 1, item.UserUpdate, item);
+                                            }
+                                        }
+                                    }
+                                    renglon = (Wsmy502)null;
                                 }
-                                renglon = (Wsmy502)null;
+
+                            
                             }
                         }
 
@@ -503,7 +529,7 @@ namespace AppService.Core.Services
                 AppService.Core.EntitiesMaestros.Csmy036 byCode = await this._unitOfWork.Csmy036Repository.GetByCode(renglon.CodProducto);
                 if (byCode != null)
                     renglon.SubCategoria = new int?((int)byCode.Idsubcategoria);
-                this._unitOfWork.RenglonRepository.Update(renglon);
+                await this._unitOfWork.RenglonRepository.Update(renglon);
                 await this._unitOfWork.SaveChangesAsync();
                 await this.UpdatePropuestaCotizacion(appDetailQuotes, renglon.Renglon);
 
@@ -607,6 +633,12 @@ namespace AppService.Core.Services
             List<AppRecipes> productIdVariableCode2 = await this._unitOfWork.AppRecipesRepository.GetListRecipesByProductIdVariableCode(appDetailQuotes.IdProducto, "CANT_PARTES");
             if (productIdVariableCode2 != null && productIdVariableCode2.Count > 0)
                 cantPartes = Convert.ToInt32((object)productIdVariableCode2.FirstOrDefault<AppRecipes>().Quantity);
+
+            decimal cantFormasRollo = 0;
+            List<AppRecipes> productIdVariableCodeFormasRollo = await this._unitOfWork.AppRecipesRepository.GetListRecipesByProductIdVariableCode(appDetailQuotes.IdProducto, "CANTFORMAS");
+            if (productIdVariableCodeFormasRollo != null && productIdVariableCodeFormasRollo.Count > 0)
+                cantFormasRollo = Convert.ToInt32((object)productIdVariableCodeFormasRollo.FirstOrDefault<AppRecipes>().Quantity);
+
             Wsmy515 propuesta = await this._unitOfWork.PropuestaRepository.GetByCotizacionRenglonPropuesta(appDetailQuotes.Cotizacion, renglon, 1);
             if (propuesta != null)
             {
@@ -654,6 +686,11 @@ namespace AppService.Core.Services
                     propuesta.CantXCaja = valoresCotizacion.CantidadXCaja;
                 }
 
+                //Si es rollo asigna la cantidad de formas por Rollo
+                if (cantFormasRollo > 0) {
+                    propuesta.CantXCaja = cantFormasRollo;
+                }
+
                 AppService.Core.EntitiesMaestros.Csmy036 byCode = await this._unitOfWork.Csmy036Repository.GetByCode(prod.ExternalCode.Trim());
                 if (byCode != null)
                 {
@@ -665,9 +702,10 @@ namespace AppService.Core.Services
 
                 var flete = (appDetailQuotes.UnitPriceBaseProduction * porcFlete) /100;
 
-                propuesta.UsdListaCpj = appDetailQuotes.UnitPriceBaseProduction + flete;
+                propuesta.UsdListaCpj = appDetailQuotes.UnitPriceBaseProductionMaximo + flete;
                 propuesta.UsdListaCpjminimo = appDetailQuotes.UnitPriceBaseProduction + flete;
-                propuesta.TotalUsdListaCpj = (appDetailQuotes.UnitPriceBaseProduction + flete)* appDetailQuotes.Cantidad;
+
+                propuesta.TotalUsdListaCpj = (appDetailQuotes.UnitPriceBaseProductionMaximo + flete)* appDetailQuotes.Cantidad;
                 propuesta.TotalUsdListaCpjminimo = ((appDetailQuotes.UnitPriceBaseProduction + flete)* appDetailQuotes.Cantidad);
 
 
@@ -707,6 +745,8 @@ namespace AppService.Core.Services
                 {
                     propuesta.OdooId = 0;
                 }
+
+
 
                 this._unitOfWork.PropuestaRepository.Update(propuesta);
                 await this._unitOfWork.SaveChangesAsync();
@@ -794,6 +834,11 @@ namespace AppService.Core.Services
                 propuestaNew.Estatus = new int?(appDetailQuotes.IdEstatus);
                 propuestaNew.Observaciones = appDetailQuotes.Observaciones;
                 propuestaNew.CantXCaja = valoresCotizacion.CantidadXCaja;
+                //Si es rollo asigna la cantidad de formas por Rollo
+                if (cantFormasRollo > 0) {
+                    propuestaNew.CantXCaja = cantFormasRollo;
+                }
+
                 AppService.Core.EntitiesMaestros.Csmy036 byCode = await this._unitOfWork.Csmy036Repository.GetByCode(prod.ExternalCode.Trim());
                 if (byCode != null)
                 {
@@ -805,9 +850,10 @@ namespace AppService.Core.Services
 
                 var flete = (appDetailQuotes.UnitPriceBaseProduction * porcFlete) / 100;
 
-                propuestaNew.UsdListaCpj = appDetailQuotes.UnitPriceBaseProduction + flete;
+                propuestaNew.UsdListaCpj = appDetailQuotes.UnitPriceBaseProductionMaximo + flete;
                 propuestaNew.UsdListaCpjminimo = appDetailQuotes.UnitPriceBaseProduction + flete;
-                propuestaNew.TotalUsdListaCpj = ((appDetailQuotes.UnitPriceBaseProduction + flete) * appDetailQuotes.Cantidad);
+
+                propuestaNew.TotalUsdListaCpj = ((appDetailQuotes.UnitPriceBaseProductionMaximo + flete) * appDetailQuotes.Cantidad);
                 propuestaNew.TotalUsdListaCpjminimo = ((appDetailQuotes.UnitPriceBaseProduction + flete) * appDetailQuotes.Cantidad);
 
                 AppService.Core.EntitiesMC.TPaTasaReferencial tasaByFecha = await this._unitOfWork.TPaTasaReferencialRepository.GetTasaByFecha(DateTime.Now);
@@ -1432,7 +1478,7 @@ namespace AppService.Core.Services
             var detailFind = await _unitOfWork.AppDetailQuotesRepository.GetById(appDetailQuotes.Id);
             if (detailFind != null)
             {
-                detailFind.Tintas = tintas;
+                detailFind.Tintas = tintas.Trim();
                 _unitOfWork.AppDetailQuotesRepository.Update(detailFind);
                 await this._unitOfWork.SaveChangesAsync();
             }
@@ -1500,8 +1546,16 @@ namespace AppService.Core.Services
 
             if (prod.ProductionUnitId == appDetailQuotes.IdUnidad)
             {
-                var valor = (1 / appDetailQuotes.ValorConvertido) * appDetailQuotes.Cantidad;
-                result.Cantidad = Math.Truncate((decimal)valor);
+                if (appDetailQuotes.ValorConvertido>0)
+                {
+                    var valor = (1 / appDetailQuotes.ValorConvertido) * appDetailQuotes.Cantidad;
+                    result.Cantidad = Math.Truncate((decimal)valor);
+                }
+                else
+                {
+                    result.Cantidad = appDetailQuotes.CantidadSolicitada;
+                }
+              
 
             }
             else
@@ -1516,8 +1570,13 @@ namespace AppService.Core.Services
             result.CantMill = (float)((decimal)result.Cantidad / (decimal)unidadCosteo);
 
 
-
-
+            var formasEnCalculo = await _unitOfWork.AppRecipesByAppDetailQuotesRepository.GetListRecipesByProductCodeVariableCodeHistorico((int)appDetailQuotes.CalculoId, prod.Code, "TOTALFORMAS");
+            if (formasEnCalculo != null && formasEnCalculo.Count > 0)
+            {
+                result.CantFormas = formasEnCalculo.FirstOrDefault().Quantity;
+                result.CantMill = (float)((decimal)result.CantFormas / (decimal)unidadCosteo);
+            }
+              
 
             decimal precioUsdUnidadSolicitada = 0;
             decimal precioUnidadSolicitada = 0;
@@ -1527,13 +1586,13 @@ namespace AppService.Core.Services
 
 
             precioUsdUnidadSolicitada = appDetailQuotes.TotalUsd / (decimal)result.Cantidad;
-            precioUsdMillarSolicitada = unidadCosteo * precioUsdUnidadSolicitada;
+            precioUsdMillarSolicitada = appDetailQuotes.TotalUsd / (decimal)result.CantMill;
             result.PrecioUnitarioUsd = precioUsdMillarSolicitada;
             result.TotalPropuestaUsd = appDetailQuotes.TotalUsd;
 
 
             precioUnidadSolicitada = appDetailQuotes.Total / (decimal)result.Cantidad;
-            precioMillarSolicitada = unidadCosteo * precioUnidadSolicitada;
+            precioMillarSolicitada = appDetailQuotes.Total/ (decimal)result.CantMill; ;
             result.PrecioUnitario = precioMillarSolicitada;
             result.TotalPropuesta = appDetailQuotes.Total;
 
@@ -2386,14 +2445,21 @@ namespace AppService.Core.Services
 
             try
             {
+
+               //await UpdateCotizacionesToOdoo();
+
+
                 var diasAcualizaPresupuesto = 1;
                 var appConfig = await _unitOfWork.AppConfigAppRepository.GetByKey("OdooDiasActualizaClientes");
                 if (appConfig != null)
                 {
                     diasAcualizaPresupuesto = int.Parse(appConfig.Valor);
                 }
-
+                
                 var clientes = await _unitOfWork.MtrClienteRepository.GetAllDAyUpdate(diasAcualizaPresupuesto);
+
+             
+               // var list = clientes.Where(x => x.Codigo.Trim() == "744331").ToList();
                 await _mtrContactosService.UpdateClientesToOdoo(clientes);
             }
             catch (Exception ex)
@@ -2449,6 +2515,8 @@ namespace AppService.Core.Services
 
         }
 
+
+
         public async Task UpdateCotizacionesToOdoo()
         {
 
@@ -2463,11 +2531,11 @@ namespace AppService.Core.Services
 
             var cotizaciones = await _unitOfWork.CotizacionRepository.GetListCotizaciones(diasAcualizaPresupuesto);
 
-            //cotizaciones = cotizaciones.Where(x => x == "WI01202211036").ToList();
+            //cotizaciones = cotizaciones.Where(x => x == "RW23202305020").ToList();
             //#####ACTUALIZACION DE CLIENTE PROSPECTO
             MtrClienteQueryFilter filter = new MtrClienteQueryFilter();
-            filter.Codigo = "000000";
-            filter.Usuario = "RR105841";
+            //filter.Codigo = "000000";
+            //filter.Usuario = "RR105841";
             //var mtrClientesProspecto = await _unitOfWork.MtrClienteRepository.ListCliente(filter);
             //await _mtrContactosService.UpdateClientesToOdoo(mtrClientesProspecto);
 
@@ -2479,12 +2547,7 @@ namespace AppService.Core.Services
 
                 try
                 {
-
-
-
-
-
-
+                   
 
                     filter.Codigo = await GetClienteCotizacion(item);
                     filter.Usuario = "RR105841";
@@ -2496,13 +2559,15 @@ namespace AppService.Core.Services
                     if (cotizacion != null)
                     {
                         await ReasignaClienteContacto((long)cotizacion.IdContacto);
-                        var contacto = await _unitOfWork.MtrContactosRepository.GetById((long)cotizacion.IdContacto);
+
+
+                        /*var contacto = await _unitOfWork.MtrContactosRepository.GetById((long)cotizacion.IdContacto);
                         if (contacto != null)
                         {
                             List<MtrContactos> listMtrContactos = new List<MtrContactos>();
                             listMtrContactos.Add(contacto);
                             await _mtrContactosService.UpdateContactosToOdooByListMtrContacto(listMtrContactos);
-                        }
+                        }*/
 
                     }
 

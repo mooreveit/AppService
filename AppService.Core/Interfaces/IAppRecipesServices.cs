@@ -52,5 +52,7 @@ namespace AppService.Core.Interfaces
         Task CalculateAllProduct();
 
         Task ValidateAllReceipProduct();
+
+        Task CreaVariables();
     }
 }

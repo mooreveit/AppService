@@ -16,7 +16,7 @@ namespace AppService.Core.Interfaces
         Task<List<MtrDireccionesDto>> GetDireccionestDtoByCodigo(string codigo);
         Task<MtrDireccionesDto> GetDireccionestDtoById(decimal id);
         Task<ApiResponse<OdooClienteTipoSectorRamo>> UpdateTipoSectorRamoPorCliente(OdooClienteTipoSectorRamo dto);
-
+        Task OdooActualizarClientes();
     }
 
 }

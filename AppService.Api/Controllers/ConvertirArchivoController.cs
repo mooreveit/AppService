@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace AppService.Api.Controllers
 {
+  
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class ConvertirArchivoController : ControllerBase
@@ -14,10 +16,23 @@ namespace AppService.Api.Controllers
 
         [HttpPost]
         [Route("[action]")]
-
         public async Task<IActionResult> ConvertirArchivo(ConvertFileDto dto)
         {
 
+            await Convertir(dto);
+
+            return Ok(dto);
+
+        }
+
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<IActionResult> ConvertirArchivo()
+        {
+            ConvertFileDto dto = new ConvertFileDto();
+            dto.CantidadNulosAdicionales = 9;
+            dto.CatidadNulosEnArchivo = 0;
             await Convertir(dto);
 
             return Ok(dto);

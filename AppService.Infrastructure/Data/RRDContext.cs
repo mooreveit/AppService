@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AppService.Core.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
@@ -37,8 +38,10 @@ namespace AppService.Infrastructure.Data
 
         public virtual DbSet<AppService.Core.Entities.AppOrdenProductoRepeticion> AppOrdenProductoRepeticion { get; set; }
         public virtual DbSet<AppService.Core.Entities.AppCategory> AppCategory { get; set; }
-
+        public virtual DbSet<AppService.Core.Entities.AppDesarrolloEtiquetasPrime> AppDesarrolloEtiquetasPrime { get; set; }
+        
         public virtual DbSet<AppService.Core.Entities.AppConfigApp> AppConfigApp { get; set; }
+     
 
         public virtual DbSet<AppService.Core.Entities.AppDetailQuotes> AppDetailQuotes { get; set; }
 
@@ -591,6 +594,21 @@ namespace AppService.Infrastructure.Data
                 entity.Property<string>((Expression<Func<AppService.Core.Entities.AppConfigApp, string>>)(e => e.Clave)).HasMaxLength((int)byte.MaxValue).IsUnicode(false);
                 entity.Property<string>((Expression<Func<AppService.Core.Entities.AppConfigApp, string>>)(e => e.Valor)).HasMaxLength((int)byte.MaxValue).IsUnicode(false);
             }));
+            modelBuilder.Entity<AppDesarrolloEtiquetasPrime>(entity =>
+            {
+                entity.ToTable("AppDesarrolloEtiquetasPrime");
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("numeric(18, 0)")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Desarrollo).HasColumnType("numeric(18, 0)");
+
+                entity.Property(e => e.Desde).HasColumnType("numeric(18, 2)");
+
+                entity.Property(e => e.Hasta).HasColumnType("numeric(18, 2)");
+            });
+
             modelBuilder.Entity<AppService.Core.Entities.AppDetailQuotes>((Action<EntityTypeBuilder<AppService.Core.Entities.AppDetailQuotes>>)(entity =>
             {
                 entity.Property<Decimal>((Expression<Func<AppService.Core.Entities.AppDetailQuotes, Decimal>>)(e => e.Cantidad)).HasColumnType<Decimal>("numeric(18, 3)");

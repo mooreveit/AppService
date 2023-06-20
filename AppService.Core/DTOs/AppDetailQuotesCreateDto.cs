@@ -37,6 +37,9 @@ namespace AppService.Core.DTOs
         public Decimal MedidaBasica { get; set; }
 
         public Decimal MedidaOpuesta { get; set; }
+        public int CalculoId { get; set; }
+
+        public Decimal? UnitPriceBaseProductionMaximo { get; set; } = 0;
         public AppConversionUnitGenericCreateDto AppConversionUnitGenericCreateDto { get; set; }
 
     }

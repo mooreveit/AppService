@@ -6,6 +6,7 @@
         PrecioPorProducto = 2,
         PrecioPorProductoCantidad = 3,
         PrecioPorMontaje = 4,
-   
+        PrecioPorRollo = 5,
+        PrecioPorDesarrolloPrime = 6,
     }
 }
